@@ -12,8 +12,11 @@ namespace DevConsole
         static void Main(string[] args)
         {
             var sititcher = new ImageStitching();
-            sititcher.stitich();
-            Console.ReadLine();
+           // sititcher.stitich();
+
+            var barcode = new Barcode();
+            barcode.ReadBarcode();
+            //Console.ReadLine();
         }
     }
 }
