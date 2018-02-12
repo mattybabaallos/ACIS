@@ -7,6 +7,8 @@ using System.Drawing;
 using System.IO;
 using ZXing;
 using System.Linq;
+using DataMatrix.net;
+using BarcodeLib.BarcodeReader;
 
 namespace CV
 {
@@ -15,7 +17,7 @@ namespace CV
         public void ReadBarcode()
         {
             var path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName + @"\TestImages\";
-            var imagePath = path + "real1.jpg";
+            var imagePath = path + "real.jpg";
             // var barcodeBitmap = (Bitmap)Bitmap.FromFile(imagePath);
             var image = CvInvoke.Imread(imagePath, ImreadModes.AnyColor);
 
@@ -78,17 +80,25 @@ namespace CV
 
 
            
-            var bitMap = CvInvoke.Imread(imagePath, ImreadModes.AnyColor).Bitmap;
-            var reader = new BarcodeReader();
+            var bitMap = new Bitmap(Image.FromFile(path + "real1.png"));
+            var reader = new ZXing.BarcodeReader();
             reader.Options.TryHarder = true;
-            reader.Options.PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.DATA_MATRIX };
+            //reader.Options.PossibleFormats = new List<BarcodeFormat> { BarcodeFormat.DATA_MATRIX };
 
+            reader.AutoRotate = true;
             var result = reader.Decode(bitMap);
             if (result != null)
             {
                 Console.WriteLine(result.BarcodeFormat.ToString());
                 Console.WriteLine(result.Text);
             }
+
+
+            var decoder = new DmtxImageDecoder();
+            var list = decoder.DecodeImage(bitMap);
+           var list2=  decoder.DecodeImageMosaic(bitMap);
+
+            var list3 = BarcodeLib.BarcodeReader.BarcodeReader.read(bitMap, BarcodeLib.BarcodeReader.BarcodeReader.DATAMATRIX);
 
         }
 
