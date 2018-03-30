@@ -11,10 +11,12 @@ class acis
   public:
 	acis();
 	void move_test();
+	int stop();
 
   private:
-	motor *m_top_x_camera_motor;
-	motor *m_top_z_camera_motor;
+	Adafruit_MotorShield ** shields;
+	motor ** motors;
+	motor * working_motor;
 };
 
 #endif /* ACIS_H */

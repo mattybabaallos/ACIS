@@ -17,12 +17,13 @@ William Boyd boydwil@pdx.edu
 class motor
 {
   public:
-	motor();
-	void move_test();
+	motor(Adafruit_StepperMotor * stepper);
+	int move();
+	int stop();
+	int home();
 
   protected:
-	Adafruit_MotorShield *m_shield;
-	Adafruit_StepperMotor *m_motor;
+	Adafruit_StepperMotor * m_motor;
 };
 
 #endif /* MOTOR_H */

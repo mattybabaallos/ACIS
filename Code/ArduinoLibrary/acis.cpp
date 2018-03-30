@@ -13,12 +13,38 @@ William Boyd boydwil@pdx.edu
 
 acis::acis()
 {
-	m_top_x_camera_motor = new motor();
-	m_top_z_camera_motor = NULL;
+	shields = new Adafruit_MotorShield[NUMBER_SHIELD];
+	for (int i = 0; i < NUMBER_SHIELD; ++i)
+		shields[i] = NULL;
+
+	motors = new Adafruit_StepperMotor[NUMBER_MOTORS];
+	for (int i = 0; i < NUMBER_MOTORS; ++i)
+		motors[i] = NULL;
+
+	shields[0] = new Adafruit_MotorShield(SHIELD_ZERO_ADDRESS);
+	shields[1] = new Adafruit_MotorShield(SHIELD_ONE_ADDRESS);
+	shields[2] = new Adafruit_MotorShield(SHIELD_TWO_ADDRESS);
+
+	motors[X_AXIS_TOP] = new motor(shields[0].getStepper(MOTOR_STEPS, X_AXIS_TOP_CHANNEL));
+	motors[X_AXIS_BOTTOM] = new motor(shields[0].getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL));
+
+	motors[Z_AXIS_TOP] = new motor(shields[1].getStepper(MOTOR_STEPS, Z_AXIS_TOP_CHANNEL));
+	motors[Z_AXIS_BOTTOM] = new motor(shields[1].getStepper(MOTOR_STEPS, Z_AXIS_BOTTOM_CHANNEL));
+
+	motors[Y_AXIS] = new motor(shields[2].getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL));
 }
 
-void acis::move_test()
+int asic::move()
 {
 
-	m_top_x_camera_motor->move_test();
+	
+}
+
+int asic::stop(int motor_id)
+{
+	working_motor = motors[motor_id];
+	if (!working_motor)
+		return 0;
+	working_motor->stop();
+	return 1;
 }

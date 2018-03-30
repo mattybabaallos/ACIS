@@ -12,18 +12,29 @@ William Boyd boydwil@pdx.edu
 
 #include "motor.h"
 
-motor::motor()
+motor::motor(Adafruit_MotorShield * stepper)
 {
-
-	m_shield = new Adafruit_MotorShield();
-	m_motor = m_shield->getStepper(200, 2);
-
-	m_shield->begin();
-	m_motor->setSpeed(100);
+	m_motor = stepper;
 }
 
-void motor::move_test()
+
+int motor::stop()
+{
+	if(!_motor)
+		return 0;
+	m_motor->release();
+	return 1;
+}
+
+
+int motor::move()
 {
 
-	m_motor->step(100, BACKWARD, MICROSTEP); //Microstep steps
+	//m_motor->step(20, BACKWARD, MICROSTEP); //Microstep steps
+}
+
+
+int motor::home()
+{
+
 }
