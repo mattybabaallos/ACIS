@@ -17,12 +17,17 @@ William Boyd boydwil@pdx.edu
 class motor
 {
   public:
-	motor(Adafruit_StepperMotor * stepper);
-	int move();
+	motor(Adafruit_StepperMotor * stepper, unsigned int max_distance);
+	int move_forward(unsigned int mm);
+	int move_backword(unsigned int mm);
 	int stop();
 	int home();
 
   protected:
+	int get_steps(unsigned int mm);
+	unsigned int current_position;
+	unsigned int max_distance;
+	unsigned int min_distance;// in mm
 	Adafruit_StepperMotor * m_motor;
 };
 
