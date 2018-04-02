@@ -39,7 +39,7 @@ It will include all #includes and #defines
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
 
-
+#define STEP_TO_DEGREE_CONST  0.204
 
 enum motors
 {

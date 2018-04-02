@@ -3,9 +3,6 @@ ECE Capstone 2018
 Automatic Check In Station
 
 Matty Baba Allos matty@pdx.edu
-Kestutis Saltonas kestutis@pdx.edu
-Thao Tran thao23@pdx.edu
-William Boyd boydwil@pdx.edu
 
 */
 
@@ -26,7 +23,7 @@ class motor
   protected:
 	int get_steps(unsigned int mm);
 	unsigned int current_position;
-	unsigned int max_distance;
+	unsigned int max_distance;// in mm
 	unsigned int min_distance;// in mm
 	Adafruit_StepperMotor * m_motor;
 };
