@@ -10,5 +10,5 @@ void setup()
 void loop()
 {
 	delay(3000);
-	m_acis->move_test();
+	m_acis->move();
 }

@@ -15,8 +15,9 @@ class motor
 {
   public:
 	motor(Adafruit_StepperMotor * stepper, unsigned int max_distance);
+	~motor();
 	int move_forward(unsigned int mm);
-	int move_backword(unsigned int mm);
+	int move_backward(unsigned int mm);
 	int stop();
 	int home();
 

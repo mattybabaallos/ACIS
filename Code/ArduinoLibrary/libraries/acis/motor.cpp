@@ -9,9 +9,15 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor(Adafruit_MotorShield * stepper,most_steps, unsigned int max_distance) :m_motor(stepper), max_distance(max_distance)
+motor::motor(Adafruit_StepperMotor * stepper, unsigned int max_distance):m_motor(stepper), max_distance(max_distance)
 {
 }
+
+motor::~motor()
+{
+	delete m_motor;
+}
+
 
 
 int motor::stop()
@@ -32,10 +38,10 @@ int motor::move_forward(unsigned int mm)
 	if(!m_motor)
 		return -1;
 	if(mm + current_position > max_distance)
-		mm = max_distance - current_position; //if the motor will be going beyond it max limit 
+		mm = max_distance - current_position; //if the motor will be going beyond it max limit
 	current_position += mm;
 	m_motor->step(get_steps(mm), FORWARD, DOUBLE);
-	return current_position; 
+	return current_position;
 }
 
 //move the motor backward
@@ -65,25 +71,25 @@ int motor::home()
 int motor::get_steps(unsigned int mm)
 {
 	/*
-	 * To get the number of stepps needed to travel that number of mm 
-	 * we need to find the circumference of the pully outside that hold
+	 * To get the number of stepps needed to travel that number of mm
+	 * we need to find the circumference of the pulley outside that hold
 	 * time belt
 	 * in our case that's 13mm. c = 13 * pi = 40.84mm
-	 * now the number mm we need to travel divde by 40.84mm gives us
+	 * now the number mm we need to travel divide by 40.84mm gives us
 	 * how many revolutions we need. Then we know there are 200 steps per
 	 * revolutions
-	 * mulitpling the two numbers give the number of steps we need.
+	 * multiplying the two numbers give the number of steps we need.
 	 * or
-	 * we also know that motor has 50 steps and 
+	 * we also know that motor has 50 steps and
 	 * that 360/50 = 1.8 step/degree.
 	 * For arc of 1 degree is the distance of traveled by 1 degree that is
 	 * arc of 1 degree = 1 * pi/180 * (13/2) = 0.113 mm/degree
-	 * to get the number of steps/mm we 
+	 * to get the number of steps/mm we
 	 * 1.8 degree/step * 0.113 mm/degree = 0.204 mm/steps
 	 * if we divide the number of mm we travel by 0.204 we get the
 	 * number of steps
 	 */
-	return mm/STEP_PER_DEGREE_CONST;
+	return mm/STEP_TO_DEGREE_CONST;
 
 
 }

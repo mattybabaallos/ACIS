@@ -10,8 +10,9 @@ class acis
 {
   public:
 	acis();
-	void move_test();
-	int stop();
+	~acis();
+	int move();
+	int stop(int motor_id);
 
   private:
 	Adafruit_MotorShield ** shields;
