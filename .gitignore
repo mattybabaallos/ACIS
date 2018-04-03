@@ -294,3 +294,5 @@ Code/ArduinoLibrary/libraries/Adafruit_Motor_Shield_V2_Library/
 Code/ArduinoLibrary/libraries/acis/\.vscode/
 
 Code/ArduinoLibrary/libraries/readme\.txt
+
+*.exe
