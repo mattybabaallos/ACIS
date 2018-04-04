@@ -296,3 +296,5 @@ Code/ArduinoLibrary/libraries/acis/\.vscode/
 Code/ArduinoLibrary/libraries/readme\.txt
 
 *.exe
+
+\.vscode/
