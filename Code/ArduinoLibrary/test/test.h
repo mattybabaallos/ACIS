@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "../common.h"
+#include "common.h"
 
 
 #ifndef _TEST_H_
