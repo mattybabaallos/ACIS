@@ -12,8 +12,10 @@ void setup()
 
   // Attach an interrupt to the ISR vector, capture interrupt at falling edge
   attachInterrupt(digitalPinToInterrupt(X_TOP_SWICH_PIN), X_TOP_ISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(X_BOTTOM_SWICH_PIN), X_BOTTOM_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
 }
 
 void loop()
@@ -33,6 +35,13 @@ void X_TOP_ISR()
     _acis.stop(X_AXIS_TOP);
 }
 
+void X_BOTTOM_ISR()
+{
+  if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
+    _acis.stop(X_AXIS_BOTTOM);
+}
+
+
 void Y_ISR()
 {
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
@@ -43,4 +52,11 @@ void Z_TOP_ISR()
 {
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
     _acis.stop(Z_AXIS_TOP);
+}
+
+
+void Z_BOTTOM_ISR()
+{
+  if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
+      _acis.stop(Z_AXIS_BOTTOM);
 }

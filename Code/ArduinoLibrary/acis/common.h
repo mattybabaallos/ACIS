@@ -29,8 +29,10 @@ It will include all #includes and #defines
 #define MOTOR_SPEED 100
 
 #define X_TOP_SWICH_PIN 2
-#define Y_SWICH_PIN 3
-#define Z_TOP_SWICH_PIN 4
+#define X_BOTTOM_SWICH_PIN 3
+#define Y_SWICH_PIN 4
+#define Z_TOP_SWICH_PIN 5
+#define Z_BOTTOM_SWICH_PIN 6
 
 
 #define NUMBER_MOTORS 5
