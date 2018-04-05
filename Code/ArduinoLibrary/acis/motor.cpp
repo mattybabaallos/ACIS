@@ -14,7 +14,7 @@ motor::motor() : current_position(0), max_distance(0), m_motor(NULL)
 int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
 {
 	if (!stepper)
-		return 0;
+		return COULD_NOT_PERFORM_OPERATION;
 	m_motor = stepper;
 	max_distance = max_distance;
 	return 1;
@@ -23,7 +23,7 @@ int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
 int motor::stop()
 {
 	if (!m_motor)
-		return -1;
+		return INVALID_DEVICE;
 	m_motor->release();
 	m_motor->step(0, FORWARD, MICROSTEP); //Hold torque
 	return SUCCESS;
@@ -62,6 +62,8 @@ int motor::move_backward(unsigned int mm)
 //Home the motor
 int motor::home()
 {
+	if (!m_motor)
+		return INVALID_DEVICE;
 	current_position = 0;
 	m_motor->step(get_steps(max_distance + 5), BACKWARD, DOUBLE); //move the most until it hits the switch
 	return current_position;
