@@ -7,32 +7,36 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor():current_position(0), max_distance(0), m_motor(NULL) {
+motor::motor() : current_position(0), max_distance(0), m_motor(NULL)
+{
 }
 
-int motor::init_motor(Adafruit_StepperMotor * stepper, unsigned int max_distance) {
-	if(!stepper)
+int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
+{
+	if (!stepper)
 		return 0;
 	m_motor = stepper;
 	max_distance = max_distance;
 	return 1;
 }
 
-int motor::stop() {
-	if ( ! m_motor)
-		return-1;
+int motor::stop()
+{
+	if (!m_motor)
+		return -1;
 	m_motor->release();
 	m_motor->step(0, FORWARD, MICROSTEP); //Hold torque
-	return 1;
+	return SUCCESS;
 }
 
 //move the motor forward
 //return the number of mm move_forward
 // negative if not successful
-int motor::move_forward(unsigned int mm) {
+int motor::move_forward(unsigned int mm)
+{
 
-	if ( ! m_motor)
-		return-1;
+	if (!m_motor)
+		return INVALID_DEVICE;
 	if (mm + current_position > max_distance)
 		mm = max_distance - current_position; //if the motor will be going beyond it max limit
 	current_position += mm;
@@ -43,10 +47,10 @@ int motor::move_forward(unsigned int mm) {
 //move the motor backward
 //return the number of mm move_forward
 // negative if not successful
-int motor::move_backward(unsigned int mm) {
-	if ( ! m_motor)
-		return-1;
-
+int motor::move_backward(unsigned int mm)
+{
+	if (!m_motor)
+		return INVALID_DEVICE;
 	if (current_position - mm <= 0)
 		mm = current_position;
 
@@ -56,13 +60,15 @@ int motor::move_backward(unsigned int mm) {
 }
 
 //Home the motor
-int motor::home() {
+int motor::home()
+{
 	current_position = 0;
 	m_motor->step(get_steps(max_distance + 5), BACKWARD, DOUBLE); //move the most until it hits the switch
 	return current_position;
 }
 
-int motor::get_steps(unsigned int mm) {
+int motor::get_steps(unsigned int mm)
+{
 	/*
 	 * To get the number of stepps needed to travel that number of mm
 	 * we need to find the circumference of the pulley outside that hold
@@ -82,7 +88,5 @@ int motor::get_steps(unsigned int mm) {
 	 * if we divide the number of mm we travel by 0.204 we get the
 	 * number of steps
 	 */
-	return mm/STEP_TO_DEGREE_CONST;
-
-
+	return mm / STEP_TO_DEGREE_CONST;
 }
