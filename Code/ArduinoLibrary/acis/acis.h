@@ -23,7 +23,7 @@ class acis
 
   private:
 	int decode(char * buffer, unsigned int device, unsigned int function, unsigned int mm);
-	int send_back_formatter(char * buffer,unsigned int status_code, unsigned int new_state);
+	int send_back(char * buffer,unsigned int status_code, unsigned int new_state);
 	Adafruit_MotorShield shield_0;
 	Adafruit_MotorShield shield_1;
 	Adafruit_MotorShield shield_2;

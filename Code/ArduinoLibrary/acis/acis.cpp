@@ -68,13 +68,13 @@ int acis::process(char *buffer)
 	if (temp < 0)
 		return temp;
 	if (function == HOME)
-		temp = send_back_formatter(buffer, SUCCESS, home(device));
+		temp = send_back(buffer, SUCCESS, home(device));
 	else if (function == MOVE_FORWARD)
-		temp = send_back_formatter(buffer, SUCCESS, move_forward(device, mm));
+		temp = send_back(buffer, SUCCESS, move_forward(device, mm));
 	else if (function == MOVE_BACKWARD)
-		temp = send_back_formatter(buffer, SUCCESS, move_backward(device, mm));
+		temp = send_back(buffer, SUCCESS, move_backward(device, mm));
 	else if (function == STOP)
-		temp = send_back_formatter(buffer, stop(device), 0);
+		temp = send_back(buffer, stop(device), 0);
 	else
 		temp = COULD_NOT_DECODE_BYTES;
 	return temp;
@@ -91,7 +91,8 @@ int acis::decode(char *buffer, unsigned int device, unsigned int function, unsig
 	return SUCCESS;
 }
 
-int acis::send_back_formatter(char *buffer, unsigned int status_code, unsigned int new_state)
+
+int acis::send_back(char *buffer, unsigned int status_code, unsigned int new_state)
 {
 	if (!buffer)
 		return COULD_NOT_PERFORM_OPERATION;
