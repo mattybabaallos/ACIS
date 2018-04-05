@@ -24,7 +24,6 @@ namespace UI
         {
             InitializeComponent();
             UIContent.Content = new Home();
-
         }
     }
 }
