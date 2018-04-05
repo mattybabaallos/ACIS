@@ -28,11 +28,16 @@ It will include all #includes and #defines
 #define MOTOR_STEPS 200
 #define MOTOR_SPEED 100
 
-#define X_SWICH_PIN 2
-#define Y_SWICH_PIN 3
+#define X_TOP_SWICH_PIN 2
+#define X_BOTTOM_SWICH_PIN 3
+#define Y_SWICH_PIN 4
+#define Z_TOP_SWICH_PIN 5
+#define Z_BOTTOM_SWICH_PIN 6
+
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
+#define NUMBER_SWITCHES 3
 
 #define MAX_X_TOP_LENGTH 3
 #define MAX_X_BOTTOM_LENGTH 3
@@ -43,6 +48,15 @@ It will include all #includes and #defines
 #define STEP_TO_DEGREE_CONST 0.204
 
 #define BYTES_TO_READ 2
+
+
+
+
+
+
+
+
+
 
 enum motors
 {

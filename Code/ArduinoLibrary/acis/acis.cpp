@@ -25,7 +25,7 @@ int acis::move_forward(int unsigned motor_id, unsigned int mm)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)
-		return 0;
+		return INVALID_DEVICE;
 	return working_motor->move_forward(mm);
 }
 
@@ -33,7 +33,7 @@ int acis::move_backward(int unsigned motor_id, unsigned int mm)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)
-		return 0;
+		return INVALID_DEVICE;
 	return working_motor->move_backward(mm);
 }
 
@@ -51,7 +51,7 @@ int acis::home(int unsigned motor_id)
 	working_motor = &motors[motor_id];
 	if (!working_motor)
 		return INVALID_DEVICE;
-	working_motor->stop();
+	working_motor->home();
 	return SUCCESS;
 }
 
