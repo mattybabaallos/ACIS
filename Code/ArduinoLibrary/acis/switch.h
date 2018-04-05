@@ -4,6 +4,11 @@ Automatic Check In Station
 
 Matty Baba Allos matty@pdx.edu
 */
+
+#ifndef LIMIT_SWITCH
+#define LIMIT_SWITCH
+
+
 #include "common.h"
 
 class limit_switch
@@ -14,4 +19,6 @@ class limit_switch
 	private:
 		unsigned long last_interrupt_time;
 		unsigned long interrupt_time;
-}
+};
+
+#endif /* LIMIT_SWITCH */

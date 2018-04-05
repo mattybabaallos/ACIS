@@ -28,11 +28,14 @@ It will include all #includes and #defines
 #define MOTOR_STEPS 200
 #define MOTOR_SPEED 100
 
-#define X_SWICH_PIN 2
+#define X_TOP_SWICH_PIN 2
 #define Y_SWICH_PIN 3
+#define Z_TOP_SWICH_PIN 4
+
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
+#define NUMBER_SWITCHES 3
 
 #define MAX_X_TOP_LENGTH 3
 #define MAX_X_BOTTOM_LENGTH 3

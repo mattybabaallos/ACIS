@@ -11,10 +11,7 @@ void setup() {
   Serial.begin(9600);
   
   // initialize the switchPin as an input
-  pinMode(switchPin, INPUT);
   
-  // Attach an interrupt to the ISR vector, capture interrupt at falling edge
-  attachInterrupt(digitalPinToInterrupt(switchPin), pin_ISR, FALLING);
 }
 
 void loop() {

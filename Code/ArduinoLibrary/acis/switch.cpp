@@ -20,7 +20,7 @@ bool limit_switch::pressed(int switch_pin_number)
 	{
 		if (!digitalRead(switch_pin_number))
 		{
-			pressed = false;
+			pressed = true;
 		}
 	}
 	last_interrupt_time = interrupt_time;
