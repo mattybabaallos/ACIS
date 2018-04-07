@@ -7,7 +7,7 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor() : current_position(0), max_distance(0), m_motor(NULL)
+motor::motor() : m_current_position(0), m_max_distance(0), m_motor(NULL)
 {
 }
 
@@ -16,7 +16,8 @@ int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
 	if (!stepper)
 		return COULD_NOT_PERFORM_OPERATION;
 	m_motor = stepper;
-	max_distance = max_distance;
+	m_max_distance = max_distance;
+  m_motor->setSpeed(10);  // 10 rpm   
 	return 1;
 }
 
@@ -37,11 +38,11 @@ int motor::move_forward(unsigned int mm)
 
 	if (!m_motor)
 		return INVALID_DEVICE;
-	if (mm + current_position > max_distance)
-		mm = max_distance - current_position; //if the motor will be going beyond it max limit
-	current_position += mm;
-	m_motor->step(get_steps(mm), FORWARD, DOUBLE);
-	return current_position;
+	if (mm + m_current_position > m_max_distance)
+		    mm = m_max_distance - m_current_position; //if the motor will be going beyond it max limit
+	m_current_position += mm;
+	m_motor->step(29, FORWARD, DOUBLE);
+	return m_current_position;
 }
 
 //move the motor backward
@@ -51,12 +52,12 @@ int motor::move_backward(unsigned int mm)
 {
 	if (!m_motor)
 		return INVALID_DEVICE;
-	if (current_position - mm <= 0)
-		mm = current_position;
+	if (m_current_position - mm <= 0)
+		mm = m_current_position;
 
-	current_position -= mm;
+	m_current_position -= mm;
 	m_motor->step(get_steps(mm), BACKWARD, DOUBLE);
-	return current_position;
+	return m_current_position;
 }
 
 //Home the motor
@@ -64,9 +65,9 @@ int motor::home()
 {
 	if (!m_motor)
 		return INVALID_DEVICE;
-	current_position = 0;
-	m_motor->step(get_steps(max_distance + 5), BACKWARD, DOUBLE); //move the most until it hits the switch
-	return current_position;
+	m_current_position = 0;
+	m_motor->step(get_steps(m_max_distance + 5), BACKWARD, DOUBLE); //move the most until it hits the switch
+	return m_current_position;
 }
 
 int motor::get_steps(unsigned int mm)

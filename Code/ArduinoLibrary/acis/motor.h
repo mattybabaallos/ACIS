@@ -21,8 +21,8 @@ class motor {
 
   protected:
 	int get_steps(unsigned int mm);
-	unsigned int current_position;
-	unsigned int max_distance; // in mm
+	unsigned int m_current_position;
+	unsigned int m_max_distance; // in mm
 	Adafruit_StepperMotor * m_motor;
 };
 
