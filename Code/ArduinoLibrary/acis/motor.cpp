@@ -7,25 +7,29 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor() : current_position(0), max_distance(0), m_motor(NULL)
+motor::motor() : m_current_position(0), m_max_distance(0), m_motor(NULL), m_stop(true)
 {
 }
 
 int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
 {
 	if (!stepper)
+	{
 		return COULD_NOT_PERFORM_OPERATION;
+	}
 	m_motor = stepper;
-	max_distance = max_distance;
+	m_max_distance = max_distance;
 	return 1;
 }
 
 int motor::stop()
 {
 	if (!m_motor)
+	{
 		return INVALID_DEVICE;
+	}
 	m_motor->release();
-	m_motor->step(0, FORWARD, MICROSTEP); //Hold torque
+	m_stop = true;
 	return SUCCESS;
 }
 
@@ -36,12 +40,16 @@ int motor::move_forward(unsigned int mm)
 {
 
 	if (!m_motor)
+	{
 		return INVALID_DEVICE;
-	if (mm + current_position > max_distance)
-		mm = max_distance - current_position; //if the motor will be going beyond it max limit
-	current_position += mm;
-	m_motor->step(get_steps(mm), FORWARD, DOUBLE);
-	return current_position;
+	}
+	m_stop = false;
+	if (mm + m_current_position > m_max_distance)
+	{
+		mm = m_max_distance - m_current_position; //if the motor will be going beyond it max limit
+	}
+	m_current_position += step(get_steps(mm), FORWARD, DOUBLE);
+	return m_current_position;
 }
 
 //move the motor backward
@@ -49,24 +57,43 @@ int motor::move_forward(unsigned int mm)
 // negative if not successful
 int motor::move_backward(unsigned int mm)
 {
-	if (!m_motor)
-		return INVALID_DEVICE;
-	if (current_position - mm <= 0)
-		mm = current_position;
 
-	current_position -= mm;
-	m_motor->step(get_steps(mm), BACKWARD, DOUBLE);
-	return current_position;
+	if (!m_motor)
+	{
+		return INVALID_DEVICE;
+	}
+	m_stop = false;
+	if ((int)(m_current_position - mm) <= 0)
+	{
+		mm = m_current_position;
+	}
+	m_current_position -= step(get_steps(mm), BACKWARD, DOUBLE);
+	return m_current_position;
 }
 
 //Home the motor
 int motor::home()
 {
 	if (!m_motor)
+	{
 		return INVALID_DEVICE;
-	current_position = 0;
-	m_motor->step(get_steps(max_distance + 5), BACKWARD, DOUBLE); //move the most until it hits the switch
-	return current_position;
+	}
+	m_stop = false;
+	m_current_position -= step(get_steps(m_current_position), BACKWARD, DOUBLE); //move the most until it hits the switch
+	return m_current_position;
+}
+
+uint16_t motor::step(uint16_t steps, uint8_t direction, uint8_t style)
+{
+	int16_t temp = steps;
+	while (!m_stop && temp > 0)
+	{
+		m_motor->onestep(direction, style);
+		delayMicroseconds(1000);
+		--temp;
+	}
+	m_stop = true;
+	return (int16_t)temp;
 }
 
 int motor::get_steps(unsigned int mm)
