@@ -26,7 +26,7 @@ int acis::init()
 
 	m_shield_0->begin();
 	//shield_2.begin();
- return 0;
+	return 0;
 }
 
 int acis::move_forward(int unsigned motor_id, unsigned int mm)
@@ -50,8 +50,7 @@ int acis::stop(int unsigned motor_id)
 	working_motor = &motors[motor_id];
 	if (!working_motor)
 		return INVALID_DEVICE;
-	working_motor->stop();
-	return SUCCESS;
+	return working_motor->stop();
 }
 
 int acis::home(int unsigned motor_id)

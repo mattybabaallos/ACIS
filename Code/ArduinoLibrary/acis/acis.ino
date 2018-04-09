@@ -28,7 +28,7 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    //_acis.process(buffer);
+    _acis.process(buffer);
     Serial.write(buffer);
   }
 }
@@ -37,38 +37,43 @@ void X_TOP_ISR()
 {
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
-    ++i;
-    Serial.println(i);
     interrupts();
-    Serial.println(_acis.move_backward(X_AXIS_TOP, 10));
-    //_acis.stop(X_AXIS_TOP);
+    _acis.stop(X_AXIS_TOP);
   }
 }
 
 void X_BOTTOM_ISR()
 {
   if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
-    i++;
-  //_acis.stop(X_AXIS_BOTTOM);
+  {
+    interrupts();
+    _acis.stop(X_AXIS_BOTTOM);
+  }
 }
 
 void Y_ISR()
 {
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
-    i++;
-  //_acis.stop(Y_AXIS);
+  {
+    interrupts();
+    _acis.stop(Y_AXIS);
+  }
 }
 
 void Z_TOP_ISR()
 {
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
-    i++;
-  //_acis.stop(Z_AXIS_TOP);
+  {
+    interrupts();
+    _acis.stop(Z_AXIS_TOP);
+  }
 }
 
 void Z_BOTTOM_ISR()
 {
   if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
-    i++;
-  //_acis.stop(Z_AXIS_BOTTOM);
+  {
+    interrupts();
+    _acis.stop(Z_AXIS_BOTTOM);
+  }
 }
