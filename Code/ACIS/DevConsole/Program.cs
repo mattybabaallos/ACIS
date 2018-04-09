@@ -11,12 +11,14 @@ namespace DevConsole
     {
         static void Main(string[] args)
         {
-            var sititcher = new ImageStitching();
+            var port = new ArduinoControl();
+            port.Connect();
+            //var sititcher = new ImageStitching();
            // sititcher.stitich();
 
-            var barcode = new Barcode();
-            barcode.ReadBarcode();
-            //Console.ReadLine();
+            //var barcode = new Barcode();
+            //barcode.ReadBarcode();
+            Console.ReadLine();
         }
     }
 }

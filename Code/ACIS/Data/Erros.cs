@@ -1,6 +1,6 @@
 ﻿namespace Data
 {
-    enum Erros
+   public enum Erros
     {
         SUCCESS = 0,
         RECEIVED_FEWER_THAN_TWO_BYTES = -1,

@@ -1,6 +1,6 @@
 ﻿namespace Data
 {
-    enum ArduinoFunctions
+    public enum ArduinoFunctions
     {
         HOME,
         MOVE_FORWARD,

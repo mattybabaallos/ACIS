@@ -1,6 +1,6 @@
 ﻿namespace Data
 {
-    enum Motors
+   public enum Motors
     {
         X_AXIS_TOP,
         X_AXIS_BOTTOM,

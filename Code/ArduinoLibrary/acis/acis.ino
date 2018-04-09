@@ -24,17 +24,18 @@ void setup()
 
 void loop()
 {
-  if (Serial.available() == BYTES_TO_READ)
+  if (Serial.available() >= BYTES_TO_READ)
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    _acis.process(buffer);
+    //_acis.process(buffer);
     Serial.write(buffer);
   }
 }
 
 void X_TOP_ISR()
 {
+  
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
     interrupts();
