@@ -34,7 +34,6 @@ It will include all #includes and #defines
 #define Z_TOP_SWICH_PIN 5
 #define Z_BOTTOM_SWICH_PIN 6
 
-
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 3
@@ -48,15 +47,6 @@ It will include all #includes and #defines
 #define STEP_TO_DEGREE_CONST 0.204
 
 #define BYTES_TO_READ 2
-
-
-
-
-
-
-
-
-
 
 enum motors
 {

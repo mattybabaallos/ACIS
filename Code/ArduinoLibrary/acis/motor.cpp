@@ -62,7 +62,7 @@ int motor::move_backward(unsigned int mm)
 	{
 		return INVALID_DEVICE;
 	}
-	m_stop = false;	
+	m_stop = false;
 	if ((int)(m_current_position - mm) <= 0)
 	{
 		mm = m_current_position;
