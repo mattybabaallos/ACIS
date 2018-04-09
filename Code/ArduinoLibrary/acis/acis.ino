@@ -40,7 +40,7 @@ void X_TOP_ISR()
     ++i;
     Serial.println(i);
     interrupts();
-    Serial.println(_acis.move_forward(X_AXIS_TOP, 10));
+    Serial.println(_acis.move_backward(X_AXIS_TOP, 10));
     //_acis.stop(X_AXIS_TOP);
   }
 }

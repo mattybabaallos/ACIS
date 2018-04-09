@@ -17,7 +17,7 @@ int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
 		return COULD_NOT_PERFORM_OPERATION;
 	m_motor = stepper;
 	m_max_distance = max_distance;
-  m_motor->setSpeed(10);  // 10 rpm   
+	m_motor->setSpeed(10); // 10 rpm
 	return 1;
 }
 
@@ -39,9 +39,9 @@ int motor::move_forward(unsigned int mm)
 	if (!m_motor)
 		return INVALID_DEVICE;
 	if (mm + m_current_position > m_max_distance)
-		    mm = m_max_distance - m_current_position; //if the motor will be going beyond it max limit
+		mm = m_max_distance - m_current_position; //if the motor will be going beyond it max limit
 	m_current_position += mm;
-	m_motor->step(29, FORWARD, DOUBLE);
+	m_motor->step(get_steps(mm), FORWARD, DOUBLE);
 	return m_current_position;
 }
 
@@ -50,11 +50,13 @@ int motor::move_forward(unsigned int mm)
 // negative if not successful
 int motor::move_backward(unsigned int mm)
 {
+   
 	if (!m_motor)
 		return INVALID_DEVICE;
-	if (m_current_position - mm <= 0)
+	if ((int)(m_current_position - mm )<= 0)
+ {
 		mm = m_current_position;
-
+ }
 	m_current_position -= mm;
 	m_motor->step(get_steps(mm), BACKWARD, DOUBLE);
 	return m_current_position;
