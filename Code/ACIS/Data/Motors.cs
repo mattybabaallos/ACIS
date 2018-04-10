@@ -2,10 +2,11 @@
 {
     public class Motor
     {
-        int Id;
-        string Name;
-        int position;
-        int MaxPosition;
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Position { get; set; }
+        public int MaxPosition { get; set; }
+
     }
 
    public enum Motors
