@@ -16,14 +16,13 @@ using System.Windows.Shapes;
 namespace UI
 {
     /// <summary>
-    /// Interaction logic for Home.xaml
+    /// Interaction logic for Status.xaml
     /// </summary>
-    public partial class Home : UserControl
+    public partial class Status : UserControl
     {
-        public Home()
+        public Status()
         {
             InitializeComponent();
-            DataContext = new ViewModel(this);
         }
     }
 }
