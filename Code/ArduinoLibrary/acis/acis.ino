@@ -7,7 +7,6 @@ Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 acis _acis(&shield_0, &shield_1, &shield_2);
 char buffer[BYTES_TO_READ];
 limit_switch sw[NUMBER_SWITCHES];
-static int i = 0;
 void setup()
 {
 
@@ -28,7 +27,7 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    //_acis.process(buffer);
+    _acis.process(buffer);
     Serial.write(buffer);
   }
 }
