@@ -22,5 +22,14 @@
                 <Label Content="three" />
             </TabItem>
         </TabControl>
+        <DockPanel Grid.Row="1">
+            <Label Content="{Binding Path=SelectedPort}"></Label>
+            <!--<ComboBox x:Name="GradeListDropdown"
+                          ItemsSource="{Binding Ports}"
+                          SelectedValue ="{Binding SelectedPort}"
+                          ToolTip="Serial port list"
+                          Margin="20,0,0,0" Width="180" HorizontalAlignment="Left" 
+                          />-->
+        </DockPanel>
     </Grid>
 </UserControl>

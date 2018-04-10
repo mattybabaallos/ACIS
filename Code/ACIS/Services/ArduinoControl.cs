@@ -26,6 +26,11 @@ namespace Services
             port.Open();
         }
 
+        public void Close()
+        {
+            port.Close();
+        }
+
         public List<string> PortList => SerialPort.GetPortNames().ToList();
 
         /// <summary>
