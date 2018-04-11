@@ -1,6 +1,7 @@
 ﻿using Data;
 using Services;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace UI
@@ -9,7 +10,7 @@ namespace UI
     {
         private Home m_home;
         private ArduinoControl m_arduinoControl;
-        private Motor [] m_motors;
+        private Motor[] m_motors;
 
         private string m_selected_port = string.Empty;
 
@@ -22,7 +23,7 @@ namespace UI
         }
 
 
-        public List<string> Ports
+        public ObservableCollection<string> Ports
         {
             get
             {
@@ -35,7 +36,7 @@ namespace UI
             get
             {
                 if (string.IsNullOrEmpty(m_selected_port))
-                    return "No port";
+                    return Ports.Count > 0 ? Ports[0] : "No port";
                 return m_selected_port;
             }
             set
@@ -45,7 +46,7 @@ namespace UI
                 m_arduinoControl.Close();
                 m_arduinoControl.Connect(m_selected_port);
             }
-            
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

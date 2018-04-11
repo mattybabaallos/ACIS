@@ -38,11 +38,11 @@ It will include all #includes and #defines
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 3
 
-#define MAX_X_TOP_LENGTH 300
-#define MAX_X_BOTTOM_LENGTH 300
-#define MAX_Z_TOP_LENGTH 300
-#define MAX_Z_BOTTOM_LENGTH 300
-#define MAX_Y_LENGTH 300
+#define MAX_X_TOP_LENGTH 400
+#define MAX_X_BOTTOM_LENGTH 400
+#define MAX_Z_TOP_LENGTH 400
+#define MAX_Z_BOTTOM_LENGTH 400
+#define MAX_Y_LENGTH 400
 
 #define STEP_TO_DEGREE_CONST 0.204
 

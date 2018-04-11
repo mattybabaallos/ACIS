@@ -12,11 +12,25 @@
             <RowDefinition Height="Auto" MinHeight="20"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Row="0">
-            <TabItem Header="tab 1">
-                <Label Content="one" />
-            </TabItem>
-            <TabItem Header="tab 2" >
-                <Label Content="two" />
+            <TabItem Header="Status">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="26"/>
+                        <RowDefinition Height="38"/>
+                        <RowDefinition Height="38"/>
+                        <RowDefinition Height="38"/>
+                        <RowDefinition Height="Auto" MinHeight="20"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="133*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Content="Positions"></Label>
+                    <Label Grid.Row="1" Content="X"></Label>
+                    <Label Grid.Row="2" Content="Y"></Label>
+                    <Label Grid.Row="3" Content="Z"></Label>
+                    
+                </Grid>
             </TabItem>
             <TabItem Header="Settings" >
                 <Grid>
@@ -33,7 +47,7 @@
                     <Label Grid.Row="0" Grid.Column="1">
                         <ComboBox x:Name="GradeListDropdown"
                           ItemsSource="{Binding Ports}"
-                          SelectedValue ="{Binding SelectedPort}"
+                          SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
                           ToolTip="Serial port list"
                           Height="20" Width="180" />
                     </Label>

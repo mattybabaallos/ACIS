@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Services
             port.Close();
         }
 
-        public List<string> PortList => SerialPort.GetPortNames().ToList();
+        public ObservableCollection<string> PortList => new ObservableCollection<string>(SerialPort.GetPortNames().ToList());
 
         /// <summary>
         /// Construct the byte array to will be sent to the Arduino and send it.
