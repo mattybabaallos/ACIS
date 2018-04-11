@@ -22,6 +22,14 @@ namespace UI
             m_motors = new Motor[Constants.NUMBER_OF_MOTORS];
         }
 
+        public void HomeAll()
+        {
+            for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
+            {
+                m_arduinoControl.SendCommand((byte)i,(byte)ArduinoFunctions.HOME, 0);
+            }
+        }
+
 
         public ObservableCollection<string> Ports
         {
@@ -48,6 +56,10 @@ namespace UI
             }
 
         }
+
+
+        
+
 
         public event PropertyChangedEventHandler PropertyChanged;
     }
