@@ -12,7 +12,9 @@ namespace Services
     public class ArduinoControl
     {
         private SerialPort port;
-        public ArduinoControl() { }
+        public ArduinoControl() {
+            port = new SerialPort();
+        }
 
         public void Connect()
         {

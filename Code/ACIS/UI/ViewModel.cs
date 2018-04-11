@@ -1,10 +1,11 @@
 ﻿using Data;
 using Services;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace UI
 {
-    internal class ViewModel
+    internal class ViewModel : INotifyPropertyChanged
     {
         private Home m_home;
         private ArduinoControl m_arduinoControl;
@@ -25,9 +26,7 @@ namespace UI
         {
             get
             {
-                var portList = new List<string>() { "no ports" };
-
-                return m_arduinoControl.PortList.Count > 0 ? m_arduinoControl.PortList : portList;
+                return m_arduinoControl.PortList;
             }
         }
 
@@ -35,8 +34,9 @@ namespace UI
         {
             get
             {
-                var serialString = "Serial port: ";
-                return string.IsNullOrEmpty(m_selected_port)? serialString + Ports[0] : serialString + m_selected_port;
+                if (string.IsNullOrEmpty(m_selected_port))
+                    return "No port";
+                return m_selected_port;
             }
             set
             {
@@ -47,7 +47,7 @@ namespace UI
             }
             
         }
-            
-           
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

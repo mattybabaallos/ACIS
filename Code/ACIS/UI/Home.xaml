@@ -16,20 +16,34 @@
                 <Label Content="one" />
             </TabItem>
             <TabItem Header="tab 2" >
-            <Label Content="two" />
+                <Label Content="two" />
             </TabItem>
-            <TabItem Header="tab 3" >
-                <Label Content="three" />
-            </TabItem>
-        </TabControl>
-        <DockPanel Grid.Row="1">
-            <Label Content="{Binding Path=SelectedPort}"></Label>
-            <!--<ComboBox x:Name="GradeListDropdown"
+            <TabItem Header="Settings" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto" MinHeight="20"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="133*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Content="Serial ports"></Label>
+                    <Label Grid.Row="0" Grid.Column="1">
+                        <ComboBox x:Name="GradeListDropdown"
                           ItemsSource="{Binding Ports}"
                           SelectedValue ="{Binding SelectedPort}"
                           ToolTip="Serial port list"
-                          Margin="20,0,0,0" Width="180" HorizontalAlignment="Left" 
-                          />-->
+                          Height="20" Width="180" />
+                    </Label>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <DockPanel Grid.Row="1">
+            <Label Content="Serial port: "/>
+            <Label Content="{Binding Path=SelectedPort}"/>
+
         </DockPanel>
     </Grid>
 </UserControl>
