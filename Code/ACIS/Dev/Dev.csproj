@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArduinoControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +56,10 @@
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{c3bd6a12-5588-41c7-8f01-479eaf4ba357}</Project>
       <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{0d8e3b37-2681-48b4-94ca-a0450fc673bb}</Project>
+      <Name>Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

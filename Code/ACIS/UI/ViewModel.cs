@@ -3,6 +3,7 @@ using Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO.Ports;
 
 namespace UI
 {
@@ -18,7 +19,6 @@ namespace UI
         {
             m_home = home;
             m_arduinoControl = new ArduinoControl();
-            //m_arduinoControl.Connect();
             m_motors = new Motor[Constants.NUMBER_OF_MOTORS];
         }
 
@@ -30,6 +30,10 @@ namespace UI
             }
         }
 
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+           //Process code here.
+        }
 
         public ObservableCollection<string> Ports
         {
@@ -53,6 +57,7 @@ namespace UI
                 m_selected_port = value;
                 m_arduinoControl.Close();
                 m_arduinoControl.Connect(m_selected_port);
+                m_arduinoControl.SerialDataReceived += Port_DataReceived;
             }
 
         }

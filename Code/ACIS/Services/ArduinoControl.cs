@@ -13,25 +13,37 @@ namespace Services
     public class ArduinoControl
     {
         private SerialPort port;
-        public ArduinoControl() {
+        public ArduinoControl()
+        {
             port = new SerialPort();
         }
 
         public void Connect()
         {
             port = new SerialPort(PortList[0], Constants.BAUD_RATE);
+            port.DtrEnable = true;
+            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_SEND;
             port.Open();
+
         }
 
         public void Connect(string portName)
         {
             port = new SerialPort(portName, Constants.BAUD_RATE);
+            port.DtrEnable = true;
+            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_SEND;
             port.Open();
         }
 
         public void Close()
         {
             port.Close();
+        }
+
+        public event SerialDataReceivedEventHandler SerialDataReceived
+        {
+            add { port.DataReceived += value; }
+            remove { port.DataReceived -= value; }
         }
 
         public ObservableCollection<string> PortList => new ObservableCollection<string>(SerialPort.GetPortNames().ToList());
