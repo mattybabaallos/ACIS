@@ -24,7 +24,7 @@ public:
 
 private:
 	int decode(char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm);
-	int send_back(char *buffer, unsigned int status_code, unsigned int new_state);
+	int send_back(char *buffer,unsigned int device,unsigned int op, unsigned int status_code, unsigned int new_state);
 	Adafruit_MotorShield *m_shield_0;
 	Adafruit_MotorShield *m_shield_1;
 	Adafruit_MotorShield *m_shield_2;

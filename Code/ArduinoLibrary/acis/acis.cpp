@@ -58,33 +58,36 @@ int acis::home(int unsigned motor_id)
 	working_motor = &motors[motor_id];
 	if (!working_motor)
 		return INVALID_DEVICE;
-	working_motor->home();
-	return SUCCESS;
+	return working_motor->home();
 }
 
 int acis::process(char *buffer)
 {
-	unsigned int device;
-	unsigned int function;
-	unsigned int mm;
-	int temp;
+	unsigned int device = 0;
+	unsigned int function = 0;
+	unsigned int mm = 0;
+	int temp = -1;
 
 	if (!buffer)
-		return COULD_NOT_PERFORM_OPERATION;
+		return send_back(buffer, device, function, COULD_NOT_PROCESS_BUFFER, 0);
 	temp = decode(buffer, device, function, mm);
 	if (temp < 0)
-		return temp;
+		return send_back(buffer, function, device, temp, 0);
 	if (function == HOME)
-		temp = send_back(buffer, SUCCESS, home(device));
+		temp = home(device);
 	else if (function == MOVE_FORWARD)
-		temp = send_back(buffer, SUCCESS, move_forward(device, mm));
+		temp = move_forward(device, mm);
 	else if (function == MOVE_BACKWARD)
-		temp = send_back(buffer, SUCCESS, move_backward(device, mm));
+		temp = move_backward(device, mm);
 	else if (function == STOP)
-		temp = send_back(buffer, stop(device), 0);
+		temp = stop(device);
 	else
 		temp = COULD_NOT_DECODE_BYTES;
-	return temp;
+	if (temp < 0)
+	{
+		return send_back(buffer, device, function, temp, 0);
+	}
+	return send_back(buffer, device, function, SUCCESS, temp);
 }
 
 int acis::decode(char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm)
@@ -98,11 +101,12 @@ int acis::decode(char *buffer, unsigned int &device, unsigned int &function, uns
 	return SUCCESS;
 }
 
-int acis::send_back(char *buffer, unsigned int status_code, unsigned int new_state)
+int acis::send_back(char *buffer, unsigned int device, unsigned int op, unsigned int status_code, unsigned int new_state)
 {
 	if (!buffer)
 		return COULD_NOT_PERFORM_OPERATION;
-	buffer[0] = status_code;
+	buffer[0] = (device | (op << 3));
 	buffer[1] = new_state;
+	buffer[2] = status_code;
 	return status_code;
 }

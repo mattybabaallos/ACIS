@@ -5,7 +5,7 @@ Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
 Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 acis _acis(&shield_0, &shield_1, &shield_2);
-char buffer[BYTES_TO_READ];
+char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
 void setup()
 {
@@ -19,6 +19,12 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
+
+  //Always home all decives after Arduino start up
+  for(int i = 0; i < NUMBER_MOTORS; ++i)
+  {
+      //Home all decives here;
+  }
 }
 
 void loop()

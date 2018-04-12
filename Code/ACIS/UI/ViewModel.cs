@@ -26,13 +26,43 @@ namespace UI
         {
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
             {
-                m_arduinoControl.SendCommand((byte)i,(byte)ArduinoFunctions.HOME, 0);
+                m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
             }
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-           //Process code here.
+            //Process code here.
+            int device = -1, status = -1, op = -1 , distance = -1;
+            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
+            Process(device, op, status, distance);
+        }
+
+        public void Process(int device, int op, int status, int distance)
+        {
+            if(status > 0 )
+            {
+                //Error happened
+            }
+
+
+            if (op == (int)ArduinoFunctions.MOVE_FORWARD)
+            {
+                m_motors[device].Position -= distance;
+            }
+            else if (op == (int)ArduinoFunctions.MOVE_BACKWARD)
+            {
+                m_motors[device].Position -= distance;
+            }
+            else if (op == (int)ArduinoFunctions.HOME)
+            {
+                m_motors[device].Position -= distance;
+            }
+            else if (op == (int)ArduinoFunctions.STOP)
+            {
+                m_motors[device].Position -= distance;
+
+            }
         }
 
         public ObservableCollection<string> Ports
@@ -61,10 +91,6 @@ namespace UI
             }
 
         }
-
-
-        
-
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

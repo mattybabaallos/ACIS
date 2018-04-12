@@ -36,7 +36,7 @@ It will include all #includes and #defines
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
-#define NUMBER_SWITCHES 3
+#define NUMBER_SWITCHES 5
 
 #define MAX_X_TOP_LENGTH 400
 #define MAX_X_BOTTOM_LENGTH 400
@@ -47,6 +47,7 @@ It will include all #includes and #defines
 #define STEP_TO_DEGREE_CONST 0.204
 
 #define BYTES_TO_READ 2
+#define BUFFER_SIZE 3
 
 enum motors
 {
@@ -73,6 +74,7 @@ enum errors
     INVALID_DEVICE = -3,
     COULD_NOT_PERFORM_OPERATION = -4,
     COULD_NOT_DECODE_BYTES = -5,
+    COULD_NOT_PROCESS_BUFFER =-6
 };
 
 /*******************************************************************************

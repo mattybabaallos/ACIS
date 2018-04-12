@@ -7,7 +7,7 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor() : m_current_position(0), m_max_distance(0), m_motor(NULL), m_stop(true)
+motor::motor() :m_stop(true), m_current_position(0), m_max_distance(0), m_motor(NULL)
 {
 }
 

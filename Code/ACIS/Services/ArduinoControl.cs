@@ -22,7 +22,7 @@ namespace Services
         {
             port = new SerialPort(PortList[0], Constants.BAUD_RATE);
             port.DtrEnable = true;
-            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_SEND;
+            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
             port.Open();
 
         }
@@ -31,7 +31,7 @@ namespace Services
         {
             port = new SerialPort(portName, Constants.BAUD_RATE);
             port.DtrEnable = true;
-            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_SEND;
+            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
             port.Open();
         }
 
@@ -69,16 +69,16 @@ namespace Services
         }
 
 
-        public void ReciveCommand(ref int device, ref int op, ref int distance)
+        public void ReciveCommand(ref int device, ref int op ,ref int status, ref int distance)
         {
-            if (port.BytesToRead >= Constants.NUMBER_OF_BYTES_TO_SEND)
+            if (port.BytesToRead >= Constants.NUMBER_OF_BYTES_TO_RECEIVE)
             {
-                byte[] buffer = new byte[Constants.NUMBER_OF_BYTES_TO_SEND];
-                port.Read(buffer, 0, Constants.NUMBER_OF_BYTES_TO_SEND);
-                byte temp = buffer[0];
-                device = (int)(temp & CrateMask(0, 2));
-                op = (int)(temp >> 3);
+                byte[] buffer = new byte[Constants.NUMBER_OF_BYTES_TO_RECEIVE];
+                port.Read(buffer, 0, Constants.NUMBER_OF_BYTES_TO_RECEIVE);
+                device = (int)(buffer[0] & CrateMask(0, 2));
+                op = (int)(buffer[0] >> 3);
                 distance = buffer[1];
+                status = buffer[2];
             }
         }
 
