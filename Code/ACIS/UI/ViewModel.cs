@@ -20,6 +20,8 @@ namespace UI
             m_home = home;
             m_arduinoControl = new ArduinoControl();
             m_motors = new Motor[Constants.NUMBER_OF_MOTORS];
+            ErrorMessages.Add("a");
+            //ErrorMessages = "this a test error message \n \n ashdfjk\n ahsdj\n fklha\n slkd\n \n ashdfjk\n ahsdj\n fklha\n slkd\n fhalks a\n hs\n df asjdf\n h akjk\n jalsd\n hflas";
         }
 
         public void HomeAll()
@@ -33,14 +35,14 @@ namespace UI
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             //Process code here.
-            int device = -1, status = -1, op = -1 , distance = -1;
+            int device = -1, status = -1, op = -1, distance = -1;
             m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
             Process(device, op, status, distance);
         }
 
         public void Process(int device, int op, int status, int distance)
         {
-            if(status > 0 )
+            if (status > 0)
             {
                 /*Error happened
                  * maybe print the error to the GUI and retry the command again. 
@@ -52,7 +54,7 @@ namespace UI
 
             if (op != (int)ArduinoFunctions.STOP)
                 m_motors[device].Position = distance;
-         
+
         }
 
         public ObservableCollection<string> Ports
@@ -62,6 +64,9 @@ namespace UI
                 return m_arduinoControl.PortList;
             }
         }
+
+
+        public ObservableCollection<string> ErrorMessages { get; }
 
         public string SelectedPort
         {
