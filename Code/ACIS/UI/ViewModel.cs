@@ -42,27 +42,17 @@ namespace UI
         {
             if(status > 0 )
             {
-                //Error happened
+                /*Error happened
+                 * maybe print the error to the GUI and retry the command again. 
+                 * Poissble keep track if the errors, if it happens mutiple times ask the user to perform a reboot
+                 * or look into the issue.
+                 * 
+                */
             }
 
-
-            if (op == (int)ArduinoFunctions.MOVE_FORWARD)
-            {
-                m_motors[device].Position -= distance;
-            }
-            else if (op == (int)ArduinoFunctions.MOVE_BACKWARD)
-            {
-                m_motors[device].Position -= distance;
-            }
-            else if (op == (int)ArduinoFunctions.HOME)
-            {
-                m_motors[device].Position -= distance;
-            }
-            else if (op == (int)ArduinoFunctions.STOP)
-            {
-                m_motors[device].Position -= distance;
-
-            }
+            if (op != (int)ArduinoFunctions.STOP)
+                m_motors[device].Position = distance;
+         
         }
 
         public ObservableCollection<string> Ports
