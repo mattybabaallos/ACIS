@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Data;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data;
 
 
 namespace Services
@@ -59,7 +55,7 @@ namespace Services
         {
             byte[] command = new byte[Constants.NUMBER_OF_BYTES_TO_SEND];
             byte temp = 0;
-            temp = (byte)(device & (byte)CrateMask(0, 2));
+            temp = (byte)(device & (byte)Common.CrateMask(0, 2));
             temp = (byte)((op << 3) | temp);
             command[0] = temp;
             command[1] = (byte)distance;
@@ -75,32 +71,13 @@ namespace Services
             {
                 byte[] buffer = new byte[Constants.NUMBER_OF_BYTES_TO_RECEIVE];
                 port.Read(buffer, 0, Constants.NUMBER_OF_BYTES_TO_RECEIVE);
-                device = (int)(buffer[0] & CrateMask(0, 2));
+                device = (int)(buffer[0] & Common.CrateMask(0, 2));
                 op = (int)(buffer[0] >> 3);
                 distance = buffer[1];
                 status = buffer[2];
             }
         }
 
-        /// <summary>
-        /// Create a bit mask.
-        /// </summary>
-        /// <param name="start">The start of the bit mask 0 inclusive</param>
-        /// <param name="end"> The end of the bit mask 0 inclusive</param>
-        /// <returns>the bit mask</returns>
-        private uint CrateMask(int start, int end)
-        {
-
-            int i;
-            uint mask = 0;
-            uint one = 1; // used because default magic # is int
-
-            for (i = start; i <= end; ++i)
-            {
-                mask |= (one << i);
-            }
-            return mask;
-        }
 
     }
 }

@@ -34,8 +34,10 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     _acis.process(buffer);
-    Serial.write(buffer);
+  
   }
+  Serial.write("o");
+  delay(2000);
 }
 
 void X_TOP_ISR()
