@@ -39,6 +39,7 @@ namespace Services
             port.Close();
         }
 
+
         public event SerialDataReceivedEventHandler SerialDataReceived
         {
             add { port.DataReceived += value; }

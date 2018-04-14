@@ -2,6 +2,9 @@
 {
     public class Motor
     {
+
+        public Motor() { }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public int Position { get; set; }
@@ -9,7 +12,7 @@
 
     }
 
-   public enum Motors
+    public enum Motors
     {
         X_AXIS_TOP,
         X_AXIS_BOTTOM,

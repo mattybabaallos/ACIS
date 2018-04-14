@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,27 @@ namespace Services
                 mask |= (one << i);
             }
             return mask;
+        }
+
+
+        public static string ErrorCodeToString(int errorCode)
+        {
+            switch (errorCode)
+            {
+                case (int)Erros.RECEIVED_FEWER_THAN_TWO_BYTES:
+                    return Erros.RECEIVED_FEWER_THAN_TWO_BYTES.ToString();
+                case (int)Erros.INVALID_OPERATION:
+                    return Erros.INVALID_OPERATION.ToString();
+                case (int)Erros.INVALID_DEVICE:
+                    return Erros.INVALID_DEVICE.ToString();
+                case (int)Erros.COULD_NOT_DECODE_BYTES:
+                    return Erros.COULD_NOT_DECODE_BYTES.ToString();
+                case (int)Erros.COULD_NOT_PERFORM_OPERATION:
+                    return Erros.COULD_NOT_DECODE_BYTES.ToString();
+                default:
+                    return "Undfined error happened";
+            }
+
         }
     }
 }

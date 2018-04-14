@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Threading;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace UI
 {
@@ -17,7 +20,8 @@ namespace UI
 
         private string m_selected_port = string.Empty;
         private object _lock = new object();
-        int i = 0;
+        private bool m_updateUI = false;
+        private event EventHandler ScrollView;
 
         //private List<string> m_error = new List<string>();
 
@@ -26,34 +30,35 @@ namespace UI
             m_home = home;
             m_arduinoControl = new ArduinoControl();
             m_motors = new Motor[Constants.NUMBER_OF_MOTORS];
-
-            BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock);
-            //ErrorMessages = "this a test error message \n \n ashdfjk\n ahsdj\n fklha\n slkd\n \n ashdfjk\n ahsdj\n fklha\n slkd\n fhalks a\n hs\n df asjdf\n h akjk\n jalsd\n hflas";
+            for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
+            {
+                m_motors[i] = new Motor();
+            }
+            BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
         }
 
         public void HomeAll()
         {
-           
+
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
             {
                 m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
             }
         }
-
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            //Process code here.
             int device = -1, status = -1, op = -1, distance = -1;
-            ++i;
-            var port = (SerialPort)sender;
-            ErrorMessages.Add(i.ToString());
-            //m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
-            //Process(device, op, status, distance);
+            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
+            Process(device, op, status, distance);
+            ErrorMessages.Add(DateTime.Now.Second.ToString());
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.ScrollViewer.ScrollToBottom();
+            }));
         }
 
         public void Process(int device, int op, int status, int distance)
         {
-
             if (status > 0)
             {
                 /*Error happened
@@ -62,13 +67,18 @@ namespace UI
                  * or look into the issue.
                  * 
                 */
+
+
             }
 
             if (op != (int)ArduinoFunctions.STOP)
+            {
                 m_motors[device].Position = distance;
+                OnPropertyChanged(this, "XTopPosition");
+            }
+
 
         }
-
         public ObservableCollection<string> Ports
         {
             get
@@ -76,8 +86,32 @@ namespace UI
                 return m_arduinoControl.PortList;
             }
         }
-
         public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+        public int XTopPosition
+        {
+            get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
+            set { }
+        }
+        public int XBottomPosition
+        {
+            get { return m_motors[(int)Motors.X_AXIS_BOTTOM].Position; }
+            set { }
+        }
+        public int ZTopPosition
+        {
+            get { return m_motors[(int)Motors.Z_AXIS_TOP].Position; }
+            set { }
+        }
+        public int ZBottomPosition
+        {
+            get { return m_motors[(int)Motors.Z_AXIS_BOTTOM].Position; }
+            set { }
+        }
+        public int YPosition
+        {
+            get { return m_motors[(int)Motors.Y_AXIS].Position; }
+            set { }
+        }
         public string SelectedPort
         {
             get
@@ -101,12 +135,10 @@ namespace UI
                 //Set the new port
                 m_selected_port = value;
                 m_arduinoControl.Close();
-                m_arduinoControl.Connect(m_selected_port);
                 m_arduinoControl.SerialDataReceived += Port_DataReceived;
             }
 
         }
-
         private void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)
@@ -114,7 +146,6 @@ namespace UI
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
 

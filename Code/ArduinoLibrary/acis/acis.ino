@@ -36,8 +36,8 @@ void loop()
     _acis.process(buffer);
   
   }
-  Serial.write("o");
-  delay(1000);
+  Serial.write(0x100010);
+  delay(333); 
 }
 
 void X_TOP_ISR()
