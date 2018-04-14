@@ -37,7 +37,7 @@ void loop()
   
   }
   Serial.write("o");
-  delay(2000);
+  delay(1000);
 }
 
 void X_TOP_ISR()

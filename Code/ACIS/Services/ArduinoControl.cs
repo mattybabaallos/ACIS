@@ -20,8 +20,10 @@ namespace Services
             port.DtrEnable = true;
             port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
             port.Open();
-
+            IsConnected = true;
         }
+
+        public bool IsConnected { get; set; }
 
         public void Connect(string portName)
         {
@@ -29,6 +31,7 @@ namespace Services
             port.DtrEnable = true;
             port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
             port.Open();
+            IsConnected = true;
         }
 
         public void Close()

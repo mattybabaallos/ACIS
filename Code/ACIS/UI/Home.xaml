@@ -48,9 +48,10 @@
 
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors" Margin="10,10,-10,120">
                     <ScrollViewer Name="ScrollViewer"
-                    VerticalAlignment="Bottom"
-                    ScrollViewer.PanningMode="VerticalOnly"
-                    VerticalScrollBarVisibility="Auto" Grid.Column="1">
+                    VerticalAlignment="Top"
+                               
+                    ScrollViewer.PanningMode="VerticalFirst"
+                    VerticalScrollBarVisibility="Auto"  Grid.Column="1">
                             <ItemsControl Name="ErrorMessages" 
                                   VerticalAlignment="Bottom"
                                   ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
