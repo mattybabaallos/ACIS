@@ -1,14 +1,11 @@
 ﻿using Data;
 using Services;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;
-using System.Threading;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace UI
 {
@@ -33,6 +30,7 @@ namespace UI
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
             {
                 m_motors[i] = new Motor();
+                m_motors[i].Position = 44;
             }
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
         }
@@ -50,7 +48,8 @@ namespace UI
             int device = -1, status = -1, op = -1, distance = -1;
             m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
             Process(device, op, status, distance);
-            ErrorMessages.Add(DateTime.Now.Second.ToString());
+            
+            //This will spin up a thread that will update the UI
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 m_home.ScrollViewer.ScrollToBottom();
@@ -74,11 +73,39 @@ namespace UI
             if (op != (int)ArduinoFunctions.STOP)
             {
                 m_motors[device].Position = distance;
-                OnPropertyChanged(this, "XTopPosition");
+                UpdateMotorsUiElements(device, distance);
             }
-
-
+            
         }
+
+        private void UpdateMotorsUiElements(int device, int distance)
+        {
+            switch (device)
+            {
+                case (int)Motors.X_AXIS_TOP:
+                    OnPropertyChanged(this, "XTopPosition");
+                    ErrorMessages.Add("X TOP motor moved to loaction" + distance );
+
+                    break;
+                case (int)Motors.X_AXIS_BOTTOM:
+                    OnPropertyChanged(this, "XBottomPosition");
+                    break;
+                case (int)Motors.Y_AXIS:
+                    OnPropertyChanged(this, "YPosition");
+                    break;
+                case (int)Motors.Z_AXIS_TOP:
+                    OnPropertyChanged(this, "ZTopPosition");
+                    break;
+                case (int)Motors.Z_AXIS_BOTTOM:
+                    OnPropertyChanged(this, "ZBottomPosition");
+                    break;
+
+
+                default:
+                    break;
+            }
+        }
+
         public ObservableCollection<string> Ports
         {
             get
