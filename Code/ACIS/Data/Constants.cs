@@ -16,6 +16,7 @@ namespace Data
         public const int DISTANCE_TO_MOVE_PER_IMAGE_X = 10;
         public const int DISTANCE_TO_MOVE_PER_IMAGE_Y = 10;
         public const int DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR = 10;
+        public const int DISTANCE_HOME_TO_TRAY_MIDDLE_BAR = 10;
         public const int CPU_TO_CAN = 6;
         public const int Y_AXIS_DIVIDERS = 3;
         

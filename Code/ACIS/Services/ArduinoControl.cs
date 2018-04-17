@@ -68,6 +68,11 @@ namespace Services
             return command;
         }
 
+        public byte[] SendCommand(Motors motor, ArduinoFunctions op, byte distance)
+        {
+            return SendCommand((byte)motor, (byte)op, distance);
+        }
+
 
         public void ReciveCommand(ref int device, ref int op ,ref int status, ref int distance)
         {

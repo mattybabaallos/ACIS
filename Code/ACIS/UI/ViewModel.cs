@@ -48,12 +48,44 @@ namespace UI
             int device = -1, status = -1, op = -1, distance = -1;
             m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
             Process(device, op, status, distance);
-            
+
             //This will spin up a thread that will update the UI
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 m_home.ScrollViewer.ScrollToBottom();
             }));
+        }
+
+        public void Scan()
+        {
+            //Home the motors.
+            HomeAll();
+
+
+            //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
+            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
+
+            //while(Signal from)
+            while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
+            {
+                //Take Pictures here......TODO
+
+                //Step the X axis camera to the next position
+                m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+                m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+            }
+
+            //Step the X axis cameras back start of tray 
+            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
+            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
+
+            m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+
+
+
+            //
+
         }
 
         public void Process(int device, int op, int status, int distance)
@@ -75,7 +107,7 @@ namespace UI
                 m_motors[device].Position = distance;
                 UpdateMotorsUiElements(device, distance);
             }
-            
+
         }
 
         private void UpdateMotorsUiElements(int device, int distance)
@@ -84,7 +116,7 @@ namespace UI
             {
                 case (int)Motors.X_AXIS_TOP:
                     OnPropertyChanged(this, "XTopPosition");
-                    ErrorMessages.Add("X TOP motor moved to loaction" + distance );
+                    ErrorMessages.Add("X TOP motor moved to loaction" + distance);
 
                     break;
                 case (int)Motors.X_AXIS_BOTTOM:
