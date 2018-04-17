@@ -74,7 +74,8 @@ enum errors
     INVALID_DEVICE = -3,
     COULD_NOT_PERFORM_OPERATION = -4,
     COULD_NOT_DECODE_BYTES = -5,
-    COULD_NOT_PROCESS_BUFFER =-6
+    COULD_NOT_PROCESS_BUFFER =-6,
+    STOP_INTERRUPT = -7
 };
 
 /*******************************************************************************
