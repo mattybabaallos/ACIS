@@ -1,0 +1,5 @@
+{
+    "board": "Intel:arc32:arduino_101",
+    "sketch": "acis\\acis.ino",
+    "port": "COM6"
+}

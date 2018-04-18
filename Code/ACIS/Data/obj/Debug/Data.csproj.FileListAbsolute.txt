@@ -1,0 +1,6 @@
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\bin\Debug\Data.dll
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\bin\Debug\Data.pdb
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\obj\Debug\Data.csproj.CoreCompileInputs.cache
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\obj\Debug\Data.dll
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\obj\Debug\Data.pdb
+C:\Users\Owner\Documents\Workspace\ACIS\Code\ACIS\Data\obj\Debug\Data.csprojResolveAssemblyReference.cache

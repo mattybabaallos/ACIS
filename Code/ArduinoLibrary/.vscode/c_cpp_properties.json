@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages\\Intel\\hardware\\arc32\\2.0.2\\cores\\arduino",
+                "C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": false,
+                "path": [
+                    "C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages\\Intel\\hardware\\arc32\\2.0.2\\cores\\arduino",
+                    "C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.21\\cores\\arduino"
+                ]
+            },
+            "intelliSenseMode": "msvc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 3
+}
