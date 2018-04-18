@@ -46,7 +46,7 @@ namespace Services
             remove { port.DataReceived -= value; }
         }
 
-        public ObservableCollection<string> PortList => new ObservableCollection<string>(SerialPort.GetPortNames().ToList());
+        public ObservableCollection<string> PortList = new ObservableCollection<string>(SerialPort.GetPortNames());
 
         /// <summary>
         /// Construct the byte array to will be sent to the Arduino and send it.

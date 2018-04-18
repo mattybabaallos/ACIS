@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:UI"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1200"  MinWidth="800">
-    <Grid>
+    <Grid IsEnabled="{Binding IsPortConnected}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto" MinHeight="20"/>

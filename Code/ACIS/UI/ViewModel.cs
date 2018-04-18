@@ -4,6 +4,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
@@ -40,6 +42,8 @@ namespace UI
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
+            updatePorts();
+
         }
 
         public void HomeAll()
@@ -61,6 +65,43 @@ namespace UI
             {
                 m_home.ScrollViewer.ScrollToBottom();
             }));
+        }
+
+
+        /// <summary>
+        /// This function always run on the background and only update the COM list if there is any changes
+        /// </summary>
+        private async void updatePorts()
+        {
+            ObservableCollection<string> CurrentPorts;
+            while (true)
+            {
+                await Task.Run(() =>
+                {
+                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
+
+                    //only update port list when it changes
+                    if (Ports.SequenceEqual(CurrentPorts) != true)
+                    {
+                        Ports = new ObservableCollection<string>(CurrentPorts);
+
+                        if (Ports.Count == 0)
+                            IsPortConnected = false;
+                        else
+                            IsPortConnected = true;
+                    }
+                });
+            }
+        }
+
+        public bool IsPortConnected
+        {
+            get { return m_updateUI; }
+            set
+            {
+                m_updateUI = value;
+                OnPropertyChanged(this, "IsPortConnected");
+            }
         }
 
         public void Scan()
@@ -187,6 +228,13 @@ namespace UI
             {
                 return m_arduinoControl.PortList;
             }
+            set
+            {
+                m_arduinoControl.PortList = new ObservableCollection<string>(value);
+                OnPropertyChanged(this, "Ports");
+
+            }
+
         }
         public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
         public int XTopPosition
@@ -238,6 +286,8 @@ namespace UI
                 m_selected_port = value;
                 m_arduinoControl.Close();
                 m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                OnPropertyChanged(this, "SelectedPort");
+
             }
 
         }
