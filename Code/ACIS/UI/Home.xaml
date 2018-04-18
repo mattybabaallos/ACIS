@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="UI.Home"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200"  MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto" MinHeight="20"/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0">
+            <TabItem Header="Status">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="400"/>
+                        <RowDefinition Height="400"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="300" Width="200"/>
+                        <ColumnDefinition MinWidth="300" Width="200"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Grid.Column="0" Grid.Row="0" Header="Motors Position" Height="200" Margin="0,10,0,190">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="50"/>
+                                <ColumnDefinition MinWidth="50" />
+                                <ColumnDefinition MinWidth="50" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Content="X Top" />
+                            <TextBox Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"  IsReadOnly="True" Text="{Binding XTopPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
+                            <Label Grid.Column="0" Grid.Row="1" Content="X Bottom" />
+                            <TextBox Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"  IsReadOnly="True" Text="{Binding XBottomPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
+                            <Label Grid.Column="1" Content="Y" ></Label>
+                            <TextBox Grid.Column="1" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"  IsReadOnly="True" Text="{Binding YPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
+                            <Label Grid.Column="2" Grid.Row="0" Content="Z Top" ></Label>
+                            <TextBox Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"   IsReadOnly="True" Text="{Binding ZTopPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
+                            <Label Grid.Column="2" Grid.Row="1" Content="Z Bottom" ></Label>
+                            <TextBox Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"   IsReadOnly="True" Text="{Binding ZBottomPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors" Margin="10,10,-10,120">
+                    <ScrollViewer Name="ScrollViewer"
+                    VerticalAlignment="Top"
+                    ScrollViewer.PanningMode="VerticalFirst"
+                    VerticalScrollBarVisibility="Auto"  Grid.Column="1">
+                            <ItemsControl Name="ErrorMessages" 
+                                  VerticalAlignment="Bottom"
+                                  ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
+                        </ScrollViewer>
+                    </GroupBox>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto" MinHeight="20"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="133*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Content="Serial ports"></Label>
+                    <Label Grid.Row="0" Grid.Column="1">
+                        <ComboBox x:Name="GradeListDropdown"
+                          ItemsSource="{Binding Ports}"
+                          SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
+                          ToolTip="Serial port list"
+                          Height="20" Width="180" />
+                    </Label>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <DockPanel Grid.Row="1">
+            <Label Content="Serial port: "/>
+            <Label Content="{Binding Path=SelectedPort}"/>
+
+        </DockPanel>
+    </Grid>
+</UserControl>
