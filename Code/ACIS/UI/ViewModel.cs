@@ -72,16 +72,16 @@ namespace UI
 
         private void HomeXTop(object obj)
         {
-
+            m_arduinoControl.SendCommand((byte)0, (byte)ArduinoFunctions.HOME, 0);
         }
         private void HomeXBottom(object obj)
         {
-
+            m_arduinoControl.SendCommand((byte)1, (byte)ArduinoFunctions.HOME, 0);
         }
 
         public void HomeY(object obj)
         {
-
+            m_arduinoControl.SendCommand((byte)4, (byte)ArduinoFunctions.HOME, 0);
         }
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
