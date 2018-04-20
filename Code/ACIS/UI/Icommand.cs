@@ -7,13 +7,14 @@ using System.Windows.Input;
 
 namespace UI
 {
-    class HomeAll : ICommand
+    class HomeCommand : ICommand
     {
-
-        private ViewModel _vm;
-        public HomeAll(ViewModel vm)
+        private readonly Predicate<object> _canExecute;
+        private readonly Action<object> _execute;
+        public HomeCommand(Predicate<object> canExecute, Action<object> execute)
         {
-            _vm = vm;
+            this._canExecute = canExecute;
+            this._execute = execute;
         }
 
         public event EventHandler CanExecuteChanged
@@ -24,12 +25,12 @@ namespace UI
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            return _canExecute(parameter);
         }
 
         public void Execute(object parameter)
         {
-            _vm.HomeAll();
+            _execute(parameter);
         }
-    }
+    } 
 }

@@ -91,10 +91,10 @@
                         <ColumnDefinition MinWidth="50" Width="100"/>
                         <ColumnDefinition Width="133*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Home All" Command="{Binding HomeAllButton}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,242,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button Content="Home X top" Grid.Column="1" HorizontalAlignment="Left" Margin="57,167,0,0" VerticalAlignment="Top" Width="75"/>
-                    <Button Content="Home X bottom" Grid.Column="1" HorizontalAlignment="Left" Margin="57,129,0,0" VerticalAlignment="Top" Width="116" Height="22"/>
-                    <Button Content="Home Y" Grid.Column="1" HorizontalAlignment="Left" Margin="57,203,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1.599,3.571"/>
+                    <Button Content="Home All" Command="{Binding HomeAllCommand}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,242,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Home X top" Command="{Binding HomeXTopCommand}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,167,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,129,0,0" VerticalAlignment="Top" Width="116" Height="22"/>
+                    <Button Content="Home Y" Command="{Binding HomeYCommand}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,203,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1.599,3.571"/>
 
                 </Grid>
             </TabItem>
