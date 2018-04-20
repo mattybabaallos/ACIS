@@ -23,7 +23,7 @@ It will include all #includes and #defines
 #define X_AXIS_BOTTOM_CHANNEL 1
 #define Z_AXIS_TOP_CHANNEL 1
 #define Z_AXIS_BOTTOM_CHANNEL 2
-#define Y_AXIS_CHANNEL 1
+#define Y_AXIS_CHANNEL 2
 
 #define MOTOR_STEPS 200
 #define MOTOR_SPEED 100

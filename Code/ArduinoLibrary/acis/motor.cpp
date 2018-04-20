@@ -79,7 +79,7 @@ int motor::home()
 		return INVALID_DEVICE;
 	}
 	m_stop = false;
-	m_current_position -= step(get_steps(m_current_position), BACKWARD, DOUBLE); //move the most until it hits the switch
+	m_current_position -= step(get_steps(MAX_X_TOP_LENGTH), BACKWARD, DOUBLE); //move the most until it hits the switch
 	return m_current_position;
 }
 

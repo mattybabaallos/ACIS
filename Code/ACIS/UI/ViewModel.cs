@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace UI
 {
@@ -41,16 +42,18 @@ namespace UI
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
+            HomeAllButton = new HomeAll(this);
             //updatePorts();
         }
 
         public void HomeAll()
         {
-
+            ErrorMessages.Add("Homing all");
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
             {
                 m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
             }
+           
         }
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -289,6 +292,15 @@ namespace UI
             }
 
         }
+
+
+
+
+        //ICommands
+        public ICommand HomeAllButton { get; set; }
+
+
+
         private void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)

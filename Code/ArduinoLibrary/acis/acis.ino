@@ -19,6 +19,9 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
+  _acis.home(Y_AXIS);
+  
+
 }
 
 void loop()
@@ -27,8 +30,8 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    _acis.process(buffer);
-  Serial.write(buffer,BUFFER_SIZE);
+    //_acis.process(buffer);
+  //Serial.write(buffer,BUFFER_SIZE);
   }
 }
 

@@ -47,7 +47,7 @@
                     </GroupBox>
 
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors" Margin="10,10,-10,120">
-                    <ScrollViewer Name="ScrollViewer"
+                        <ScrollViewer Name="ScrollViewer"
                     VerticalAlignment="Top"
                     ScrollViewer.PanningMode="VerticalFirst"
                     VerticalScrollBarVisibility="Auto"  Grid.Column="1">
@@ -78,6 +78,24 @@
                           ToolTip="Serial port list"
                           Height="20" Width="180" />
                     </Label>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Manual control" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto" MinHeight="20"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="133*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Home All" Command="{Binding HomeAllButton}" Grid.Column="1" HorizontalAlignment="Left" Margin="57,242,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Home X top" Grid.Column="1" HorizontalAlignment="Left" Margin="57,167,0,0" VerticalAlignment="Top" Width="75"/>
+                    <Button Content="Home X bottom" Grid.Column="1" HorizontalAlignment="Left" Margin="57,129,0,0" VerticalAlignment="Top" Width="116" Height="22"/>
+                    <Button Content="Home Y" Grid.Column="1" HorizontalAlignment="Left" Margin="57,203,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1.599,3.571"/>
+
                 </Grid>
             </TabItem>
         </TabControl>
