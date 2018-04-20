@@ -15,8 +15,8 @@ It will include all #includes and #defines
 #include <Wire.h>
 #include "Adafruit_MotorShield.h"
 
-#define SHIELD_ZERO_ADDRESS 0x60
-#define SHIELD_ONE_ADDRESS 0x90
+#define SHIELD_ZERO_ADDRESS 0x61
+#define SHIELD_ONE_ADDRESS 0x62
 #define SHIELD_TWO_ADDRESS 0x00
 
 #define X_AXIS_TOP_CHANNEL 2

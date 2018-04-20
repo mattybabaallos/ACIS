@@ -36,14 +36,12 @@ namespace UI
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
             {
                 m_motors[i] = new Motor();
-                m_motors[i].Position = 44;
             }
             m_cpu_scanned = 0;
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
-            updatePorts();
-
+            //updatePorts();
         }
 
         public void HomeAll()
@@ -96,7 +94,7 @@ namespace UI
 
         public bool IsPortConnected
         {
-            get { return m_updateUI; }
+            get { return true; }
             set
             {
                 m_updateUI = value;

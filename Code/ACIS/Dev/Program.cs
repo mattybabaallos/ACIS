@@ -14,9 +14,7 @@ namespace Dev
 
             static void Main(string[] args)
             {
-                var ard = new ArduinoControl();
-                ard.Connect();
-                Console.ReadLine();
+  ;
             }
         }
     }

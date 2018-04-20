@@ -22,10 +22,10 @@ int acis::init()
 	//motors[Z_AXIS_TOP].init_motor(shield_1.getStepper(MOTOR_STEPS, Z_AXIS_TOP_CHANNEL), MAX_Z_TOP_LENGTH);
 	//motors[Z_AXIS_BOTTOM].init_motor(shield_1.getStepper(MOTOR_STEPS, Z_AXIS_BOTTOM_CHANNEL), MAX_Z_BOTTOM_LENGTH);
 
-	//motors[Y_AXIS].init_motor(shield_2.getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL), MAX_Y_LENGTH);
+	motors[Y_AXIS].init_motor(m_shield_1->getStepper(MOTOR_STEPS, Y_AXIS_CHANNEL), MAX_Y_LENGTH);
 
 	m_shield_0->begin();
-	//shield_2.begin();
+	m_shield_1->begin();
 	return 0;
 }
 
