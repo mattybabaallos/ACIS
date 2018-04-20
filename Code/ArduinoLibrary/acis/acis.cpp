@@ -55,6 +55,7 @@ int acis::stop(int unsigned motor_id)
 
 int acis::home(int unsigned motor_id)
 {
+  home(1);
 	working_motor = &motors[motor_id];
 	if (!working_motor)
 		return INVALID_DEVICE;
@@ -68,13 +69,14 @@ int acis::process(char *buffer)
 	unsigned int mm = 0;
 	int temp = -1;
 
+
 	if (!buffer)
 		return send_back(buffer, device, function, COULD_NOT_PROCESS_BUFFER, 0);
 	temp = decode(buffer, device, function, mm);
 	if (temp < 0)
 		return send_back(buffer, function, device, temp, 0);
-	if (function == HOME)
-		temp = home(device);
+	if (function == HOME)		
+			temp = home(device);
 	else if (function == MOVE_FORWARD)
 		temp = move_forward(device, mm);
 	else if (function == MOVE_BACKWARD)

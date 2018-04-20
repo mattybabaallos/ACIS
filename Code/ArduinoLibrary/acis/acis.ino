@@ -19,11 +19,6 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
-  _acis.home(X_AXIS_TOP);
-  _acis.home(X_AXIS_BOTTOM);
-  _acis.home(Y_AXIS);
-  
-
 }
 
 void loop()
@@ -32,8 +27,8 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    //_acis.process(buffer);
-  //Serial.write(buffer,BUFFER_SIZE);
+    _acis.process(buffer);
+    Serial.write(buffer, BUFFER_SIZE);
   }
 }
 
@@ -43,7 +38,7 @@ void X_TOP_ISR()
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,X_AXIS_TOP,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_TOP);
   }
 }
@@ -53,7 +48,7 @@ void X_BOTTOM_ISR()
   if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,X_AXIS_BOTTOM,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_BOTTOM);
   }
 }
@@ -63,7 +58,7 @@ void Y_ISR()
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,Y_AXIS,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Y_AXIS);
   }
 }
@@ -73,7 +68,7 @@ void Z_TOP_ISR()
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,Z_AXIS_TOP,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, Z_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Z_AXIS_TOP);
   }
 }
@@ -83,7 +78,7 @@ void Z_BOTTOM_ISR()
   if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,Z_AXIS_BOTTOM,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Z_AXIS_BOTTOM);
   }
 }
