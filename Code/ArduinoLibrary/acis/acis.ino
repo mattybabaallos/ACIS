@@ -19,6 +19,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
+  _acis.home(X_AXIS_TOP);
+  _acis.home(X_AXIS_BOTTOM);
   _acis.home(Y_AXIS);
   
 

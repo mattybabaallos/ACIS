@@ -80,6 +80,9 @@ int motor::home()
 	}
 	m_stop = false;
 	m_current_position -= step(get_steps(MAX_X_TOP_LENGTH), BACKWARD, DOUBLE); //move the most until it hits the switch
+  	m_stop= false;
+	step(get_steps(5), FORWARD, DOUBLE);
+	m_motor->release();
 	return m_current_position;
 }
 
