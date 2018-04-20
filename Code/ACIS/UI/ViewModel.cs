@@ -27,6 +27,11 @@ namespace UI
         private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
 
+        public ICommand HomeAllCommand { get { return new HomeCommand(e => true, this.HomeAll); } }
+        public ICommand HomeXTopCommand { get { return new HomeCommand(e => true, this.HomeXTop); } }
+        public ICommand HomeXBottomCommand { get { return new HomeCommand(e => true, this.HomeXBottom); } }
+        public ICommand HomeYCommand { get { return new HomeCommand(e => true, this.HomeY); } }
+
         //private List<string> m_error = new List<string>();
 
         public ViewModel(Home home)
@@ -42,11 +47,11 @@ namespace UI
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
-            HomeAllButton = new HomeAll(this);
+            //HomeAllButton = new HomeCommand(this);
             //updatePorts();
         }
 
-        public void HomeAll()
+        private void HomeAll()
         {
             ErrorMessages.Add("Homing all");
             for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
@@ -54,6 +59,29 @@ namespace UI
                 m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
             }
            
+        }
+        private void HomeAll(object obj)
+        {
+            ErrorMessages.Add("Homing all");
+            for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
+            {
+                m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
+            }
+
+        }
+
+        private void HomeXTop(object obj)
+        {
+
+        }
+        private void HomeXBottom(object obj)
+        {
+
+        }
+
+        public void HomeY(object obj)
+        {
+
         }
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
