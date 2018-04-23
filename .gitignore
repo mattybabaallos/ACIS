@@ -298,3 +298,5 @@ Code/ArduinoLibrary/libraries/readme\.txt
 *.exe
 
 \.vscode/
+
+Code/ArduinoLibrary/output/
