@@ -1,5 +1,6 @@
 #include "acis.h"
 #include "switch.h"
+#include "sev_seg.h"
 
 Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
@@ -7,10 +8,10 @@ Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 acis _acis(&shield_0, &shield_1, &shield_2);
 char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
+sev_seg disp(8);
 void setup()
 {
-
-  Serial.println(_acis.init());
+  _acis.init();
   Serial.begin(9600);
 
   // Attach an interrupt to the ISR vector, capture interrupt at falling edge
@@ -19,10 +20,6 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
-  _acis.home(X_AXIS_TOP);
-  _acis.home(X_AXIS_BOTTOM);
-  _acis.home(Y_AXIS);
-  
 
 }
 
@@ -32,8 +29,20 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
-    //_acis.process(buffer);
-  //Serial.write(buffer,BUFFER_SIZE);
+    disp.all_off();
+    delay(1500);
+    disp.display_binary(buffer[0]);
+    delay(1500);
+    disp.display_binary(buffer[1]);
+    delay(1500);
+    _acis.process(buffer);
+    disp.all_off();
+    delay(1500);
+    disp.display_binary(buffer[0]);
+    delay(1500);
+    disp.display_binary(buffer[1]);
+    delay(1500);
+    Serial.write(buffer,BUFFER_SIZE);
   }
 }
 
