@@ -17,17 +17,16 @@
             <TabItem Header="Status">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="400"/>
-                        <RowDefinition Height="400"/>
+                        <RowDefinition Height="300"/>
+                        <RowDefinition Height="300"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="71.2"/>
-                        <ColumnDefinition Width="229.6"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition MinWidth="300" Width="300"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" Grid.Row="0" Header="Motors Position" Height="200" Margin="0,10,300.6,190" Grid.ColumnSpan="3">
+                    <GroupBox Grid.Column="0" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="1">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
@@ -49,9 +48,19 @@
                             <Label Grid.Column="2" Grid.Row="1" Content="Z Bottom" ></Label>
                             <TextBox Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Height="24" TextWrapping="Wrap"   IsReadOnly="True" Text="{Binding ZBottomPosition,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="58" Margin="0,23,0,0"/>
                         </Grid>
-                    </GroupBox>
 
-                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Errors" Margin="10.2,10,290.4,112" Grid.ColumnSpan="2">
+                    </GroupBox>
+                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Button Content="Start scan" Command="{Binding  StartScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116"  Grid.Row="0" Grid.Column="1"/>
+                            <Button Content="Stop scan" Command="{Binding  StopScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="ScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -61,29 +70,28 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <StackPanel  Grid.Column="3" Grid.Row="0" Orientation="Vertical" Margin="0,0,-41,0" Grid.ColumnSpan="2">
-                        <GroupBox Header="Preview" Height="275" Margin="15,10,0,0">
-                            <StackPanel Orientation="Horizontal">
-                                <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="190" Margin="18,30,0,0" VerticalAlignment="Top" Width="207"/>
-                                <Button Content="Capture" Height="20" Margin="20,117,0,116" Command="{Binding CaptureCommand}"/>
+                    <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
+                                  Grid.ColumnSpan="1">
+                        <StackPanel Orientation="Horizontal">
+                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="190" Margin="18,30,0,0" VerticalAlignment="Top" Width="207"/>
+                            <Button Content="Capture" Height="20"  Command="{Binding CaptureCommand}"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Progress" Height="80" Grid.Column="2" VerticalAlignment="Top" Grid.Row="2">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <ProgressBar Grid.Row="0" Value="{Binding Progress, UpdateSourceTrigger=PropertyChanged}" Height="20" Width="200" HorizontalAlignment="Center"/>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Label Content="{Binding CPU_Scanned}"/>
+                                <Label Content="/"/>
+                                <Label Content="{x:Static cons:Constants.CPU_TO_SCAN}"/>
+                                <Label Content="CPUs"/>
                             </StackPanel>
-                        </GroupBox>
-                        <GroupBox Header="Progress" Height="80" Margin="15,10,-0.2,310">
-                            <Grid >
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <ProgressBar Grid.Row="0" Value="{Binding Progress, UpdateSourceTrigger=PropertyChanged}" Height="20" Width="200" HorizontalAlignment="Center"/>
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Label Content="{Binding CPU_Scanned}"/>
-                                    <Label Content="/"/>
-                                    <Label Content="{x:Static cons:Constants.CPU_TO_SCAN}"/>
-                                    <Label Content="CPUs"/>
-                                </StackPanel>
-                            </Grid>
-                        </GroupBox>
-                    </StackPanel>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings" >
@@ -96,19 +104,20 @@
                         <RowDefinition Height="Auto" MinHeight="20"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="6"/>
+                        <ColumnDefinition Width="94"/>
                         <ColumnDefinition Width="133*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Content="Serial ports"></Label>
-                    <Label Grid.Row="0" Grid.Column="1">
+                    <Label Grid.Row="0" Content="Serial ports" Grid.ColumnSpan="2"></Label>
+                    <Label Grid.Row="0" Grid.Column="2">
                         <ComboBox x:Name="GradeListDropdown"
                             ItemsSource="{Binding Ports}"
                             SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
                             ToolTip="Serial port list"
                             Height="20" Width="180" />
                     </Label>
-                    <Label Grid.Row="1" Content="Save path "></Label>
-                    <Label Grid.Row="1" Grid.Column="1">
+                    <Label Grid.Row="1" Content="Save path " Grid.ColumnSpan="2"></Label>
+                    <Label Grid.Row="1" Grid.Column="2">
                         <TextBox x:Name="SaveFolder"
                             Text="{Binding SaveFolder}"
                             ToolTip="Save path"
@@ -126,13 +135,14 @@
                         <RowDefinition Height="Auto" MinHeight="20"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="50" Width="100"/>
+                        <ColumnDefinition Width="10.5"/>
+                        <ColumnDefinition Width="89.5"/>
                         <ColumnDefinition Width="133*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Home All" Command="{Binding HomeAllCommand}" HorizontalAlignment="Left" Margin="51,155,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2"/>
-                    <Button Content="Home X top" Command="{Binding HomeXTopCommand}" HorizontalAlignment="Left" Margin="51,85,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2"/>
-                    <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" HorizontalAlignment="Left" Margin="51,49,0,0" VerticalAlignment="Top" Width="116" Height="20" Grid.ColumnSpan="2"/>
-                    <Button Content="Home Y" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" Margin="51,121,0,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="1.599,3.571" Grid.ColumnSpan="2"/>
+                    <Button Content="Home All" Command="{Binding HomeAllCommand}" HorizontalAlignment="Left" Margin="40.5,155,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2" Grid.Column="1"/>
+                    <Button Content="Home X top" Command="{Binding HomeXTopCommand}" HorizontalAlignment="Left" Margin="40.5,85,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2" Grid.Column="1"/>
+                    <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" HorizontalAlignment="Left" Margin="40.5,49,0,0" VerticalAlignment="Top" Width="116" Height="20" Grid.ColumnSpan="2" Grid.Column="1"/>
+                    <Button Content="Home Y" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" Margin="40.5,121,0,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="1.599,3.571" Grid.ColumnSpan="2" Grid.Column="1"/>
 
                 </Grid>
             </TabItem>

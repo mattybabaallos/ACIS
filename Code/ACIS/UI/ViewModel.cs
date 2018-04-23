@@ -36,11 +36,16 @@ namespace UI
         private int m_y_axis_dividers_count;
         private float m_progress;
 
-        public ICommand HomeAllCommand { get { return new HomeCommand(e => true, this.HomeAll); } }
-        public ICommand HomeXTopCommand { get { return new HomeCommand(e => true, this.HomeXTop); } }
-        public ICommand HomeXBottomCommand { get { return new HomeCommand(e => true, this.HomeXBottom); } }
-        public ICommand HomeYCommand { get { return new HomeCommand(e => true, this.HomeY); } }
-        public ICommand CaptureCommand { get { return new HomeCommand(e => true, this.CaptureCPU); } }
+        public ICommand HomeAllCommand { get { return new Command(e => true, this.HomeAll); } }
+        public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
+        public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
+        public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
+        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
+
+        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
+        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
+
+
 
         //private List<string> m_error = new List<string>();
 
@@ -212,6 +217,9 @@ namespace UI
                 OnPropertyChanged(this, "Progress");
             }
         }
+
+        public void Stop() { 
+}
 
         public void Scan()
         {

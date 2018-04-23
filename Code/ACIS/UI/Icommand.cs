@@ -7,11 +7,11 @@ using System.Windows.Input;
 
 namespace UI
 {
-    class HomeCommand : ICommand
+    class Command : ICommand
     {
         private readonly Predicate<object> _canExecute;
         private readonly Action _execute;
-        public HomeCommand(Predicate<object> canExecute, Action execute)
+        public Command(Predicate<object> canExecute, Action execute)
         {
             this._canExecute = canExecute;
             this._execute = execute;
