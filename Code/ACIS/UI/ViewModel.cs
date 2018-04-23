@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -41,6 +40,7 @@ namespace UI
         public ICommand HomeXBottomCommand { get { return new HomeCommand(e => true, this.HomeXBottom); } }
         public ICommand HomeYCommand { get { return new HomeCommand(e => true, this.HomeY); } }
         public ICommand CaptureCommand { get { return new HomeCommand(e => true, this.CaptureCPU); } }
+        public ICommand BrowseCommand { get { return new HomeCommand(e => true, this.Browse); } }
 
         //private List<string> m_error = new List<string>();
 
@@ -122,6 +122,12 @@ namespace UI
             }
         }
 
+        private void Browse()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            SaveFolder = dialog.SelectedPath;
+        }
         private void HomeAll()
         {
             ErrorMessages.Add("Homing all");

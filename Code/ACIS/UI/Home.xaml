@@ -97,7 +97,8 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="50" Width="100"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Content="Serial ports"></Label>
                     <Label Grid.Row="0" Grid.Column="1">
@@ -116,6 +117,7 @@
                     </Label>
                     <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
+                    <Button Grid.Row="1" Grid.Column="2" Content="Browse" Width="80" Margin="10,1,394,7" Command="{Binding BrowseCommand}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Manual control" >
