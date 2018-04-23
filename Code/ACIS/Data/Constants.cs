@@ -19,9 +19,8 @@ namespace Data
         public const int DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR = 160;
         public const int DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY = 60;
         public const int DISTANCE_FROM_HOME_TO_END_OF_TRAY = 230;
-        public const int CPU_TO_CAN = 6;
+        public const int CPU_TO_SCAN = 6;
         public const int Y_AXIS_DIVIDERS = 3;
-        
     }
 
 }

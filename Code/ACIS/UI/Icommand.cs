@@ -10,8 +10,8 @@ namespace UI
     class HomeCommand : ICommand
     {
         private readonly Predicate<object> _canExecute;
-        private readonly Action<object> _execute;
-        public HomeCommand(Predicate<object> canExecute, Action<object> execute)
+        private readonly Action _execute;
+        public HomeCommand(Predicate<object> canExecute, Action execute)
         {
             this._canExecute = canExecute;
             this._execute = execute;
@@ -30,7 +30,7 @@ namespace UI
 
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            _execute();
         }
     } 
 }

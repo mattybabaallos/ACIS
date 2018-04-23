@@ -3,8 +3,10 @@ using Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -18,6 +20,12 @@ namespace UI
         private ArduinoControl m_arduinoControl;
         private Motor[] m_motors;
 
+        /***********Added for camrea************/
+        private CameraControl m_camera;
+        private string m_saveFolder;
+        private string m_imagePath;
+        /***************************************/
+
         private string m_selected_port = string.Empty;
         private object _lock = new object();
         private bool m_updateUI = false;
@@ -26,11 +34,13 @@ namespace UI
         private int m_cpu_scanned;
         private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
+        private float m_progress;
 
         public ICommand HomeAllCommand { get { return new HomeCommand(e => true, this.HomeAll); } }
         public ICommand HomeXTopCommand { get { return new HomeCommand(e => true, this.HomeXTop); } }
         public ICommand HomeXBottomCommand { get { return new HomeCommand(e => true, this.HomeXBottom); } }
         public ICommand HomeYCommand { get { return new HomeCommand(e => true, this.HomeY); } }
+        public ICommand CaptureCommand { get { return new HomeCommand(e => true, this.CaptureCPU); } }
 
         //private List<string> m_error = new List<string>();
 
@@ -43,12 +53,73 @@ namespace UI
             {
                 m_motors[i] = new Motor();
             }
+            /***********Added for camrea************/
+            m_camera = new CameraControl();
+            m_camera.Videocapture.ImageGrabbed += SaveImage;
+            m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
+            if (!Directory.Exists(m_saveFolder))
+                Directory.CreateDirectory(m_saveFolder);
+            m_imagePath = "";
+            /***************************************/
             m_cpu_scanned = 0;
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
+            m_progress = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
             //HomeAllButton = new HomeCommand(this);
             //updatePorts();
+        }
+
+        /***********Added for camrea************/
+        private void CaptureCPU()
+        {
+            m_camera.Capture();
+        }
+        private void SaveImage(object sender, EventArgs e)
+        {
+            try
+            {
+                m_camera.Videocapture.Retrieve(m_camera.Frame);
+                m_camera.Videocapture.Stop();
+                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
+                m_camera.Frame.Save(path);     
+                ImagePath = path;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+           
+        public string ImagePath
+        {
+            get { return m_imagePath; }
+            set
+            {
+                m_imagePath = value;
+                OnPropertyChanged(this, "ImagePath");
+            }
+        }
+        public string SaveFolder
+        {
+            get { return m_saveFolder; }
+            set
+            {
+              m_saveFolder = value;
+                if (!Directory.Exists(m_saveFolder))
+                    Directory.CreateDirectory(m_saveFolder);
+                OnPropertyChanged(this, "SaveFolder");
+            }
+        }
+        /***************************************/
+        public int CPU_Scanned
+        {
+            get { return m_cpu_scanned; }
+            set
+            {
+                m_cpu_scanned = value;
+                OnPropertyChanged(this, "CPU_Scanned");
+            }
         }
 
         private void HomeAll()
@@ -60,26 +131,17 @@ namespace UI
             }
            
         }
-        private void HomeAll(object obj)
-        {
-            ErrorMessages.Add("Homing all");
-            for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
-            {
-                m_arduinoControl.SendCommand((byte)i, (byte)ArduinoFunctions.HOME, 0);
-            }
 
-        }
-
-        private void HomeXTop(object obj)
+        private void HomeXTop()
         {
             m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
         }
-        private void HomeXBottom(object obj)
+        private void HomeXBottom()
         {
             m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
         }
 
-        public void HomeY(object obj)
+        public void HomeY()
         {
             m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
         }
@@ -105,6 +167,7 @@ namespace UI
             ObservableCollection<string> CurrentPorts;
             while (true)
             {
+                await Task.Delay(2000);
                 await Task.Run(() =>
                 {
                     CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
@@ -119,6 +182,10 @@ namespace UI
                         else
                             IsPortConnected = true;
                     }
+                    //++CPU_Scanned;
+                    //Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
+                    //Console.WriteLine(CPU_Scanned);
+                    //Console.WriteLine(Progress);
                 });
             }
         }
@@ -130,6 +197,19 @@ namespace UI
             {
                 m_updateUI = value;
                 OnPropertyChanged(this, "IsPortConnected");
+            }
+        }
+
+        public float Progress
+        { 
+            get
+            {
+                return m_progress;
+            }
+            set
+            {
+                m_progress = value;
+                OnPropertyChanged(this, "Progress");
             }
         }
 
@@ -163,7 +243,8 @@ namespace UI
                     m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                 } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                ++m_cpu_scanned;
+                ++CPU_Scanned;
+                Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
             }
 
             HomeAll();
@@ -193,7 +274,8 @@ namespace UI
                     m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                 } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                ++m_cpu_scanned;
+                ++CPU_Scanned;
+                Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
             }
 
         }

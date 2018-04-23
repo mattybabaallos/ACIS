@@ -25,5 +25,10 @@ namespace UI
             InitializeComponent();
             DataContext = new ViewModel(this);
         }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
