@@ -80,10 +80,10 @@ namespace UI
             try
             {
                 m_camera.Videocapture.Retrieve(m_camera.Frame);
-                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
-                m_camera.Frame.Save(path);
-                ImagePath = path;
                 m_camera.Videocapture.Stop();
+                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
+                m_camera.Frame.Save(path);     
+                ImagePath = path;
             }
             catch (Exception ex)
             {
