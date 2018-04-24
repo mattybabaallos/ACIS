@@ -106,7 +106,8 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="6"/>
                         <ColumnDefinition Width="94"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="133"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Content="Serial ports" Grid.ColumnSpan="2"></Label>
                     <Label Grid.Row="0" Grid.Column="2">
@@ -121,8 +122,9 @@
                         <TextBox x:Name="SaveFolder"
                             Text="{Binding SaveFolder}"
                             ToolTip="Save path"
-                            Height="20" Width="600" />
+                            Height="20" Width="380" />
                     </Label>
+                    <Button Grid.Row="1" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="80"  Command="{Binding BrowseCommand}"/>
                     <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
                 </Grid>
