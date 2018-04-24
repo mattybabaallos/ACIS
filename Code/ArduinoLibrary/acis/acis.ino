@@ -20,13 +20,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
- disp.display(_acis.home(X_AXIS_TOP));
- delay(1000);  
- disp.all_off();
- delay(1000);
- disp.display(_acis.move_forward(X_AXIS_TOP,MAX_X_TOP_LENGTH));
- delay(1000);
- disp.display(_acis.move_backward(X_AXIS_TOP,200));
+
 }
 
 void loop()
@@ -36,21 +30,20 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     disp.all_off();
-    delay(1000);
+    delay(1500);
     disp.display_binary(buffer[0]);
-    delay(1000);
+    delay(1500);
     disp.display_binary(buffer[1]);
-    delay(1000);
+    delay(1500);
     _acis.process(buffer);
     disp.all_off();
-    delay(1000);
+    delay(1500);
     disp.display_binary(buffer[0]);
-    delay(1000);
+    delay(1500);
     disp.display_binary(buffer[1]);
-    delay(1000);
+    delay(1500);
     Serial.write(buffer,BUFFER_SIZE);
   }
-
 }
 
 void X_TOP_ISR()

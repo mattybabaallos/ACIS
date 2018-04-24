@@ -2,15 +2,17 @@
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
-
+using System.Threading;
 
 namespace Services
 {
     public class ArduinoControl
     {
         private SerialPort port;
-        public ArduinoControl()
+        private AutoResetEvent m_autoEvent; //Thead synchrontion
+        public ArduinoControl(AutoResetEvent autoEvent)
         {
+            m_autoEvent = autoEvent;
             port = new SerialPort();
         }
 
@@ -71,6 +73,21 @@ namespace Services
         public byte[] SendCommand(Motors motor, ArduinoFunctions op, byte distance)
         {
             return SendCommand((byte)motor, (byte)op, distance);
+        }
+
+        public byte[] SendCommandBlocking(Motors motor, ArduinoFunctions op, byte distance)
+        {
+            var val = SendCommand((byte)motor, (byte)op, distance);
+            m_autoEvent.WaitOne();
+            return val;
+
+        }
+
+        public byte[] SendCommandBlocking(byte device, byte op, byte distance)
+        {
+            var val = SendCommand(device, op, distance);
+            m_autoEvent.WaitOne();
+            return val;
         }
 
 
