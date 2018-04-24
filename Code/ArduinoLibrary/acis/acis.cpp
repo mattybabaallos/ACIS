@@ -17,7 +17,7 @@ acis::acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafr
 int acis::init()
 {
 	motors[X_AXIS_TOP].init_motor(m_shield_0->getStepper(MOTOR_STEPS, X_AXIS_TOP_CHANNEL), MAX_X_TOP_LENGTH);
-	motors[X_AXIS_BOTTOM].init_motor(m_shield_0->getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL), MAX_X_BOTTOM_LENGTH);
+	//motors[X_AXIS_BOTTOM].init_motor(m_shield_0->getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL), MAX_X_BOTTOM_LENGTH);
 
 	//motors[Z_AXIS_TOP].init_motor(shield_1.getStepper(MOTOR_STEPS, Z_AXIS_TOP_CHANNEL), MAX_Z_TOP_LENGTH);
 	//motors[Z_AXIS_BOTTOM].init_motor(shield_1.getStepper(MOTOR_STEPS, Z_AXIS_BOTTOM_CHANNEL), MAX_Z_BOTTOM_LENGTH);
@@ -37,7 +37,7 @@ int acis::move_forward(int unsigned motor_id, unsigned int mm)
 	return working_motor->move_forward(mm);
 }
 
-int acis::move_backward(int unsigned motor_id, unsigned int mm)
+int acis::move_backward(unsigned int motor_id, unsigned int mm)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)
@@ -45,7 +45,7 @@ int acis::move_backward(int unsigned motor_id, unsigned int mm)
 	return working_motor->move_backward(mm);
 }
 
-int acis::stop(int unsigned motor_id)
+int acis::stop(unsigned int motor_id)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)
@@ -53,7 +53,7 @@ int acis::stop(int unsigned motor_id)
 	return working_motor->stop();
 }
 
-int acis::home(int unsigned motor_id)
+int acis::home(unsigned int motor_id)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)

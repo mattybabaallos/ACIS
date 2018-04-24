@@ -150,6 +150,7 @@ namespace UI
         {
             m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
         }
+
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int device = -1, status = -1, op = -1, distance = -1;
@@ -162,7 +163,6 @@ namespace UI
                 m_home.ScrollViewer.ScrollToBottom();
             }));
         }
-
 
         /// <summary>
         /// This function always run on the background and only update the COM list if there is any changes

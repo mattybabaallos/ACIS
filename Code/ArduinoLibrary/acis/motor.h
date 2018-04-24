@@ -12,20 +12,21 @@ Matty Baba Allos matty@pdx.edu
 
 class motor
 {
-public:
+  public:
 	motor();
-	int init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance);
-	int move_forward(unsigned int mm);
-	int move_backward(unsigned int mm);
+	int init_motor(Adafruit_StepperMotor *stepper, int max_distance);
+	int move_forward(float mm);
+	int move_backward(float mm);
 	int stop();
 	int home();
 
-protected:
-	int get_steps(unsigned int mm);
-	uint16_t step(uint16_t steps, uint8_t direction, uint8_t style);
+  protected:
+	float get_steps(float mm);
+	float get_mm(float steps);
+	int step(int steps, int direction, int style);
 	bool m_stop;
-	unsigned int m_current_position;
-	unsigned int m_max_distance; // in mm
+	float m_current_position;
+	float m_max_distance; // in mm
 	Adafruit_StepperMotor *m_motor;
 };
 

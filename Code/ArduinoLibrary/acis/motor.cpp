@@ -7,11 +7,11 @@ Matty Baba Allos matty@pdx.edu
 
 #include "motor.h"
 
-motor::motor() :m_stop(true), m_current_position(0), m_max_distance(0), m_motor(NULL)
+motor::motor() : m_stop(true), m_current_position(0), m_max_distance(0), m_motor(NULL)
 {
 }
 
-int motor::init_motor(Adafruit_StepperMotor *stepper, unsigned int max_distance)
+int motor::init_motor(Adafruit_StepperMotor *stepper, int max_distance)
 {
 	if (!stepper)
 	{
@@ -36,7 +36,7 @@ int motor::stop()
 //move the motor forward
 //return the number of mm move_forward
 // negative if not successful
-int motor::move_forward(unsigned int mm)
+int motor::move_forward(float mm)
 {
 
 	if (!m_motor)
@@ -48,14 +48,15 @@ int motor::move_forward(unsigned int mm)
 	{
 		mm = m_max_distance - m_current_position; //if the motor will be going beyond it max limit
 	}
-	m_current_position += step(get_steps(mm), FORWARD, DOUBLE);
+	m_current_position += get_mm(step(get_steps(mm), FORWARD, DOUBLE));
+	m_motor->release();
 	return m_current_position;
 }
 
 //move the motor backward
 //return the number of mm move_forward
 // negative if not successful
-int motor::move_backward(unsigned int mm)
+int motor::move_backward(float mm)
 {
 
 	if (!m_motor)
@@ -63,11 +64,11 @@ int motor::move_backward(unsigned int mm)
 		return INVALID_DEVICE;
 	}
 	m_stop = false;
-	if ((int)(m_current_position - mm) <= 0)
+	if ((float)(m_current_position - mm) <= 0)
 	{
 		mm = m_current_position;
 	}
-	m_current_position -= step(get_steps(mm), BACKWARD, DOUBLE);
+	m_current_position -= get_mm(step(get_steps(mm), BACKWARD, DOUBLE));
 	return m_current_position;
 }
 
@@ -80,27 +81,28 @@ int motor::home()
 	}
 	m_stop = false;
 	step(get_steps(MAX_X_TOP_LENGTH), BACKWARD, DOUBLE); //move the most until it hits the switch
-  	m_stop= false;
+	m_stop = false;
 	step(get_steps(5), FORWARD, DOUBLE);
 	m_motor->release();
 	m_current_position = 0;
 	return m_current_position;
 }
 
-uint16_t motor::step(uint16_t steps, uint8_t direction, uint8_t style)
+int motor::step(int steps, int direction, int style)
 {
-	int16_t temp = steps;
-	while (!m_stop && temp > 0)
+	int temp = 0;
+	while (!m_stop && steps > 0)
 	{
 		m_motor->onestep(direction, style);
-		delayMicroseconds(1000);
-		--temp;
+		//delayMicroseconds(1000);
+		--steps;
+		++temp;
 	}
 	m_stop = true;
-	return (int16_t)temp;
+	return temp;
 }
 
-int motor::get_steps(unsigned int mm)
+float motor::get_steps(float mm)
 {
 	/*
 	 * To get the number of stepps needed to travel that number of mm
@@ -122,4 +124,9 @@ int motor::get_steps(unsigned int mm)
 	 * number of steps
 	 */
 	return mm / STEP_TO_DEGREE_CONST;
+}
+
+float motor::get_mm(float steps)
+{
+	return steps * STEP_TO_DEGREE_CONST;
 }

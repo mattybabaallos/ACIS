@@ -23,14 +23,14 @@ It will include all #includes and #defines
 #define X_AXIS_BOTTOM_CHANNEL 1
 #define Z_AXIS_TOP_CHANNEL 1
 #define Z_AXIS_BOTTOM_CHANNEL 2
-#define Y_AXIS_CHANNEL 2
+#define Y_AXIS_CHANNEL 1
 
 #define MOTOR_STEPS 200
 #define MOTOR_SPEED 100
 
 #define X_TOP_SWICH_PIN 2
 #define X_BOTTOM_SWICH_PIN 3
-#define Y_SWICH_PIN 4
+#define Y_SWICH_PIN 3
 #define Z_TOP_SWICH_PIN 5
 #define Z_BOTTOM_SWICH_PIN 6
 
@@ -38,13 +38,13 @@ It will include all #includes and #defines
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 5
 
-#define MAX_X_TOP_LENGTH 400
-#define MAX_X_BOTTOM_LENGTH 400
-#define MAX_Z_TOP_LENGTH 400
-#define MAX_Z_BOTTOM_LENGTH 400
-#define MAX_Y_LENGTH 400
+#define MAX_X_TOP_LENGTH 330
+#define MAX_X_BOTTOM_LENGTH 330
+#define MAX_Z_TOP_LENGTH 330
+#define MAX_Z_BOTTOM_LENGTH 330
+#define MAX_Y_LENGTH 330
 
-#define STEP_TO_DEGREE_CONST 0.204
+#define STEP_TO_DEGREE_CONST (0.11344640138 * 1.8)
 
 #define BYTES_TO_READ 2
 #define BUFFER_SIZE 3
