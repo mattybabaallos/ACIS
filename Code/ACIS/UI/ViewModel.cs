@@ -44,7 +44,7 @@ namespace UI
 
         public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
         public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
-
+        public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
 
 
         //private List<string> m_error = new List<string>();
@@ -105,15 +105,28 @@ namespace UI
                 OnPropertyChanged(this, "ImagePath");
             }
         }
+
+        private void Browse()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            SaveFolder = dialog.SelectedPath;
+        }
+
+
         public string SaveFolder
         {
             get { return m_saveFolder; }
             set
             {
-                m_saveFolder = value;
-                if (!Directory.Exists(m_saveFolder))
-                    Directory.CreateDirectory(m_saveFolder);
-                OnPropertyChanged(this, "SaveFolder");
+                if (!String.IsNullOrEmpty(value))
+                {
+                    m_saveFolder = value;
+                    if (!Directory.Exists(m_saveFolder))
+                        Directory.CreateDirectory(m_saveFolder);
+                    OnPropertyChanged(this, "SaveFolder");
+                }
+
             }
         }
         /***************************************/
@@ -228,7 +241,7 @@ namespace UI
             {
                 //Home the motors.
                 HomeAll();
-          
+
                 //Move the X axis cameras to the begging of the tray
                 m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
                 m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
