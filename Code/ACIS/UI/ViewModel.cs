@@ -1,6 +1,7 @@
 ﻿using Data;
 using Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -35,12 +36,17 @@ namespace UI
         private int m_y_axis_dividers_count;
         private float m_progress;
 
+        private Motors m_selected_motor;
+        private ArduinoFunctions m_selected_direction;
+        private float m_distance;
+
         public ICommand HomeAllCommand { get { return new HomeCommand(e => true, this.HomeAll); } }
         public ICommand HomeXTopCommand { get { return new HomeCommand(e => true, this.HomeXTop); } }
         public ICommand HomeXBottomCommand { get { return new HomeCommand(e => true, this.HomeXBottom); } }
         public ICommand HomeYCommand { get { return new HomeCommand(e => true, this.HomeY); } }
         public ICommand CaptureCommand { get { return new HomeCommand(e => true, this.CaptureCPU); } }
         public ICommand BrowseCommand { get { return new HomeCommand(e => true, this.Browse); } }
+        public ICommand SendCommand { get { return new HomeCommand(e => true, this.Send); } }
 
         //private List<string> m_error = new List<string>();
 
@@ -82,7 +88,7 @@ namespace UI
                 m_camera.Videocapture.Retrieve(m_camera.Frame);
                 m_camera.Videocapture.Stop();
                 string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
-                m_camera.Frame.Save(path);     
+                m_camera.Frame.Save(path);
                 ImagePath = path;
             }
             catch (Exception ex)
@@ -90,7 +96,7 @@ namespace UI
                 Console.WriteLine(ex.Message);
             }
         }
-           
+
         public string ImagePath
         {
             get { return m_imagePath; }
@@ -105,13 +111,37 @@ namespace UI
             get { return m_saveFolder; }
             set
             {
-              m_saveFolder = value;
+                m_saveFolder = value;
                 if (!Directory.Exists(m_saveFolder))
                     Directory.CreateDirectory(m_saveFolder);
                 OnPropertyChanged(this, "SaveFolder");
             }
         }
         /***************************************/
+        public Motors SelectedMotor
+        {
+            get { return m_selected_motor; }
+            set { m_selected_motor = value;  OnPropertyChanged(this, "SelectedMotor"); }
+        }
+        public ArduinoFunctions SelectedDirection
+        {
+            get { return m_selected_direction; }
+            set { m_selected_direction = value; OnPropertyChanged(this, "SelectedDirection"); }
+        }
+        public float Distance
+        {
+            get { return m_distance; }
+            set { m_distance = value; OnPropertyChanged(this, "Distance"); }
+        }
+
+        public List<Motors> MotorList
+        {
+            get { return Enum.GetValues(typeof(Motors)).Cast<Motors>().ToList(); }
+        }
+        public List<ArduinoFunctions> DirectionList
+        {
+            get { return Enum.GetValues(typeof(ArduinoFunctions)).Cast<ArduinoFunctions>().ToList(); }
+        }
         public int CPU_Scanned
         {
             get { return m_cpu_scanned; }
@@ -121,7 +151,10 @@ namespace UI
                 OnPropertyChanged(this, "CPU_Scanned");
             }
         }
-
+        private void Send()
+        {
+            m_arduinoControl.SendCommand((byte)m_selected_motor, (byte)m_selected_direction, (byte)m_distance);
+        }
         private void Browse()
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();

@@ -51,7 +51,7 @@
                         </Grid>
                     </GroupBox>
 
-                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Errors" Margin="10.2,10,290.4,112" Grid.ColumnSpan="2">
+                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Errors" Margin="10,10,0,112">
                         <ScrollViewer   Name="ScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -97,19 +97,20 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="50" Width="100"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="43.2"/>
+                        <ColumnDefinition Width="566.4"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Content="Serial ports"></Label>
-                    <Label Grid.Row="0" Grid.Column="1">
+                    <Label Grid.Row="0" Content="Serial ports" Grid.ColumnSpan="2" Margin="0,0,43,0.2"></Label>
+                    <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0.2,0,0.4,0.2">
                         <ComboBox x:Name="GradeListDropdown"
                             ItemsSource="{Binding Ports}"
                             SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
                             ToolTip="Serial port list"
                             Height="20" Width="180" />
                     </Label>
-                    <Label Grid.Row="1" Content="Save path "></Label>
-                    <Label Grid.Row="1" Grid.Column="1">
+                    <Label Content="Save path " Grid.ColumnSpan="2" Margin="0,31,43,0.4" Grid.RowSpan="2"/>
+                    <Label Grid.Column="1" Grid.ColumnSpan="2" Margin="0.2,31,0.4,0.4" Grid.RowSpan="2">
                         <TextBox x:Name="SaveFolder"
                             Text="{Binding SaveFolder}"
                             ToolTip="Save path"
@@ -117,25 +118,69 @@
                     </Label>
                     <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
-                    <Button Grid.Row="1" Grid.Column="2" Content="Browse" Width="80" Margin="10,1,394,7" Command="{Binding BrowseCommand}"/>
+                    <Button Grid.Row="1" Grid.Column="3" Content="Browse" Width="80" Margin="9.6,0.8,394.4,7.4" Command="{Binding BrowseCommand}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Manual control" >
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition Height="Auto" MinHeight="20"/>
+                        <RowDefinition Height="200"/>
+                        <RowDefinition Height="200"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="50" Width="100"/>
-                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Content="Home All" Command="{Binding HomeAllCommand}" HorizontalAlignment="Left" Margin="51,155,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2"/>
-                    <Button Content="Home X top" Command="{Binding HomeXTopCommand}" HorizontalAlignment="Left" Margin="51,85,0,0" VerticalAlignment="Top" Width="116" Grid.ColumnSpan="2"/>
-                    <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" HorizontalAlignment="Left" Margin="51,49,0,0" VerticalAlignment="Top" Width="116" Height="20" Grid.ColumnSpan="2"/>
-                    <Button Content="Home Y" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" Margin="51,121,0,0" VerticalAlignment="Top" Width="116" RenderTransformOrigin="1.599,3.571" Grid.ColumnSpan="2"/>
+                    <GroupBox Grid.Row="0" Grid.Column="0" Header="Home Commands" Margin="10,10,0,0">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Margin" Value="10,10,10,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Content="Home All" Command="{Binding HomeAllCommand}" Margin="10,30,10,0" />
+                            <Button Content="Home X top" Command="{Binding HomeXTopCommand}"/>
+                            <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}"/>
+                            <Button Content="Home Y" Command="{Binding HomeYCommand}"/>
+                        </StackPanel>
+                    </GroupBox>
 
+                    <GroupBox Grid.Row="0" Grid.Column="1" Header="Send Command" HorizontalAlignment="Left" Margin="20,10,0,0" >
+                        <StackPanel Orientation="Vertical">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Motors" Margin="0,10,0,0"/>
+                                <Label  Grid.Row="0" Grid.Column="1" Margin="0,5,10,0">
+                                    <ComboBox HorizontalAlignment="Left" Width="200"
+                                              ItemsSource="{Binding MotorList}"
+                                              SelectedValue ="{Binding SelectedMotor}"
+                                              ToolTip="Motor list"/>
+                                </Label>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Centimeters" Margin="0,10,0,0"/>
+                                <Label  Grid.Row="1" Grid.Column="1" Margin="0,5,0,0">
+                                    <TextBox Text="{Binding Distance}" Width="200" Height="20" HorizontalAlignment="Left"/>
+                                </Label>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Directions" Margin="0,10,0,0"/>
+                                <Label Grid.Row="2" Grid.Column="1" Margin="0,5,10,0">
+                                    <ComboBox Width="200" 
+                                          HorizontalAlignment="Left"
+                                          ItemsSource="{Binding DirectionList}"
+                                          SelectedValue ="{Binding SelectedDirection}"
+                                          ToolTip="Direction list"/>
+                                </Label>
+                            </Grid>
+                            <Button Content="SEND" Command="{Binding SendCommand}" Width="100" Height="30" Margin="0,20,0,0"/>
+                        </StackPanel>
+                    </GroupBox>
+    
                 </Grid>
             </TabItem>
         </TabControl>
