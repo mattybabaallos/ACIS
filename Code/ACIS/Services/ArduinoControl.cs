@@ -2,17 +2,22 @@
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
-
+using System.Threading;
 
 namespace Services
 {
     public class ArduinoControl
     {
         private SerialPort port;
-        public ArduinoControl()
+        private AutoResetEvent m_autoEvent; //Thead synchrontion
+        public ArduinoControl(AutoResetEvent autoEvent, CancellationTokenSource cancellation)
         {
+            m_autoEvent = autoEvent;
             port = new SerialPort();
+            Cancellation = cancellation;
         }
+
+        public CancellationTokenSource Cancellation { get; set; }
 
         public void Connect()
         {
@@ -71,6 +76,23 @@ namespace Services
         public byte[] SendCommand(Motors motor, ArduinoFunctions op, byte distance)
         {
             return SendCommand((byte)motor, (byte)op, distance);
+        }
+
+        public byte[] SendCommandBlocking(Motors motor, ArduinoFunctions op, byte distance)
+        {
+            var val = SendCommand((byte)motor, (byte)op, distance);
+            m_autoEvent.WaitOne();
+            Cancellation.Token.ThrowIfCancellationRequested();
+            return val;
+
+        }
+
+        public byte[] SendCommandBlocking(byte device, byte op, byte distance)
+        {
+            var val = SendCommand(device, op, distance);
+            m_autoEvent.WaitOne();
+            Cancellation.Token.ThrowIfCancellationRequested();
+            return val;
         }
 
 
