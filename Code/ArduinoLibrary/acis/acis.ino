@@ -30,18 +30,12 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     disp.all_off();
-    delay(1500);
     disp.display_binary(buffer[0]);
-    delay(1500);
     disp.display_binary(buffer[1]);
-    delay(1500);
     _acis.process(buffer);
     disp.all_off();
-    delay(1500);
     disp.display_binary(buffer[0]);
-    delay(1500);
     disp.display_binary(buffer[1]);
-    delay(1500);
     Serial.write(buffer,BUFFER_SIZE);
   }
 }
@@ -54,6 +48,8 @@ void X_TOP_ISR()
     interrupts();
     _acis.send_back(buffer,X_AXIS_TOP,STOP,STOP_INTERRUPT,0);
     _acis.stop(X_AXIS_TOP);
+    disp.display(100);
+
   }
 }
 

@@ -10,11 +10,14 @@ namespace Services
     {
         private SerialPort port;
         private AutoResetEvent m_autoEvent; //Thead synchrontion
-        public ArduinoControl(AutoResetEvent autoEvent)
+        public ArduinoControl(AutoResetEvent autoEvent, CancellationTokenSource cancellation)
         {
             m_autoEvent = autoEvent;
             port = new SerialPort();
+            Cancellation = cancellation;
         }
+
+        public CancellationTokenSource Cancellation { get; set; }
 
         public void Connect()
         {
@@ -79,6 +82,7 @@ namespace Services
         {
             var val = SendCommand((byte)motor, (byte)op, distance);
             m_autoEvent.WaitOne();
+            Cancellation.Token.ThrowIfCancellationRequested();
             return val;
 
         }
@@ -87,6 +91,7 @@ namespace Services
         {
             var val = SendCommand(device, op, distance);
             m_autoEvent.WaitOne();
+            Cancellation.Token.ThrowIfCancellationRequested();
             return val;
         }
 
