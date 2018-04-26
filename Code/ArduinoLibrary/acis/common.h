@@ -12,6 +12,7 @@ It will include all #includes and #defines
 #define COMMON_H
 
 #include <Arduino.h>
+#include <avr/interrupt.h>
 #include <Wire.h>
 #include "Adafruit_MotorShield.h"
 
@@ -30,7 +31,7 @@ It will include all #includes and #defines
 
 #define X_TOP_SWICH_PIN 2
 #define X_BOTTOM_SWICH_PIN 3
-#define Y_SWICH_PIN 3
+#define Y_SWICH_PIN 4
 #define Z_TOP_SWICH_PIN 5
 #define Z_BOTTOM_SWICH_PIN 6
 

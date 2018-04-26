@@ -8,19 +8,12 @@ Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 acis _acis(&shield_0, &shield_1, &shield_2);
 char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
-sev_seg disp(8);
+sev_seg disp(9);
 void setup()
 {
   _acis.init();
+  enable_pin_change_interrupt();
   Serial.begin(9600);
-
-  // Attach an interrupt to the ISR vector, capture interrupt at falling edge
-  attachInterrupt(digitalPinToInterrupt(X_TOP_SWICH_PIN), X_TOP_ISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(X_BOTTOM_SWICH_PIN), X_BOTTOM_ISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(Y_SWICH_PIN), Y_ISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(Z_TOP_SWICH_PIN), Z_TOP_ISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(Z_BOTTOM_SWICH_PIN), Z_BOTTOM_ISR, FALLING);
-
 }
 
 void loop()
@@ -36,59 +29,60 @@ void loop()
     disp.all_off();
     disp.display_binary(buffer[0]);
     disp.display_binary(buffer[1]);
-    Serial.write(buffer,BUFFER_SIZE);
+    Serial.write(buffer, BUFFER_SIZE);
   }
 }
 
-void X_TOP_ISR()
+void enable_pin_change_interrupt()
 {
+
+  PCICR |= 0b00000100;
+  PCMSK2 |= 0b11111100; //enable pin change interrpt on pin 2 to 7;
+  //Pullup all the pins on the port
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(4, INPUT_PULLUP);
+  pinMode(5, INPUT_PULLUP);
+  pinMode(6, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
+  interrupts();
+}
+
+ISR(PCINT2_vect)
+{
+
+  if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
+  {
+    interrupts();
+    _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    _acis.stop(X_AXIS_BOTTOM);
+  }
+
+  if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
+  {
+    interrupts();
+    _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
+    _acis.stop(Y_AXIS);
+  }
+
+  if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
+  {
+    interrupts();
+    _acis.send_back(buffer, Z_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    _acis.stop(Z_AXIS_TOP);
+  }
+
+  if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
+  {
+    interrupts();
+    _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    _acis.stop(Z_AXIS_BOTTOM);
+  }
 
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer,X_AXIS_TOP,STOP,STOP_INTERRUPT,0);
+    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_TOP);
-    disp.display(100);
-
-  }
-}
-
-void X_BOTTOM_ISR()
-{
-  if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
-  {
-    interrupts();
-    _acis.send_back(buffer,X_AXIS_BOTTOM,STOP,STOP_INTERRUPT,0);
-    _acis.stop(X_AXIS_BOTTOM);
-  }
-}
-
-void Y_ISR()
-{
-  if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
-  {
-    interrupts();
-    _acis.send_back(buffer,Y_AXIS,STOP,STOP_INTERRUPT,0);
-    _acis.stop(Y_AXIS);
-  }
-}
-
-void Z_TOP_ISR()
-{
-  if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
-  {
-    interrupts();
-    _acis.send_back(buffer,Z_AXIS_TOP,STOP,STOP_INTERRUPT,0);
-    _acis.stop(Z_AXIS_TOP);
-  }
-}
-
-void Z_BOTTOM_ISR()
-{
-  if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
-  {
-    interrupts();
-    _acis.send_back(buffer,Z_AXIS_BOTTOM,STOP,STOP_INTERRUPT,0);
-    _acis.stop(Z_AXIS_BOTTOM);
   }
 }
