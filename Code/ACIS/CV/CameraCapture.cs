@@ -30,6 +30,8 @@ namespace CV
         /* Base name for the file: */
         private string file_name;
 
+        public string FileName => Image_prefix();
+
         /* Camera Settings: */
         public void Init_camera(int R, int C, string save_path, string name)
         {
