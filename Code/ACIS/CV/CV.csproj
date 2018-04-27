@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Barcode.cs" />
+    <Compile Include="CameraCapture.cs" />
     <Compile Include="ImageStitching.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
