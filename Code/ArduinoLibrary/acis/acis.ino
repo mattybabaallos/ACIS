@@ -14,6 +14,7 @@ void setup()
   _acis.init();
   enable_pin_change_interrupt();
   Serial.begin(9600);
+  _acis.home(Y_AXIS);
 }
 
 void loop()
