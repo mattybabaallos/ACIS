@@ -14,6 +14,8 @@ void setup()
   _acis.init();
   enable_pin_change_interrupt();
   Serial.begin(9600);
+  
+
 }
 
 void loop()
@@ -51,11 +53,21 @@ void enable_pin_change_interrupt()
 ISR(PCINT2_vect)
 {
 
+
+  if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
+  {
+    interrupts();
+    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    _acis.stop(X_AXIS_TOP);
+    disp.display(0);
+  }
+
   if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
   {
     interrupts();
     _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_BOTTOM);
+    disp.display(1);
   }
 
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
@@ -63,6 +75,8 @@ ISR(PCINT2_vect)
     interrupts();
     _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Y_AXIS);
+    disp.display(2);
+    
   }
 
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
@@ -79,10 +93,5 @@ ISR(PCINT2_vect)
     _acis.stop(Z_AXIS_BOTTOM);
   }
 
-  if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
-  {
-    interrupts();
-    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
-    _acis.stop(X_AXIS_TOP);
-  }
+
 }

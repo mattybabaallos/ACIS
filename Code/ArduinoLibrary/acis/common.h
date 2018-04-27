@@ -20,11 +20,11 @@ It will include all #includes and #defines
 #define SHIELD_ONE_ADDRESS 0x62
 #define SHIELD_TWO_ADDRESS 0x00
 
-#define X_AXIS_TOP_CHANNEL 2
-#define X_AXIS_BOTTOM_CHANNEL 1
+#define X_AXIS_TOP_CHANNEL 1
+#define X_AXIS_BOTTOM_CHANNEL 2
 #define Z_AXIS_TOP_CHANNEL 1
 #define Z_AXIS_BOTTOM_CHANNEL 2
-#define Y_AXIS_CHANNEL 1
+#define Y_AXIS_CHANNEL 2
 
 #define MOTOR_STEPS 200
 #define MOTOR_SPEED 100
