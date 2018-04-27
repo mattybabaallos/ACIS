@@ -30,7 +30,7 @@ namespace CV
         /* Base name for the file: */
         private string file_name;
 
-        public string FileName => Image_prefix();
+        public string FileName => Image_prefix_filename();
 
         /* Camera Settings: */
         public void Init_camera(int R, int C, string save_path, string name)
@@ -54,6 +54,12 @@ namespace CV
                 Image_number_C = 0;
                 Image_number_R++;
             }
+            return prefix;
+        }
+
+        private string Image_prefix_filename()
+        {
+            var prefix = "/" + file_name + Image_number_R + Image_number_C + ".jpg";
             return prefix;
         }
 

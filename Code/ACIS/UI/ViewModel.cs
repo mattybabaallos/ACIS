@@ -283,9 +283,10 @@ namespace UI
                         {
                             while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
                             {
+                                Thread.Sleep(500);
                                 cameraCapture.Take_picture();
                                 ImagePath = cameraCapture.FileName;
-                                Thread.Sleep(500);
+                            
 
                                 //Step the X axis camera to the next position
                                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
@@ -294,7 +295,7 @@ namespace UI
 
                             //Step the X axis cameras back start of tray 
                             m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
-                          //  m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
+                           //m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
 
                             m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
