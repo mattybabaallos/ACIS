@@ -13,18 +13,18 @@ Matty Baba Allos matty@pdx.edu
 
 class acis
 {
-public:
+  public:
 	acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafruit_MotorShield *shield_2);
 	int init();
-	int move_forward(int unsigned motor_id, unsigned int mm);
-	int move_backward(int unsigned motor_id, unsigned int mm);
-	int stop(int unsigned motor_id);
-	int home(int unsigned motor_id);
-	int process(char *buffer);
-	int send_back(char *buffer,unsigned int device,unsigned int op, unsigned int status_code, unsigned int new_state);
+	int move_forward(unsigned int motor_id, unsigned int mm);
+	int move_backward(unsigned int motor_id, unsigned int mm);
+	int stop(unsigned int motor_id);
+	int home(unsigned int motor_id);
+	int process(unsigned char *buffer);
+	int send_back(unsigned char *buffer, unsigned int device, unsigned int op, unsigned int status_code, unsigned int new_state);
 
-private:
-	int decode(char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm);
+  private:
+	int decode(unsigned char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm);
 	Adafruit_MotorShield *m_shield_0;
 	Adafruit_MotorShield *m_shield_1;
 	Adafruit_MotorShield *m_shield_2;

@@ -46,7 +46,7 @@ namespace Services
                 case (int)Erros.COULD_NOT_PERFORM_OPERATION:
                     return Erros.COULD_NOT_DECODE_BYTES.ToString();
                 default:
-                    return "Undfined error happened";
+                    return "Undefined error happened";
             }
 
         }

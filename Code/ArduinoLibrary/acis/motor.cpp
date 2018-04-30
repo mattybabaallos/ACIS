@@ -38,7 +38,6 @@ int motor::stop()
 // negative if not successful
 int motor::move_forward(float mm)
 {
-
 	if (!m_motor)
 	{
 		return INVALID_DEVICE;
