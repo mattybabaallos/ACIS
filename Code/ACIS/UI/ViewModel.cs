@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using CV;
+using System.Xml;
 
 namespace UI
 {
@@ -21,12 +22,9 @@ namespace UI
         private ArduinoControl m_arduinoControl;
         private Motor[] m_motors;
 
-        /***********Added for camrea************/
-        private CameraControl m_camera;
         private string m_saveFolder;
         private string m_imagePath;
         private CameraCapture cameraCapture;
-        /***************************************/
 
         private string m_selected_port = string.Empty;
         private object _lock = new object();
@@ -45,8 +43,6 @@ namespace UI
         public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
         public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
         public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
-        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
-
         public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
         public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
@@ -65,46 +61,38 @@ namespace UI
             {
                 m_motors[i] = new Motor();
             }
-            /***********Added for camera************/
-            m_camera = new CameraControl();
-            m_camera.Videocapture.ImageGrabbed += SaveImage;
-            m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
-            if (!Directory.Exists(m_saveFolder))
-                Directory.CreateDirectory(m_saveFolder);
+
+            XmlDocument xmlDoc = new XmlDocument(); 
+            xmlDoc.Load("Setting.xml");
+            XmlNodeList savePathNode = xmlDoc.GetElementsByTagName("savePath");
+
+            if (!String.IsNullOrEmpty(savePathNode[0].InnerText))
+                m_saveFolder = savePathNode[0].InnerText;
+            else
+                m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
+
+            //validate the savePath
+            try
+            {
+                if (!Directory.Exists(m_saveFolder))
+                    Directory.CreateDirectory(m_saveFolder);
+            }
+            catch 
+            {
+                ErrorMessages.Add("Illegal save path");
+            }
+
+
             m_imagePath = "";
-
-
             cameraCapture = new CameraCapture();
-            /***************************************/
+
             m_cpu_scanned = 0;
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
 
-            //HomeAllButton = new HomeCommand(this);
             //updatePorts();
-        }
-
-        /***********Added for camrea************/
-        private void CaptureCPU()
-        {
-            m_camera.Capture();
-        }
-        private void SaveImage(object sender, EventArgs e)
-        {
-            try
-            {
-                m_camera.Videocapture.Retrieve(m_camera.Frame);
-                m_camera.Videocapture.Stop();
-                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
-                m_camera.Frame.Save(path);
-                ImagePath = path;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
         }
 
         public string ImagePath
@@ -124,7 +112,6 @@ namespace UI
             SaveFolder = dialog.SelectedPath;
         }
 
-
         public string SaveFolder
         {
             get { return m_saveFolder; }
@@ -140,7 +127,7 @@ namespace UI
 
             }
         }
-        /***************************************/
+
         public int CPU_Scanned
         {
             get { return m_cpu_scanned; }
@@ -185,7 +172,6 @@ namespace UI
             ObservableCollection<string> CurrentPorts;
             while (true)
             {
-                await Task.Delay(2000);
                 await Task.Run(() =>
                 {
                     CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
@@ -320,7 +306,7 @@ namespace UI
                             while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY) //Scan for one row 
                             {
                                 cameraCapture.Take_picture();
-                                ImagePath = cameraCapture.FileName;
+                                ImagePath = SaveFolder + cameraCapture.FileName;
 
                                 //Step the X axis camera to the next position
                                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);

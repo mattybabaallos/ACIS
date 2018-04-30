@@ -56,8 +56,8 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Button Content="Start scan" Command="{Binding  StartScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116"  Grid.Row="0" Grid.Column="1"/>
-                            <Button Content="Stop scan" Command="{Binding  StopScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
+                            <Button Content="Start scan" Command="{Binding StartScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116"  Grid.Row="0" Grid.Column="1"/>
+                            <Button Content="Stop scan" Command="{Binding StopScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
@@ -73,8 +73,7 @@
                     <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
                                   Grid.ColumnSpan="1">
                         <StackPanel Orientation="Horizontal">
-                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="190" Margin="18,30,0,0" VerticalAlignment="Top" Width="207"/>
-                            <Button Content="Capture" Height="20"  Command="{Binding CaptureCommand}"/>
+                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="25,25,25,0" VerticalAlignment="Top" Width="237"/>
                         </StackPanel>
                     </GroupBox>
                     <GroupBox Header="Progress" Height="80" Grid.Column="2" VerticalAlignment="Top" Grid.Row="2">
