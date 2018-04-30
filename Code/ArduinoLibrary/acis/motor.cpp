@@ -68,6 +68,7 @@ int motor::move_backward(float mm)
 		mm = m_current_position;
 	}
 	m_current_position -= get_mm(step(get_steps(mm), BACKWARD, DOUBLE));
+	m_motor->release();
 	return m_current_position;
 }
 
