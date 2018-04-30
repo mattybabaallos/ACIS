@@ -6,7 +6,7 @@ Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
 Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 acis _acis(&shield_0, &shield_1, &shield_2);
-char buffer[BUFFER_SIZE];
+unsigned char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
 sev_seg disp(9);
 void setup()
@@ -14,7 +14,6 @@ void setup()
   _acis.init();
   enable_pin_change_interrupt();
   Serial.begin(9600);
-  _acis.home(Y_AXIS);
 }
 
 void loop()
@@ -24,12 +23,13 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     disp.all_off();
-    disp.display_binary(buffer[0]);
-    disp.display_binary(buffer[1]);
+    disp.display(buffer[0]);
+    disp.display(buffer[1]);
+    //delay(1000);
     _acis.process(buffer);
     disp.all_off();
-    disp.display_binary(buffer[0]);
-    disp.display_binary(buffer[1]);
+    disp.display(buffer[0]);
+    disp.display(buffer[1]);
     Serial.write(buffer, BUFFER_SIZE);
   }
 }
@@ -51,7 +51,6 @@ void enable_pin_change_interrupt()
 
 ISR(PCINT2_vect)
 {
-
 
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
@@ -75,7 +74,6 @@ ISR(PCINT2_vect)
     _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Y_AXIS);
     disp.display(2);
-    
   }
 
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
@@ -91,6 +89,4 @@ ISR(PCINT2_vect)
     _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Z_AXIS_BOTTOM);
   }
-
-
 }

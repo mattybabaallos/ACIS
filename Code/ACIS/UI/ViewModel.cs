@@ -284,7 +284,7 @@ namespace UI
                             while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
                             {
                                 Thread.Sleep(500);
-                                cameraCapture.Take_picture();
+                               // cameraCapture.Take_picture();
                                 ImagePath = cameraCapture.FileName;
                             
 
@@ -343,7 +343,7 @@ namespace UI
             }
             catch
             {
-                ErrorMessages.Add("Scan cancelled");
+                ErrorMessages.Add("Scan canceled");
                 return;
             }
 
@@ -383,19 +383,26 @@ namespace UI
             {
                 case (int)Motors.X_AXIS_TOP:
                     OnPropertyChanged(this, "XTopPosition");
-                    ErrorMessages.Add("X TOP motor moved to loaction" + distance);
+                    ErrorMessages.Add("X TOP motor moved to location " + distance);
                     break;
                 case (int)Motors.X_AXIS_BOTTOM:
                     OnPropertyChanged(this, "XBottomPosition");
+                    ErrorMessages.Add("X Bottom motor moved to location " + distance);
+
                     break;
                 case (int)Motors.Y_AXIS:
                     OnPropertyChanged(this, "YPosition");
+                    ErrorMessages.Add("Y motor moved to location " + distance);
+
                     break;
                 case (int)Motors.Z_AXIS_TOP:
                     OnPropertyChanged(this, "ZTopPosition");
+                    ErrorMessages.Add("Z TOP motor moved to location " + distance);
+
                     break;
                 case (int)Motors.Z_AXIS_BOTTOM:
                     OnPropertyChanged(this, "ZBottomPosition");
+                    ErrorMessages.Add("Z Bottom motor moved to location " + distance);
                     break;
 
 

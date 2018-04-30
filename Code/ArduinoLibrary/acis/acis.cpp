@@ -29,7 +29,7 @@ int acis::init()
 	return 0;
 }
 
-int acis::move_forward(int unsigned motor_id, unsigned int mm)
+int acis::move_forward(unsigned int motor_id, unsigned int mm)
 {
 	working_motor = &motors[motor_id];
 	if (!working_motor)
@@ -61,7 +61,7 @@ int acis::home(unsigned int motor_id)
 	return working_motor->home();
 }
 
-int acis::process(char *buffer)
+int acis::process(unsigned char *buffer)
 {
 	unsigned int device = 0;
 	unsigned int function = 0;
@@ -90,18 +90,18 @@ int acis::process(char *buffer)
 	return send_back(buffer, device, function, SUCCESS, temp);
 }
 
-int acis::decode(char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm)
+int acis::decode(unsigned char *buffer, unsigned int &device, unsigned int &function, unsigned int &mm)
 {
 	if (!buffer)
 		return COULD_NOT_PERFORM_OPERATION;
-	char temp = buffer[0];
+	unsigned char temp = buffer[0];
 	device = create_mask(0, 2) & temp;
 	function = (create_mask(3, 4) & temp) >> 3;
 	mm = buffer[1];
 	return SUCCESS;
 }
 
-int acis::send_back(char *buffer, unsigned int device, unsigned int op, unsigned int status_code, unsigned int new_state)
+int acis::send_back(unsigned char *buffer, unsigned int device, unsigned int op, unsigned int status_code, unsigned int new_state)
 {
 	if (!buffer)
 		return COULD_NOT_PERFORM_OPERATION;

@@ -12,7 +12,7 @@ Matty Baba Allos matty@pdx.edu
 
 class motor
 {
-  public:
+public:
 	motor();
 	int init_motor(Adafruit_StepperMotor *stepper, int max_distance);
 	int move_forward(float mm);
@@ -20,7 +20,7 @@ class motor
 	int stop();
 	int home();
 
-  protected:
+protected:
 	float get_steps(float mm);
 	float get_mm(float steps);
 	int step(int steps, int direction, int style);
