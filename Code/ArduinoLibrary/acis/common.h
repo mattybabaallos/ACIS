@@ -32,12 +32,13 @@ It will include all #includes and #defines
 #define X_TOP_SWICH_PIN 2
 #define X_BOTTOM_SWICH_PIN 3
 #define Y_SWICH_PIN 4
-#define Z_TOP_SWICH_PIN 5
-#define Z_BOTTOM_SWICH_PIN 6
+#define Y_AXIS_CPU_SWITCH_PIN 5
+#define Z_TOP_SWICH_PIN 6
+#define Z_BOTTOM_SWICH_PIN 7
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
-#define NUMBER_SWITCHES 5
+#define NUMBER_SWITCHES 6
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
@@ -50,14 +51,12 @@ It will include all #includes and #defines
 #define BYTES_TO_READ 2
 #define BUFFER_SIZE 3
 
-enum motors
-{
-    X_AXIS_TOP,
-    X_AXIS_BOTTOM,
-    Z_AXIS_TOP,
-    Z_AXIS_BOTTOM,
-    Y_AXIS
-};
+#define X_AXIS_TOP 0
+#define X_AXIS_BOTTOM 1
+#define Z_AXIS_TOP 2
+#define Z_AXIS_BOTTOM 3
+#define Y_AXIS 4
+#define Y_AXIS_CPU 5
 
 enum functions
 {
@@ -75,7 +74,7 @@ enum errors
     INVALID_DEVICE = -3,
     COULD_NOT_PERFORM_OPERATION = -4,
     COULD_NOT_DECODE_BYTES = -5,
-    COULD_NOT_PROCESS_BUFFER =-6,
+    COULD_NOT_PROCESS_BUFFER = -6,
     STOP_INTERRUPT = -7
 };
 

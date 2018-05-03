@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="ArduinoFunctions.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Erros.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="Motors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

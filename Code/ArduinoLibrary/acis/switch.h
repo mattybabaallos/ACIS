@@ -15,6 +15,7 @@ class limit_switch
   public:
 	limit_switch();
 	bool pressed(int switch_pin_number);
+	bool pressed(int switch_pin_number, int time_to_wait);
 
   private:
 	unsigned long last_interrupt_time;

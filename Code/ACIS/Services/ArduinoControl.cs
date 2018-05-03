@@ -102,10 +102,10 @@ namespace Services
             {
                 byte[] buffer = new byte[Constants.NUMBER_OF_BYTES_TO_RECEIVE];
                 port.Read(buffer, 0, Constants.NUMBER_OF_BYTES_TO_RECEIVE);
-                device = (int)(buffer[0] & Common.CrateMask(0, 2));
-                op = (int)(buffer[0] >> 3);
+                device = (byte)(buffer[0] & Common.CrateMask(0, 2));
+                op = (byte)buffer[0] >> 3;
                 distance = buffer[1];
-                status = buffer[2];
+                status = (sbyte)buffer[2];
             }
         }
 

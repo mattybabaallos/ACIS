@@ -14,7 +14,10 @@ namespace Data
         public const int BAUD_RATE = 9600;
 
         public const int CPU_WIDTH = 42;
-        
+
+        public const int Y_AXIS_CPU = 5;
+
+
 
 
 

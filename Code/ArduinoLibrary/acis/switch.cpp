@@ -26,3 +26,19 @@ bool limit_switch::pressed(int switch_pin_number)
 	last_interrupt_time = interrupt_time;
 	return pressed;
 }
+
+bool limit_switch::pressed(int switch_pin_number, int time_to_wait)
+{
+	bool pressed = false;
+	interrupt_time = millis();
+	// If interrupts come faster than 200ms, assume it's a bounce and ignore
+	if (interrupt_time - last_interrupt_time >time_to_wait)
+	{
+		if (!digitalRead(switch_pin_number))
+		{
+			pressed = true;
+		}
+	}
+	last_interrupt_time = interrupt_time;
+	return pressed;
+}

@@ -9,6 +9,7 @@ acis _acis(&shield_0, &shield_1, &shield_2);
 unsigned char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
 sev_seg disp(9);
+int i = 0;
 void setup()
 {
   _acis.init();
@@ -23,13 +24,13 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     disp.all_off();
-    disp.display(buffer[0]);
-    disp.display(buffer[1]);
+    // disp.display(buffer[0]);
+    // disp.display(buffer[1]);
     //delay(1000);
     _acis.process(buffer);
     disp.all_off();
-    disp.display(buffer[0]);
-    disp.display(buffer[1]);
+    //disp.display(buffer[0]);
+    //disp.display(buffer[1]);
     Serial.write(buffer, BUFFER_SIZE);
   }
 }
@@ -55,38 +56,51 @@ ISR(PCINT2_vect)
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_TOP);
+    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
     disp.display(0);
   }
 
   if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(X_AXIS_BOTTOM);
+    _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
     disp.display(1);
   }
 
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Y_AXIS);
+    _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
+
     disp.display(2);
   }
 
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer, Z_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Z_AXIS_TOP);
+    _acis.send_back(buffer, Z_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
   }
 
   if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
     _acis.stop(Z_AXIS_BOTTOM);
+    _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
+  }
+
+  if (sw[Y_AXIS_CPU].pressed(Y_AXIS_CPU_SWITCH_PIN, 150))
+  {
+    interrupts();
+    _acis.send_back(buffer, Y_AXIS_CPU, STOP, STOP_INTERRUPT, 0);
+    Serial.write(buffer, BUFFER_SIZE);
   }
 }

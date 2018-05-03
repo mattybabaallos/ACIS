@@ -21,7 +21,7 @@ namespace UI
         private ArduinoControl m_arduinoControl;
         private Motor[] m_motors;
 
-        /***********Added for camrea************/
+        /***********Added for camera************/
         private CameraControl m_camera;
         private string m_saveFolder;
         private string m_imagePath;
@@ -86,7 +86,7 @@ namespace UI
             //updatePorts();
         }
 
-        /***********Added for camrea************/
+        /***********Added for camera************/
         private void CaptureCPU()
         {
             m_camera.Capture();
@@ -285,9 +285,9 @@ namespace UI
                             while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
                             {
                                 Thread.Sleep(500);
-                               // cameraCapture.Take_picture();
+                                // cameraCapture.Take_picture();
                                 ImagePath = cameraCapture.FileName;
-                            
+
 
                                 //Step the X axis camera to the next position
                                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
@@ -301,7 +301,7 @@ namespace UI
                             m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                         } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                       // cameraCapture.Init_camera(24/Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder,DateTime.Now.ToString());
+                        // cameraCapture.Init_camera(24/Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder,DateTime.Now.ToString());
                         ++CPU_Scanned;
                         Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
                     }
@@ -356,7 +356,7 @@ namespace UI
             {
                 /*Error happened
                  * maybe print the error to the GUI and retry the command again. 
-                 * Poissble keep track if the errors, if it happens mutiple times ask the user to perform a reboot
+                 * Possible keep track if the errors, if it happens multiple times ask the user to perform a reboot
                  * or look into the issue.
                  * 
                 */
@@ -364,18 +364,21 @@ namespace UI
 
             }
 
-            m_waitHandle.Set();
-
-            if (op != (int)ArduinoFunctions.STOP)
+            //This is a respond to command sent from the main application
+            if (op != (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
             {
                 m_motors[device].Position = distance;
                 UpdateMotorsUiElements(device, distance);
-                return;
+                m_waitHandle.Set();
             }
 
-            if (device == (int)Motors.Y_AXIS)
+            else if (device == Constants.Y_AXIS_CPU && op == (int)ArduinoFunctions.STOP && status == (int)Errors.STOP_INTERRUPT)
                 ++m_y_axis_dividers_count;
-            m_motors[device].Stopped = true;
+
+            else if (op == (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
+                m_motors[device].Stopped = true;
+            else
+                ErrorMessages.Add("Couldn't decode message from scanner");
         }
 
         private void UpdateMotorsUiElements(int device, int distance)
