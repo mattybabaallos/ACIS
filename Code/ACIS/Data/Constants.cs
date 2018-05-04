@@ -26,11 +26,11 @@ namespace Data
 
 
         public const int DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR = 55;
-        public const int DISTANCE_FROM_HOME_TO_TRAY = 80;
+        public const int DISTANCE_FROM_HOME_TO_TRAY = 78;
         public const int DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR = 142;
         public const int DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY = 60;
         public const int DISTANCE_FROM_HOME_TO_END_OF_TRAY = 230;
-        public const int DISTANCE_FROM_HOME_TO_TRAY_Y = 140;
+        public const int DISTANCE_FROM_HOME_TO_TRAY_Y = 135;
         public const int CPU_TO_SCAN = 6;
         public const int Y_AXIS_DIVIDERS = 3;
     }

@@ -1,4 +1,5 @@
 ﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,20 +67,34 @@ namespace CV
         /* Take picture: */
         public int Take_picture()
         {
-            if ((seg_C * seg_R) <= Image_count)
-                return 1;                           //Error, asking for more photos than requrested at init.
+            try
+            {
 
-            var prefix = Image_prefix();
+                if ((seg_C * seg_R) <= Image_count)
+                    return 1;                           //Error, asking for more photos than requrested at init.
 
-            var image = new Mat();
-            var capture = new VideoCapture();
-            image = capture.QueryFrame();
+                var prefix = Image_prefix();
 
-            image.Save(img_save_path + prefix);
+                var image = new Mat();
+                var capture = new VideoCapture();
 
-            Image_count++;
+                for (int i = 0; i < 5; ++i)
+                {
+                    capture.QueryFrame();
+                }
 
-            return 0;
+                image = capture.QueryFrame();
+
+                image.Save(img_save_path + prefix);
+
+                //Image_count++;
+
+                return 0;
+            }
+            catch
+            {
+                return 1;
+            }
         }
     }
 }
