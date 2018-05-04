@@ -35,6 +35,7 @@ namespace UI
         private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
         private float m_progress;
+        private bool _isScanable = true;
 
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
@@ -43,8 +44,8 @@ namespace UI
         public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
         public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
         public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
-        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
+        public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
+        public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
 
 
@@ -81,7 +82,6 @@ namespace UI
             {
                 ErrorMessages.Add("Illegal save path");
             }
-
 
             m_imagePath = "";
             cameraCapture = new CameraCapture();
@@ -219,6 +219,7 @@ namespace UI
 
         public void Stop()
         {
+            _isScanable = true;
             m_scan_cancel.Cancel();
             if (m_scan_cancel.IsCancellationRequested)
                 ErrorMessages.Add("canceling");
@@ -247,6 +248,7 @@ namespace UI
         {
             try
             {
+                _isScanable = false;
                 if (m_scan_cancel.IsCancellationRequested)
                     CreateNewCancellationToken();
 
@@ -271,7 +273,7 @@ namespace UI
                             {
                                 Thread.Sleep(500);
                                 cameraCapture.Take_picture();
-                                ImagePath = cameraCapture.FileName;
+                                ImagePath = SaveFolder + cameraCapture.FileName;
                             
 
                                 //Step the X axis camera to the next position
@@ -326,6 +328,8 @@ namespace UI
                     }
 
                 });
+
+                _isScanable = true;
             }
             catch
             {
@@ -369,7 +373,7 @@ namespace UI
             {
                 case (int)Motors.X_AXIS_TOP:
                     OnPropertyChanged(this, "XTopPosition");
-                    ErrorMessages.Add("X TOP motor moved to loaction" + distance);
+                    ErrorMessages.Add("X TOP motor moved to location" + distance);
                     break;
                 case (int)Motors.X_AXIS_BOTTOM:
                     OnPropertyChanged(this, "XBottomPosition");
