@@ -42,16 +42,6 @@ namespace UI
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
 
-        public ICommand HomeAllCommand { get { return new Command(e => true, this.HomeAll); } }
-        public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
-        public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
-        public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
-        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
-
-        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
-        public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
-
 
         //private List<string> m_error = new List<string>();
 
@@ -89,25 +79,7 @@ namespace UI
         }
 
         /***********Added for camera************/
-        private void CaptureCPU()
-        {
-            m_camera.Capture();
-        }
-        private void SaveImage(object sender, EventArgs e)
-        {
-            try
-            {
-                m_camera.Videocapture.Retrieve(m_camera.Frame);
-                m_camera.Videocapture.Stop();
-                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
-                m_camera.Frame.Save(path);
-                ImagePath = path;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
+
 
         public string ImagePath
         {
@@ -119,12 +91,6 @@ namespace UI
             }
         }
 
-        private void Browse()
-        {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            SaveFolder = dialog.SelectedPath;
-        }
 
 
         public string SaveFolder
@@ -153,63 +119,9 @@ namespace UI
             }
         }
 
-        private void HomeAll()
-        {
-            ErrorMessages.Add("Homing all");
-            //for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
-            //{
-            //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
-            //}
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
 
-        }
 
-        private void HomeXTop()
-        {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
-        }
-        private void HomeXBottom()
-        {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
-        }
 
-        public void HomeY()
-        {
-            m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
-        }
-
-        /// <summary>
-        /// This function always run on the background and only update the COM list if there is any changes
-        /// </summary>
-        private async void updatePorts()
-        {
-            ObservableCollection<string> CurrentPorts;
-            while (true)
-            {
-                await Task.Delay(2000);
-                await Task.Run(() =>
-                {
-                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
-
-                    //only update port list when it changes
-                    if (Ports.SequenceEqual(CurrentPorts) != true)
-                    {
-                        Ports = new ObservableCollection<string>(CurrentPorts);
-
-                        if (Ports.Count == 0)
-                            IsPortConnected = false;
-                        else
-                            IsPortConnected = true;
-                    }
-                    //++CPU_Scanned;
-                    //Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    //Console.WriteLine(CPU_Scanned);
-                    //Console.WriteLine(Progress);
-                });
-            }
-        }
 
         public bool IsPortConnected
         {
@@ -239,25 +151,6 @@ namespace UI
             m_scan_cancel.Cancel();
             if (m_scan_cancel.IsCancellationRequested)
                 ErrorMessages.Add("canceling");
-        }
-
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            int device = -1, status = -1, op = -1, distance = -1;
-            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
-            Process(device, op, status, distance);
-
-            //This will spin up a thread that will update the UI
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                m_home.ScrollViewer.ScrollToBottom();
-            }));
-        }
-
-        private void CreateNewCancellationToken()
-        {
-            m_scan_cancel = new CancellationTokenSource();
-            m_arduinoControl.Cancellation = m_scan_cancel;
         }
 
         public async void Scan()
@@ -380,13 +273,193 @@ namespace UI
             {
                 ++m_y_axis_dividers_count;
                 m_cpu_done = true;
-                
+
             }
 
             else if (op == (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
+        }
+
+
+        public ObservableCollection<string> Ports
+        {
+            get
+            {
+                return m_arduinoControl.PortList;
+            }
+            set
+            {
+                m_arduinoControl.PortList = new ObservableCollection<string>(value);
+                OnPropertyChanged(this, "Ports");
+
+            }
+
+        }
+        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+
+        public string SelectedPort
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(m_selected_port) && !m_arduinoControl.IsConnected)
+                {
+                    if (Ports.Count > 0)
+                    {
+                        m_arduinoControl.Connect(Ports[0]);
+                        m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                        m_selected_port = Ports[0];
+                        return Ports[0];
+                    }
+                    else
+                        return "No port";
+                }
+                return m_selected_port;
+            }
+            set
+            {
+                //Set the new port
+                m_selected_port = value;
+                m_arduinoControl.Close();
+                m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                OnPropertyChanged(this, "SelectedPort");
+
+            }
+
+        }
+
+        public int XTopPosition
+        {
+            get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
+            set { }
+        }
+        public int XBottomPosition
+        {
+            get { return m_motors[(int)Motors.X_AXIS_BOTTOM].Position; }
+            set { }
+        }
+        public int ZTopPosition
+        {
+            get { return m_motors[(int)Motors.Z_AXIS_TOP].Position; }
+            set { }
+        }
+        public int ZBottomPosition
+        {
+            get { return m_motors[(int)Motors.Z_AXIS_BOTTOM].Position; }
+            set { }
+        }
+        public int YPosition
+        {
+            get { return m_motors[(int)Motors.Y_AXIS].Position; }
+            set { }
+        }
+
+
+        #region Privates
+
+        private void HomeAll()
+        {
+            ErrorMessages.Add("Homing all");
+            //for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
+            //{
+            //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
+            //}
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
+
+        }
+
+        private void HomeXTop()
+        {
+            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
+        }
+        private void HomeXBottom()
+        {
+            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
+        }
+
+        private void HomeY()
+        {
+            m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
+        }
+
+        /// <summary>
+        /// This function always run on the background and only update the COM list if there is any changes
+        /// </summary>
+        private async void updatePorts()
+        {
+            ObservableCollection<string> CurrentPorts;
+            while (true)
+            {
+                await Task.Delay(2000);
+                await Task.Run(() =>
+                {
+                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
+
+                    //only update port list when it changes
+                    if (Ports.SequenceEqual(CurrentPorts) != true)
+                    {
+                        Ports = new ObservableCollection<string>(CurrentPorts);
+
+                        if (Ports.Count == 0)
+                            IsPortConnected = false;
+                        else
+                            IsPortConnected = true;
+                    }
+                    //++CPU_Scanned;
+                    //Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
+                    //Console.WriteLine(CPU_Scanned);
+                    //Console.WriteLine(Progress);
+                });
+            }
+        }
+
+        private void Browse()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            SaveFolder = dialog.SelectedPath;
+        }
+        private void CaptureCPU()
+        {
+            m_camera.Capture();
+        }
+        private void SaveImage(object sender, EventArgs e)
+        {
+            try
+            {
+                m_camera.Videocapture.Retrieve(m_camera.Frame);
+                m_camera.Videocapture.Stop();
+                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
+                m_camera.Frame.Save(path);
+                ImagePath = path;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
+        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            int device = -1, status = -1, op = -1, distance = -1;
+            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
+            Process(device, op, status, distance);
+
+            //This will spin up a thread that will update the UI
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.ScrollViewer.ScrollToBottom();
+            }));
+        }
+
+        private void CreateNewCancellationToken()
+        {
+            m_scan_cancel = new CancellationTokenSource();
+            m_arduinoControl.Cancellation = m_scan_cancel;
         }
 
         private void UpdateMotorsUiElements(int device, int distance)
@@ -423,82 +496,6 @@ namespace UI
             }
         }
 
-        public ObservableCollection<string> Ports
-        {
-            get
-            {
-                return m_arduinoControl.PortList;
-            }
-            set
-            {
-                m_arduinoControl.PortList = new ObservableCollection<string>(value);
-                OnPropertyChanged(this, "Ports");
-
-            }
-
-        }
-        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
-        public int XTopPosition
-        {
-            get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
-            set { }
-        }
-        public int XBottomPosition
-        {
-            get { return m_motors[(int)Motors.X_AXIS_BOTTOM].Position; }
-            set { }
-        }
-        public int ZTopPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_TOP].Position; }
-            set { }
-        }
-        public int ZBottomPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_BOTTOM].Position; }
-            set { }
-        }
-        public int YPosition
-        {
-            get { return m_motors[(int)Motors.Y_AXIS].Position; }
-            set { }
-        }
-        public string SelectedPort
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(m_selected_port) && !m_arduinoControl.IsConnected)
-                {
-                    if (Ports.Count > 0)
-                    {
-                        m_arduinoControl.Connect(Ports[0]);
-                        m_arduinoControl.SerialDataReceived += Port_DataReceived;
-                        m_selected_port = Ports[0];
-                        return Ports[0];
-                    }
-                    else
-                        return "No port";
-                }
-                return m_selected_port;
-            }
-            set
-            {
-                //Set the new port
-                m_selected_port = value;
-                m_arduinoControl.Close();
-                m_arduinoControl.SerialDataReceived += Port_DataReceived;
-                OnPropertyChanged(this, "SelectedPort");
-
-            }
-
-        }
-
-
-
-
-        //ICommands
-        public ICommand HomeAllButton { get; set; }
-
 
 
         private void OnPropertyChanged(object sender, string propertyName)
@@ -508,6 +505,25 @@ namespace UI
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
+
+
+
+        #region ICommands
+
+        //ICommands
+        public ICommand HomeAllCommand { get { return new Command(e => true, this.HomeAll); } }
+        public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
+        public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
+        public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
+        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
+
+        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
+        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
+        public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
+        #endregion
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 
