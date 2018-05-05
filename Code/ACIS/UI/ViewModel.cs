@@ -43,7 +43,6 @@ namespace UI
         private AutoResetEvent m_waitHandle;
 
 
-        //private List<string> m_error = new List<string>();
 
         public ViewModel(Home home)
         {
@@ -73,9 +72,6 @@ namespace UI
             m_progress = 0;
             m_cpu_done = false;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
-
-            //HomeAllButton = new HomeCommand(this);
-            //updatePorts();
         }
 
         /***********Added for camera************/
@@ -108,6 +104,7 @@ namespace UI
 
             }
         }
+
         /***************************************/
         public int CPU_Scanned
         {
@@ -118,10 +115,6 @@ namespace UI
                 OnPropertyChanged(this, "CPU_Scanned");
             }
         }
-
-
-
-
 
         public bool IsPortConnected
         {
@@ -408,10 +401,6 @@ namespace UI
                         else
                             IsPortConnected = true;
                     }
-                    //++CPU_Scanned;
-                    //Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    //Console.WriteLine(CPU_Scanned);
-                    //Console.WriteLine(Progress);
                 });
             }
         }
