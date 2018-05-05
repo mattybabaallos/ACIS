@@ -29,12 +29,10 @@ namespace UI
         /***************************************/
 
         private string m_selected_port = string.Empty;
-        private object _lock = new object();
+        private object m_lock = new object();
         private bool m_updateUI = false;
-        private event EventHandler ScrollView;
 
         private int m_cpu_scanned;
-        private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
         private float m_progress;
         private bool m_cpu_done;
@@ -58,20 +56,17 @@ namespace UI
             /***********Added for camera************/
             m_camera = new CameraControl();
             m_camera.Videocapture.ImageGrabbed += SaveImage;
-            m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
-            if (!Directory.Exists(m_saveFolder))
-                Directory.CreateDirectory(m_saveFolder);
+            SaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
             m_imagePath = "";
 
 
             cameraCapture = new CameraCapture();
             /***************************************/
             m_cpu_scanned = 0;
-            m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
             m_cpu_done = false;
-            BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
+            BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
         }
 
 
@@ -102,7 +97,7 @@ namespace UI
             }
         }
 
-        public int CPU_Scanned
+        public int CpuScanned
         {
             get { return m_cpu_scanned; }
             set
@@ -195,7 +190,7 @@ namespace UI
                     if (Ports.Count > 0)
                     {
                         m_arduinoControl.Connect(Ports[0]);
-                        m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                        m_arduinoControl.SerialDataReceived += PortDataReceived;
                         m_selected_port = Ports[0];
                         return Ports[0];
                     }
@@ -209,7 +204,7 @@ namespace UI
                 //Set the new port
                 m_selected_port = value;
                 m_arduinoControl.Close();
-                m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                m_arduinoControl.SerialDataReceived += PortDataReceived;
                 OnPropertyChanged(this, "SelectedPort");
 
             }
@@ -258,7 +253,7 @@ namespace UI
                 {
                     //Scan the first column
                     MoveToStartOfColumn(Constants.DISTANCE_FROM_HOME_TO_TRAY, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CPU_Scanned.ToString());
+                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CpuScanned.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
@@ -299,9 +294,9 @@ namespace UI
         private void UpdateScanVariables()
         {
             cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
-            ++CPU_Scanned;
+            ++CpuScanned;
             m_cpu_done = false;
-            Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
+            Progress = ((float)CpuScanned / (float)Constants.CPU_TO_SCAN) * 100;
         }
 
         private void MoveStartOfRow(int x, int y)
@@ -368,7 +363,6 @@ namespace UI
         {
             m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
         }
-
         private void HomeY()
         {
             m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
@@ -427,7 +421,7 @@ namespace UI
             }
         }
 
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int device = -1, status = -1, op = -1, distance = -1;
             m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);

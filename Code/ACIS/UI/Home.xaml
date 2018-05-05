@@ -85,7 +85,7 @@
                             </Grid.RowDefinitions>
                             <ProgressBar Grid.Row="0" Value="{Binding Progress, UpdateSourceTrigger=PropertyChanged}" Height="20" Width="200" HorizontalAlignment="Center"/>
                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Label Content="{Binding CPU_Scanned}"/>
+                                <Label Content="{Binding CpuScanned}"/>
                                 <Label Content="/"/>
                                 <Label Content="{x:Static cons:Constants.CPU_TO_SCAN}"/>
                                 <Label Content="CPUs"/>
