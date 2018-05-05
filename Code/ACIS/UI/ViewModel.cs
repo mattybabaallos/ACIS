@@ -74,9 +74,8 @@ namespace UI
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
         }
 
-        /***********Added for camera************/
 
-
+        #region UiProprties 
         public string ImagePath
         {
             get { return m_imagePath; }
@@ -86,8 +85,6 @@ namespace UI
                 OnPropertyChanged(this, "ImagePath");
             }
         }
-
-
 
         public string SaveFolder
         {
@@ -105,7 +102,6 @@ namespace UI
             }
         }
 
-        /***************************************/
         public int CPU_Scanned
         {
             get { return m_cpu_scanned; }
@@ -137,107 +133,6 @@ namespace UI
                 m_progress = value;
                 OnPropertyChanged(this, "Progress");
             }
-        }
-
-        public void Stop()
-        {
-            m_scan_cancel.Cancel();
-            if (m_scan_cancel.IsCancellationRequested)
-                ErrorMessages.Add("canceling");
-        }
-
-        public async void Scan()
-        {
-            try
-            {
-                if (m_scan_cancel.IsCancellationRequested)
-                    CreateNewCancellationToken();
-
-                await Task.Run(
-                () =>
-                {
-                    //Home the motors.
-                    HomeAll();
-
-                    //Move the X axis cameras to the begging of the tray
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
-                    m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
-
-
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CPU_Scanned.ToString());
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
-                    {
-                        do
-                        {
-                            while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
-                            {
-                                Thread.Sleep(500);
-                                // cameraCapture.Take_picture();
-                                ImagePath = cameraCapture.FileName;
-
-
-                                //Step the X axis camera to the next position
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                            }
-
-                            //Step the X axis cameras back start of tray 
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
-
-                            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
-
-                        } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                        // cameraCapture.Init_camera(24/Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder,DateTime.Now.ToString());
-                        ++CPU_Scanned;
-                        m_cpu_done = false;
-                        Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    }
-
-                    HomeAll();
-                    m_y_axis_dividers_count = 0;
-
-
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
-                    m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
-                    {
-                        do
-                        {
-                            while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY) //Scan for one row 
-                            {
-                                cameraCapture.Take_picture();
-                                ImagePath = cameraCapture.FileName;
-
-                                //Step the X axis camera to the next position
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                            }
-
-                            //Step the X axis cameras back start of tray 
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY);
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY);
-
-                            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
-
-                        } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                        cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
-                        ++CPU_Scanned;
-                        m_cpu_done = false;
-                        Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    }
-
-                });
-            }
-            catch
-            {
-                ErrorMessages.Add("Scan canceled");
-                return;
-            }
-
         }
 
         public void Process(int device, int op, int status, int distance)
@@ -274,7 +169,6 @@ namespace UI
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
         }
-
 
         public ObservableCollection<string> Ports
         {
@@ -348,8 +242,110 @@ namespace UI
             set { }
         }
 
+        #endregion
 
         #region Privates
+
+        private async void Scan()
+        {
+            try
+            {
+                if (m_scan_cancel.IsCancellationRequested)
+                    CreateNewCancellationToken();
+
+                await Task.Run(
+                () =>
+                {
+                    //Scan the first column
+                    MoveToStartOfColumn(Constants.DISTANCE_FROM_HOME_TO_TRAY, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
+                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CPU_Scanned.ToString());
+                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
+                    {
+                        do
+                        {
+                            ScanRow(Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
+                            MoveStartOfRow(Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+
+                        } while (!m_cpu_done);
+                        UpdateScanVariables();
+                    }
+
+                    m_y_axis_dividers_count = 0;
+
+                    //Scan the second column
+                    MoveToStartOfColumn(Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
+                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
+                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
+                    {
+                        do
+                        {
+                            ScanRow(Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY);
+                            MoveStartOfRow(Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+
+                        } while (!m_cpu_done);
+                        UpdateScanVariables();
+                    }
+
+                });
+            }
+            catch
+            {
+                ErrorMessages.Add("Scan canceled");
+                return;
+            }
+
+        }
+
+        private void UpdateScanVariables()
+        {
+            cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
+            ++CPU_Scanned;
+            m_cpu_done = false;
+            Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
+        }
+
+        private void MoveStartOfRow(int x, int y)
+        {
+
+            //Step the X axis cameras back start of tray 
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, (byte)x);
+
+            //Move Y axis to next step
+            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, (byte)y);
+        }
+
+        private void ScanRow(int xPosition)
+        {
+            while (m_motors[(int)Motors.X_AXIS_TOP].Position < xPosition) //Scan for one row 
+            {
+                cameraCapture.Take_picture();
+                ImagePath = cameraCapture.FileName;
+
+                //Step the X axis camera to the next position
+                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+            }
+        }
+
+        private void MoveToStartOfColumn(int x, int y)
+        {
+            //Home the motors.
+            HomeAll();
+
+            //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, (byte)y);
+
+        }
+
+        private void Stop()
+        {
+            m_scan_cancel.Cancel();
+            if (m_scan_cancel.IsCancellationRequested)
+                ErrorMessages.Add("canceling");
+        }
 
         private void HomeAll()
         {
@@ -431,7 +427,6 @@ namespace UI
             }
         }
 
-
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int device = -1, status = -1, op = -1, distance = -1;
@@ -485,8 +480,6 @@ namespace UI
             }
         }
 
-
-
         private void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)
@@ -496,7 +489,6 @@ namespace UI
         }
 
         #endregion
-
 
 
         #region ICommands
