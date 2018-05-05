@@ -37,6 +37,7 @@ namespace UI
         private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
         private float m_progress;
+        private bool m_cpu_done;
 
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
@@ -80,6 +81,7 @@ namespace UI
             m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
+            m_cpu_done = false;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
 
             //HomeAllButton = new HomeCommand(this);
@@ -303,6 +305,7 @@ namespace UI
                         } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
                         // cameraCapture.Init_camera(24/Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder,DateTime.Now.ToString());
                         ++CPU_Scanned;
+                        m_cpu_done = false;
                         Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
                     }
 
@@ -337,6 +340,7 @@ namespace UI
                         } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
                         cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
                         ++CPU_Scanned;
+                        m_cpu_done = false;
                         Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
                     }
 
@@ -373,7 +377,11 @@ namespace UI
             }
 
             else if (device == Constants.Y_AXIS_CPU && op == (int)ArduinoFunctions.STOP && status == (int)Errors.STOP_INTERRUPT)
+            {
                 ++m_y_axis_dividers_count;
+                m_cpu_done = true;
+                
+            }
 
             else if (op == (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
