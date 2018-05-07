@@ -28,7 +28,6 @@ namespace UI
         private string m_saveFolder;
         private string m_imagePath;
         private CameraCapture cameraCapture;
-        /***************************************/
 
         private string m_selected_port = string.Empty;
         private object m_lock = new object();
@@ -61,9 +60,29 @@ namespace UI
             SaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
             m_imagePath = "";
 
+            XmlDocument xmlDoc = new XmlDocument(); 
+            xmlDoc.Load("Setting.xml");
+            XmlNodeList savePathNode = xmlDoc.GetElementsByTagName("savePath");
 
+            if (!String.IsNullOrEmpty(savePathNode[0].InnerText))
+                m_saveFolder = savePathNode[0].InnerText;
+            else
+                m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
+
+            //validate the savePath
+            try
+            {
+                if (!Directory.Exists(m_saveFolder))
+                    Directory.CreateDirectory(m_saveFolder);
+            }
+            catch 
+            {
+                ErrorMessages.Add("Illegal save path");
+            }
+
+            m_imagePath = "";
             cameraCapture = new CameraCapture();
-            /***************************************/
+
             m_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
@@ -249,6 +268,7 @@ namespace UI
         {
             try
             {
+                _isScanable = false;
                 if (m_scan_cancel.IsCancellationRequested)
                     CreateNewCancellationToken();
 
@@ -286,6 +306,8 @@ namespace UI
                     }
 
                 });
+
+                _isScanable = true;
             }
             catch
             {
