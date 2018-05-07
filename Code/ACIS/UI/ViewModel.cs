@@ -13,6 +13,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using CV;
 using System.Xml;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace UI
 {
@@ -47,6 +49,8 @@ namespace UI
         public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
         public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
+        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
+        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => this.BrowseCPUFolder(path)); } }
 
 
         //private List<string> m_error = new List<string>();
@@ -105,13 +109,32 @@ namespace UI
             }
         }
 
+        private void ViewCPU(object path)
+        {
+            Window imgWindow = new Window();
+            imgWindow.Height = 300;
+            imgWindow.Width = 300;
+            imgWindow.Title = path.ToString();
+            BitmapImage btm = new BitmapImage(new Uri(path.ToString(), UriKind.Relative));
+            Image img = new Image();
+            img.Source = btm;
+            imgWindow.Content = img;
+            imgWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            imgWindow.Show();
+        }
+        private void BrowseCPUFolder(object path)
+        {
+            System.Windows.Forms.OpenFileDialog cpuDialog = new System.Windows.Forms.OpenFileDialog();
+            cpuDialog.Title = path.ToString();
+            cpuDialog.InitialDirectory = path.ToString();
+            cpuDialog.ShowDialog();
+        }
         private void Browse()
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
             SaveFolder = dialog.SelectedPath;
         }
-
         public string SaveFolder
         {
             get { return m_saveFolder; }
@@ -274,7 +297,10 @@ namespace UI
                                 Thread.Sleep(500);
                                 cameraCapture.Take_picture();
                                 ImagePath = SaveFolder + cameraCapture.FileName;
-                            
+                               
+                                /**TODO***
+                                ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***));
+                                **********/
 
                                 //Step the X axis camera to the next position
                                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
@@ -409,6 +435,7 @@ namespace UI
 
         }
         public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
         public int XTopPosition
         {
             get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
