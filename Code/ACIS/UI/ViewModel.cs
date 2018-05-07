@@ -12,6 +12,8 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using CV;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace UI
 {
@@ -106,6 +108,8 @@ namespace UI
                 OnPropertyChanged(this, "CPU_Scanned");
             }
         }
+
+        public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
 
         public bool IsPortConnected
         {
@@ -317,6 +321,10 @@ namespace UI
                 cameraCapture.Take_picture();
                 ImagePath = cameraCapture.FileName;
 
+                /**TODO*** 
+                ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 
+                **********/
+
                 //Step the X axis camera to the next position
                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
                 m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
@@ -354,6 +362,28 @@ namespace UI
             m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
 
         }
+
+        private void ViewCPU(object path)
+        {
+            Window imgWindow = new Window();
+            imgWindow.Height = 300;
+            imgWindow.Width = 300;
+            imgWindow.Title = path.ToString();
+            BitmapImage btm = new BitmapImage(new Uri(path.ToString(), UriKind.Relative));
+            Image img = new Image();
+            img.Source = btm;
+            imgWindow.Content = img;
+            imgWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            imgWindow.Show();
+        }
+        private void BrowseCPUFolder(object path)
+        {
+            System.Windows.Forms.OpenFileDialog cpuDialog = new System.Windows.Forms.OpenFileDialog();
+            cpuDialog.Title = path.ToString();
+            cpuDialog.InitialDirectory = path.ToString();
+            cpuDialog.ShowDialog();
+        }
+
 
         private void HomeXTop()
         {
@@ -497,6 +527,9 @@ namespace UI
         public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
         public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
+
+        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
+        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => this.BrowseCPUFolder(path)); } }
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
