@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using CV;
+using System.Xml;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -32,6 +33,7 @@ namespace UI
         private string m_selected_port = string.Empty;
         private object m_lock = new object();
         private bool m_updateUI = false;
+        private bool _isScanable = true;
 
         private int m_cpu_scanned;
         private int m_y_axis_dividers_count;
