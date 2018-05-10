@@ -17,13 +17,8 @@ namespace Data
 
         public const int Y_AXIS_CPU = 5;
 
-
-
-
-
         public const int DISTANCE_TO_MOVE_PER_IMAGE_X = 10;
         public const int DISTANCE_TO_MOVE_PER_IMAGE_Y = 10;
-
 
         public const int DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR = 55;
         public const int DISTANCE_FROM_HOME_TO_TRAY = 80;

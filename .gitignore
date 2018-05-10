@@ -300,3 +300,5 @@ Code/ArduinoLibrary/libraries/readme\.txt
 \.vscode/
 
 Code/ArduinoLibrary/output/
+
+*.dll

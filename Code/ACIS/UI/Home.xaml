@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="UI.Home"
+             x:Name="HomeControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,12 +22,13 @@
                         <RowDefinition Height="300"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition Width="81.986"/>
+                        <ColumnDefinition Width="218.014"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="0" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="2">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
@@ -50,17 +52,17 @@
                         </Grid>
 
                     </GroupBox>
-                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1">
+                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Button Content="Start scan" Command="{Binding  StartScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116"  Grid.Row="0" Grid.Column="1"/>
-                            <Button Content="Stop scan" Command="{Binding  StopScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
+                            <Button Content="Start scan" Command="{Binding StartScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116"  Grid.Row="0" Grid.Column="1"/>
+                            <Button Content="Stop scan" Command="{Binding StopScan}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="ScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -70,14 +72,13 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
+                    <GroupBox Header="Preview" Grid.Column="3" Grid.Row="0"
                                   Grid.ColumnSpan="1">
                         <StackPanel Orientation="Horizontal">
-                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="190" Margin="18,30,0,0" VerticalAlignment="Top" Width="207"/>
-                            <Button Content="Capture" Height="20"  Command="{Binding CaptureCommand}"/>
+                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="25,25,25,0" VerticalAlignment="Top" Width="237"/>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Progress" Height="80" Grid.Column="2" VerticalAlignment="Top" Grid.Row="2">
+                    <GroupBox Header="Progress" Height="80" Grid.Column="3" VerticalAlignment="Top" Grid.Row="1">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -85,12 +86,39 @@
                             </Grid.RowDefinitions>
                             <ProgressBar Grid.Row="0" Value="{Binding Progress, UpdateSourceTrigger=PropertyChanged}" Height="20" Width="200" HorizontalAlignment="Center"/>
                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Label Content="{Binding CPU_Scanned}"/>
+                                <Label Content="{Binding CpuScanned}"/>
                                 <Label Content="/"/>
                                 <Label Content="{x:Static cons:Constants.CPU_TO_SCAN}"/>
                                 <Label Content="CPUs"/>
                             </StackPanel>
                         </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Scanned CPU" Grid.Column="4">
+                        <ScrollViewer   Name="ScrollScannedCPUs"
+                                        VerticalAlignment="Top"
+                                        ScrollViewer.PanningMode="VerticalFirst"
+                                        VerticalScrollBarVisibility="Auto">
+                            <ItemsControl   VerticalAlignment="Bottom"
+                                            ItemsSource="{Binding ScannedCPUCollection}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="{Binding CPUBarcode}" Width="120" Margin="0,0,15,5"/>
+                                            <Button Content="View Image" 
+                                                    Command="{Binding ElementName=HomeControl, Path=DataContext.ViewCPUCommand}" 
+                                                    CommandParameter="{Binding CPUImagePath}"
+                                                    Height="20" 
+                                                    Margin="0,0,15,5"/>
+                                            <Button Content="Browse" 
+                                                    Command="{Binding ElementName=HomeControl, Path=DataContext.BrowseCPUFolderCommand}" 
+                                                    CommandParameter="{Binding CPUFolderPath}"
+                                                    Height="20" 
+                                                    Margin="0,0,15,5"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </GroupBox>
                 </Grid>
             </TabItem>
@@ -124,7 +152,7 @@
                             ToolTip="Save path"
                             Height="20" Width="380" />
                     </Label>
-                    <Button Grid.Row="1" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="80"  Command="{Binding BrowseCommand}"/>
+                    <Button Grid.Row="1" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
                     <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
                 </Grid>
