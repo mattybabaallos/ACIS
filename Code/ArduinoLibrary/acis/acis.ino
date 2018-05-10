@@ -5,7 +5,9 @@
 Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
 Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
-acis _acis(&shield_0, &shield_1, &shield_2);
+Adafruit_NeoPixel pixels(NUMBER_LEDS, LEDS_PIN, NEO_GRB + NEO_KHZ800);
+led leds(&pixels, NUMBER_LEDS);
+acis _acis(&shield_0, &shield_1, &shield_2, &leds);
 unsigned char buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
 sev_seg disp(9);

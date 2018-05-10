@@ -15,6 +15,7 @@ It will include all #includes and #defines
 #include <avr/interrupt.h>
 #include <Wire.h>
 #include "Adafruit_MotorShield.h"
+#include "Adafruit_NeoPixel.h"
 
 #define SHIELD_ZERO_ADDRESS 0x61
 #define SHIELD_ONE_ADDRESS 0x62
@@ -36,9 +37,13 @@ It will include all #includes and #defines
 #define Z_TOP_SWICH_PIN 6
 #define Z_BOTTOM_SWICH_PIN 7
 
+#define LEDS_PIN 9
+
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 6
+#define NUMBER_LEDS  144
+
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
@@ -57,6 +62,8 @@ It will include all #includes and #defines
 #define Z_AXIS_BOTTOM 3
 #define Y_AXIS 4
 #define Y_AXIS_CPU 5
+
+
 
 enum functions
 {

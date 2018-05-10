@@ -10,11 +10,12 @@ Matty Baba Allos matty@pdx.edu
 
 #include "common.h"
 #include "motor.h"
+#include "led.h"
 
 class acis
 {
   public:
-	acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafruit_MotorShield *shield_2);
+	acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafruit_MotorShield *shield_2,  led * leds);
 	int init();
 	int move_forward(unsigned int motor_id, unsigned int mm);
 	int move_backward(unsigned int motor_id, unsigned int mm);
@@ -30,6 +31,7 @@ class acis
 	Adafruit_MotorShield *m_shield_2;
 	motor motors[NUMBER_MOTORS];
 	motor *working_motor;
+	led * m_leds;
 };
 
 #endif /* ACIS_H */
