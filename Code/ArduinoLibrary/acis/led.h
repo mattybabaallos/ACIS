@@ -18,8 +18,8 @@ class led
     led(Adafruit_NeoPixel *leds, int number_leds);
     int set(int led, byte r, byte g, byte b);
     int set(byte r, byte g, byte b);
-    int set(int hex);
-    int set(int led,int hex);
+    int set(long hex);
+    int set(int led,long hex);
     int off(int led);
     int off();
 

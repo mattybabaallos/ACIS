@@ -4,17 +4,16 @@
 
 Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
-Adafruit_MotorShield shield_2(SHIELD_TWO_ADDRESS);
 Adafruit_NeoPixel pixels(NUMBER_LEDS, LEDS_PIN, NEO_GRB + NEO_KHZ800);
 led leds(&pixels, NUMBER_LEDS);
-acis _acis(&shield_0, &shield_1, &shield_2, &leds);
-unsigned char buffer[BUFFER_SIZE];
+acis acis(&shield_0, &shield_1, &leds);
+byte buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
 sev_seg disp(9);
 int i = 0;
 void setup()
 {
-  _acis.init();
+  acis.init();
   enable_pin_change_interrupt();
   Serial.begin(9600);
 }
@@ -26,13 +25,8 @@ void loop()
     // read the incoming byte:
     Serial.readBytes(buffer, BYTES_TO_READ);
     disp.all_off();
-    // disp.display(buffer[0]);
-    // disp.display(buffer[1]);
-    //delay(1000);
-    _acis.process(buffer);
+    acis.process(buffer);
     disp.all_off();
-    //disp.display(buffer[0]);
-    //disp.display(buffer[1]);
     Serial.write(buffer, BUFFER_SIZE);
   }
 }
@@ -58,8 +52,8 @@ ISR(PCINT2_vect)
   if (sw[X_AXIS_TOP].pressed(X_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.stop(X_AXIS_TOP);
-    _acis.send_back(buffer, X_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    acis.stop(X_AXIS_TOP);
+    acis.send_back(buffer, X_AXIS_TOP, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
     disp.display(0);
   }
@@ -67,8 +61,8 @@ ISR(PCINT2_vect)
   if (sw[X_AXIS_BOTTOM].pressed(X_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.stop(X_AXIS_BOTTOM);
-    _acis.send_back(buffer, X_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    acis.stop(X_AXIS_BOTTOM);
+    acis.send_back(buffer, X_AXIS_BOTTOM, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
     disp.display(1);
   }
@@ -76,8 +70,8 @@ ISR(PCINT2_vect)
   if (sw[Y_AXIS].pressed(Y_SWICH_PIN))
   {
     interrupts();
-    _acis.stop(Y_AXIS);
-    _acis.send_back(buffer, Y_AXIS, STOP, STOP_INTERRUPT, 0);
+    acis.stop(Y_AXIS);
+    acis.send_back(buffer, Y_AXIS, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
 
     disp.display(2);
@@ -86,23 +80,23 @@ ISR(PCINT2_vect)
   if (sw[Z_AXIS_TOP].pressed(Z_TOP_SWICH_PIN))
   {
     interrupts();
-    _acis.stop(Z_AXIS_TOP);
-    _acis.send_back(buffer, Z_AXIS_TOP, STOP, STOP_INTERRUPT, 0);
+    acis.stop(Z_AXIS_TOP);
+    acis.send_back(buffer, Z_AXIS_TOP, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
   }
 
   if (sw[Z_AXIS_BOTTOM].pressed(Z_BOTTOM_SWICH_PIN))
   {
     interrupts();
-    _acis.stop(Z_AXIS_BOTTOM);
-    _acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, STOP_INTERRUPT, 0);
+    acis.stop(Z_AXIS_BOTTOM);
+    acis.send_back(buffer, Z_AXIS_BOTTOM, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
   }
 
   if (sw[Y_AXIS_CPU].pressed(Y_AXIS_CPU_SWITCH_PIN, 150))
   {
     interrupts();
-    _acis.send_back(buffer, Y_AXIS_CPU, STOP, STOP_INTERRUPT, 0);
+    acis.send_back(buffer, Y_AXIS_CPU, STOP, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
   }
 }

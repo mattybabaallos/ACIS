@@ -23,8 +23,6 @@ It will include all #includes and #defines
 
 #define X_AXIS_TOP_CHANNEL 1
 #define X_AXIS_BOTTOM_CHANNEL 2
-#define Z_AXIS_TOP_CHANNEL 1
-#define Z_AXIS_BOTTOM_CHANNEL 2
 #define Y_AXIS_CHANNEL 2
 
 #define MOTOR_STEPS 200
@@ -47,8 +45,6 @@ It will include all #includes and #defines
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
-#define MAX_Z_TOP_LENGTH 330
-#define MAX_Z_BOTTOM_LENGTH 330
 #define MAX_Y_LENGTH 330
 
 #define STEP_TO_DEGREE_CONST (0.11344640138 * 1.8)

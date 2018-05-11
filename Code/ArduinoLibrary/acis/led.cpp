@@ -39,7 +39,7 @@ int led::set(byte r, byte g, byte b)
     return SUCCESS;
 }
 
-int led::set(int hex)
+int led::set(long hex)
 {
     if (!m_leds)
         return INVALID_DEVICE;
@@ -54,7 +54,7 @@ int led::set(int hex)
     return SUCCESS;
 }
 
-int led::set(int led, int hex)
+int led::set(int led, long hex)
 {
     if (!m_leds)
         return INVALID_DEVICE;
