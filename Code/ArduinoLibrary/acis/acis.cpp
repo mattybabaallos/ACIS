@@ -10,7 +10,8 @@ NOTE: All of the Arduino was made statically allocated to avoid memory leak
 
 #include "acis.h"
 
-acis::acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafruit_MotorShield *shield_2, led * leds) : m_shield_0(shield_0), m_shield_1(shield_1), m_shield_2(shield_2), working_motor(NULL),m_leds(leds)
+acis::acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, Adafruit_MotorShield *shield_2, led * leds) :
+   m_shield_0(shield_0), m_shield_1(shield_1), m_shield_2(shield_2), working_motor(NULL),m_leds(leds)
 {
 }
 
