@@ -57,6 +57,18 @@ int acis::home(byte motor_id)
 	return working_motor->home();
 }
 
+int acis::leds_on(byte led_id, long hex_color)
+{
+
+	return 0;
+}
+
+
+int acis::leds_off(byte led_id)
+{
+	return 0;
+}
+
 int acis::process(byte *buffer)
 {
 	byte device = 0;
@@ -65,10 +77,10 @@ int acis::process(byte *buffer)
 	int temp = -1;
 
 	if (!buffer)
-		return send_back(buffer, device, function, COULD_NOT_PROCESS_BUFFER, 0);
+		return send_back(buffer, device, function, 0, COULD_NOT_PROCESS_BUFFER);
 	temp = decode(buffer, device, function, data);
 	if (temp < 0)
-		return send_back(buffer, function, device, temp, 0);
+		return send_back(buffer, function, device, 0, temp);
 	if (function == HOME)
 		temp = home(device);
 	else if (function == MOVE_FORWARD)
@@ -83,7 +95,7 @@ int acis::process(byte *buffer)
 	{
 		return send_back(buffer, device, function, temp, 0);
 	}
-	return send_back(buffer, device, function, SUCCESS, temp);
+	return send_back(buffer, device, function, temp, SUCCESS);
 }
 
 int acis::decode(byte *buffer, byte &device, byte &function, long &data)

@@ -39,13 +39,13 @@ int led::set(byte r, byte g, byte b)
     return SUCCESS;
 }
 
-int led::set(long hex)
+int led::set(long hex_color)
 {
     if (!m_leds)
         return INVALID_DEVICE;
-    byte r = ((hex >> 8) >> 8);
-    byte g = (((hex << 8) >> 8) >> 8);
-    byte b = hex;
+    byte r = ((hex_color >> 8) >> 8);
+    byte g = (((hex_color << 8) >> 8) >> 8);
+    byte b = hex_color;
     for (int i = 0; i < m_numLed; ++i)
     {
         m_leds->setPixelColor(i, r, g, b);
@@ -54,13 +54,13 @@ int led::set(long hex)
     return SUCCESS;
 }
 
-int led::set(int led, long hex)
+int led::set(int led, long hex_color)
 {
     if (!m_leds)
         return INVALID_DEVICE;
-    byte r = ((hex >> 8) >> 8);
-    byte g = (((hex << 8) >> 8) >> 8);
-    byte b = hex;
+    byte r = ((hex_color >> 8) >> 8);
+    byte g = (((hex_color << 8) >> 8) >> 8);
+    byte b = hex_color;
     m_leds->setPixelColor(led, r, g, b);
     m_leds->show();
     return SUCCESS;
