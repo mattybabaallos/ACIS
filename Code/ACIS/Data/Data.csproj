@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArduinoFunctions.cs" />
+    <Compile Include="Functiion.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Devices.cs" />
     <Compile Include="Errors.cs" />

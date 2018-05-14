@@ -177,7 +177,7 @@ namespace UI
                 m_waitHandle.Set();
             }
 
-            else if (device == Constants.Y_AXIS_CPU && function == (int)Functions.StopStepper && errorCode == (int)Errors.StopInterrupt)
+            else if (device == (int)Devices.YAxisCpuSwitch && function == (int)Functions.StopStepper && errorCode == (int)Errors.StopInterrupt)
             {
                 ++m_y_axis_dividers_count;
                 m_cpu_done = true;
