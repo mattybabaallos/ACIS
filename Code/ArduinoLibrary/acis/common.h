@@ -46,7 +46,7 @@ It will include all #includes and #defines
 
 #define STEP_TO_DEGREE_CONST (0.11344640138 * 1.8)
 
-#define BUFFER_SIZE 3
+#define BUFFER_SIZE 6
 
 enum Devices
 {
