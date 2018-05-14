@@ -73,12 +73,12 @@ namespace Services
             return command;
         }
 
-        public byte[] SendCommand(Motors motor, ArduinoFunctions op, byte distance)
+        public byte[] SendCommand(Devices motor, Functions op, byte distance)
         {
             return SendCommand((byte)motor, (byte)op, distance);
         }
 
-        public byte[] SendCommandBlocking(Motors motor, ArduinoFunctions op, byte distance)
+        public byte[] SendCommandBlocking(Devices motor, Functions op, byte distance)
         {
             var val = SendCommand((byte)motor, (byte)op, distance);
             m_autoEvent.WaitOne();

@@ -1,10 +1,12 @@
 ﻿namespace Data
 {
-    public enum ArduinoFunctions
+    public enum Functions
     {
-        HOME,
-        MOVE_FORWARD,
-        MOVE_BACKWARD,
-        STOP
+        HomeStepper,
+        MoveStepperForward,
+        MoveStepperBackward,
+        StopStepper,
+        TurnOnUpdateLeds,
+        TurnOffLeds
     }
 }

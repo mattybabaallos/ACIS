@@ -170,21 +170,21 @@ namespace UI
             }
 
             //This is a respond to command sent from the main application
-            if (op != (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
+            if (op != (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
             {
                 m_motors[device].Position = distance;
                 UpdateMotorsUiElements(device, distance);
                 m_waitHandle.Set();
             }
 
-            else if (device == Constants.Y_AXIS_CPU && op == (int)ArduinoFunctions.STOP && status == (int)Errors.STOP_INTERRUPT)
+            else if (device == Constants.Y_AXIS_CPU && op == (int)Functions.StopStepper && status == (int)Errors.StopInterrupt)
             {
                 ++m_y_axis_dividers_count;
                 m_cpu_done = true;
 
             }
 
-            else if (op == (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
+            else if (op == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
@@ -238,27 +238,17 @@ namespace UI
 
         public int XTopPosition
         {
-            get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
+            get { return m_motors[(int)Devices.XAxisTopMotor].Position; }
             set { }
         }
         public int XBottomPosition
         {
-            get { return m_motors[(int)Motors.X_AXIS_BOTTOM].Position; }
-            set { }
-        }
-        public int ZTopPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_TOP].Position; }
-            set { }
-        }
-        public int ZBottomPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_BOTTOM].Position; }
+            get { return m_motors[(int)Devices.XAxisBottomMotor].Position; }
             set { }
         }
         public int YPosition
         {
-            get { return m_motors[(int)Motors.Y_AXIS].Position; }
+            get { return m_motors[(int)Devices.Y_AXIS_MOTOR].Position; }
             set { }
         }
 
@@ -331,16 +321,16 @@ namespace UI
         {
 
             //Step the X axis cameras back start of tray 
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperBackward, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperBackward, (byte)x);
 
             //Move Y axis to next step
-            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.MoveStepperBackward, (byte)y);
         }
 
         private void ScanRow(int xPosition)
         {
-            while (m_motors[(int)Motors.X_AXIS_TOP].Position < xPosition) //Scan for one row 
+            while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
                 cameraCapture.Take_picture();
                 ImagePath = cameraCapture.FileName;
@@ -350,8 +340,8 @@ namespace UI
                 **********/
 
                 //Step the X axis camera to the next position
-                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
             }
         }
 
@@ -361,9 +351,9 @@ namespace UI
             HomeAll();
 
             //Move the X axis cameras to the begging of the tray
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.MoveStepperForward, (byte)y);
 
         }
 
@@ -381,9 +371,9 @@ namespace UI
             //{
             //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
             //}
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.HomeStepper, 0);
 
         }
 
@@ -411,15 +401,15 @@ namespace UI
 
         private void HomeXTop()
         {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommand(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
         }
         private void HomeXBottom()
         {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommand(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
         }
         private void HomeY()
         {
-            m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
+            m_arduinoControl.SendCommand(Devices.Y_AXIS_MOTOR, Functions.HomeStepper, 0);
         }
 
         /// <summary>
@@ -498,31 +488,20 @@ namespace UI
         {
             switch (device)
             {
-                case (int)Motors.X_AXIS_TOP:
+                case (int)Devices.XAxisTopMotor:
                     OnPropertyChanged(this, "XTopPosition");
                     ErrorMessages.Add("X TOP motor moved to location " + distance);
                     break;
-                case (int)Motors.X_AXIS_BOTTOM:
+                case (int)Devices.XAxisBottomMotor:
                     OnPropertyChanged(this, "XBottomPosition");
                     ErrorMessages.Add("X Bottom motor moved to location " + distance);
 
                     break;
-                case (int)Motors.Y_AXIS:
+                case (int)Devices.Y_AXIS_MOTOR:
                     OnPropertyChanged(this, "YPosition");
                     ErrorMessages.Add("Y motor moved to location " + distance);
 
                     break;
-                case (int)Motors.Z_AXIS_TOP:
-                    OnPropertyChanged(this, "ZTopPosition");
-                    ErrorMessages.Add("Z TOP motor moved to location " + distance);
-
-                    break;
-                case (int)Motors.Z_AXIS_BOTTOM:
-                    OnPropertyChanged(this, "ZBottomPosition");
-                    ErrorMessages.Add("Z Bottom motor moved to location " + distance);
-                    break;
-
-
                 default:
                     break;
             }
@@ -537,7 +516,6 @@ namespace UI
         }
 
         #endregion
-
 
         #region ICommands
 

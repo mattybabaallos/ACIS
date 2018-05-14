@@ -35,16 +35,16 @@ namespace Services
         {
             switch (errorCode)
             {
-                case (int)Errors.RECEIVED_FEWER_THAN_TWO_BYTES:
-                    return Errors.RECEIVED_FEWER_THAN_TWO_BYTES.ToString();
-                case (int)Errors.INVALID_OPERATION:
-                    return Errors.INVALID_OPERATION.ToString();
-                case (int)Errors.INVALID_DEVICE:
-                    return Errors.INVALID_DEVICE.ToString();
-                case (int)Errors.COULD_NOT_DECODE_BYTES:
-                    return Errors.COULD_NOT_DECODE_BYTES.ToString();
-                case (int)Errors.COULD_NOT_PERFORM_OPERATION:
-                    return Errors.COULD_NOT_DECODE_BYTES.ToString();
+                case (int)Errors.ReceivedFewerThanTwoBytes:
+                    return Errors.ReceivedFewerThanTwoBytes.ToString();
+                case (int)Errors.InvalidOperation:
+                    return Errors.InvalidOperation.ToString();
+                case (int)Errors.InvalidDevice:
+                    return Errors.InvalidDevice.ToString();
+                case (int)Errors.CouldNotDecodeBytes:
+                    return Errors.CouldNotDecodeBytes.ToString();
+                case (int)Errors.CouldNotPerformOperation:
+                    return Errors.CouldNotDecodeBytes.ToString();
                 default:
                     return "Undefined error happened";
             }
