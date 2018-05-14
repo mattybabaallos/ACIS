@@ -248,7 +248,7 @@ namespace UI
         }
         public int YPosition
         {
-            get { return m_motors[(int)Devices.Y_AXIS_MOTOR].Position; }
+            get { return m_motors[(int)Devices.YAxisMotor].Position; }
             set { }
         }
 
@@ -325,7 +325,7 @@ namespace UI
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperBackward, (byte)x);
 
             //Move Y axis to next step
-            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.MoveStepperBackward, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperBackward, (byte)y);
         }
 
         private void ScanRow(int xPosition)
@@ -353,7 +353,7 @@ namespace UI
             //Move the X axis cameras to the begging of the tray
             m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, (byte)x);
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.MoveStepperForward, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, (byte)y);
 
         }
 
@@ -373,7 +373,7 @@ namespace UI
             //}
             m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
-            m_arduinoControl.SendCommandBlocking(Devices.Y_AXIS_MOTOR, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.HomeStepper, 0);
 
         }
 
@@ -409,7 +409,7 @@ namespace UI
         }
         private void HomeY()
         {
-            m_arduinoControl.SendCommand(Devices.Y_AXIS_MOTOR, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace UI
                     ErrorMessages.Add("X Bottom motor moved to location " + distance);
 
                     break;
-                case (int)Devices.Y_AXIS_MOTOR:
+                case (int)Devices.YAxisMotor:
                     OnPropertyChanged(this, "YPosition");
                     ErrorMessages.Add("Y motor moved to location " + distance);
 
