@@ -28,11 +28,13 @@ public:
 
 private:
 	int decode(byte *buffer, byte &device, byte &function, long &data);
+	led* select_led(byte led_id);
 	Adafruit_MotorShield *m_shield_0;
 	Adafruit_MotorShield *m_shield_1;
 	motor motors[NUMBER_MOTORS];
 	motor *working_motor;
-	led *m_leds;
+	led *m_top_leds;
+	led *m_bottom_leds;
 };
 
 #endif /* ACIS_H */

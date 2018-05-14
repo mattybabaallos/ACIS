@@ -155,9 +155,9 @@ namespace UI
             }
         }
 
-        public void Process(int device, int op, int status, int distance)
+        public void Process(int device, int function, int errorCode, int data)
         {
-            if (status > 0)
+            if (errorCode > 0)
             {
                 /*Error happened
                  * maybe print the error to the GUI and retry the command again. 
@@ -170,21 +170,21 @@ namespace UI
             }
 
             //This is a respond to command sent from the main application
-            if (op != (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
+            if (function != (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
             {
-                m_motors[device].Position = distance;
-                UpdateMotorsUiElements(device, distance);
+                m_motors[device].Position = data;
+                UpdateMotorsUiElements(device, data);
                 m_waitHandle.Set();
             }
 
-            else if (device == Constants.Y_AXIS_CPU && op == (int)Functions.StopStepper && status == (int)Errors.StopInterrupt)
+            else if (device == Constants.Y_AXIS_CPU && function == (int)Functions.StopStepper && errorCode == (int)Errors.StopInterrupt)
             {
                 ++m_y_axis_dividers_count;
                 m_cpu_done = true;
 
             }
 
-            else if (op == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
+            else if (function == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
@@ -467,9 +467,9 @@ namespace UI
 
         private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            int device = -1, status = -1, op = -1, distance = -1;
-            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
-            Process(device, op, status, distance);
+            int device = -1, status = -1, fucntion = -1, data = -1, errorCode = -1;
+            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data,ref errorCode);
+            Process(device, fucntion, status, data);
 
             //This will spin up a thread that will update the UI
             Application.Current.Dispatcher.Invoke(new Action(() =>

@@ -23,7 +23,7 @@ namespace Services
         {
             port = new SerialPort(PortList[0], Constants.BAUD_RATE);
             port.DtrEnable = true;
-            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
+            port.ReceivedBytesThreshold = Constants.BUFFER_SIZE;
             port.Open();
             IsConnected = true;
         }
@@ -34,7 +34,7 @@ namespace Services
         {
             port = new SerialPort(portName, Constants.BAUD_RATE);
             port.DtrEnable = true;
-            port.ReceivedBytesThreshold = Constants.NUMBER_OF_BYTES_TO_RECEIVE;
+            port.ReceivedBytesThreshold = Constants.BUFFER_SIZE;
             port.Open();
             IsConnected = true;
         }
@@ -57,55 +57,55 @@ namespace Services
         /// Construct the byte array to will be sent to the Arduino and send it.
         /// </summary>
         /// <param name="device"> The device id</param>
-        /// <param name="op"> the operation id</param>
-        /// <param name="distance"> the distance the device will travel if it's a stepper</param>
+        /// <param name="function"> the operation id</param>
+        /// <param name="data"> the data the device will travel if it's a stepper</param>
         /// <returns>byte[] that can sent to the Arduino</returns>
-        public byte[] SendCommand(byte device, byte op, byte distance)
+        public byte[] SendCommand(byte device, byte function, int data)
         {
-            byte[] command = new byte[Constants.NUMBER_OF_BYTES_TO_SEND];
-            byte temp = 0;
-            temp = (byte)(device & (byte)Common.CrateMask(0, 2));
-            temp = (byte)((op << 3) | temp);
-            command[0] = temp;
-            command[1] = (byte)distance;
-
-            port.Write(command, 0, Constants.NUMBER_OF_BYTES_TO_SEND);
+            byte[] command = new byte[Constants.BUFFER_SIZE];
+            command[0] = device;
+            command[1] = function;
+            command[2] = (byte)data;
+            command[3] = (byte)(data >> 8);
+            command[4] = (byte)(data >> 16);
+            command[6] = 0;
+            port.Write(command, 0, Constants.BUFFER_SIZE);
             return command;
         }
 
-        public byte[] SendCommand(Devices motor, Functions op, byte distance)
+        public byte[] SendCommand(Devices motor, Functions function, int data)
         {
-            return SendCommand((byte)motor, (byte)op, distance);
+            return SendCommand((byte)motor, (byte)function, data);
         }
 
-        public byte[] SendCommandBlocking(Devices motor, Functions op, byte distance)
+        public byte[] SendCommandBlocking(Devices motor, Functions function, int data)
         {
-            var val = SendCommand((byte)motor, (byte)op, distance);
+            var val = SendCommand((byte)motor, (byte)function, data);
             m_autoEvent.WaitOne();
             Cancellation.Token.ThrowIfCancellationRequested();
             return val;
 
         }
 
-        public byte[] SendCommandBlocking(byte device, byte op, byte distance)
+        public byte[] SendCommandBlocking(byte device, byte function, int data)
         {
-            var val = SendCommand(device, op, distance);
+            var val = SendCommand(device, function, data);
             m_autoEvent.WaitOne();
             Cancellation.Token.ThrowIfCancellationRequested();
             return val;
         }
 
 
-        public void ReciveCommand(ref int device, ref int op ,ref int status, ref int distance)
+        public void ReciveCommand(ref int device, ref int function ,ref int status, ref int data, ref int errorCode)
         {
-            if (port.BytesToRead >= Constants.NUMBER_OF_BYTES_TO_RECEIVE)
+            if (port.BytesToRead >= Constants.BUFFER_SIZE)
             {
-                byte[] buffer = new byte[Constants.NUMBER_OF_BYTES_TO_RECEIVE];
-                port.Read(buffer, 0, Constants.NUMBER_OF_BYTES_TO_RECEIVE);
-                device = (byte)(buffer[0] & Common.CrateMask(0, 2));
-                op = (byte)buffer[0] >> 3;
-                distance = buffer[1];
-                status = (sbyte)buffer[2];
+                byte[] buffer = new byte[Constants.BUFFER_SIZE];
+                port.Read(buffer, 0, Constants.BUFFER_SIZE);
+                device = buffer[0];
+                function = buffer[1];
+                data = 0;
+                data = ((data | buffer[4]) << 16) | ((data | buffer[3]) << 8) | (data | buffer[2]);
             }
         }
 

@@ -9,8 +9,7 @@ namespace Data
     public class Constants
     {
         public const int NUMBER_OF_MOTORS = 5;
-        public const int NUMBER_OF_BYTES_TO_SEND = 2;
-        public const int NUMBER_OF_BYTES_TO_RECEIVE = 3;
+        public const int BUFFER_SIZE = 6;
         public const int BAUD_RATE = 9600;
 
         public const int CPU_WIDTH = 42;

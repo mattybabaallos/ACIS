@@ -11,21 +11,21 @@ NOTE: I am reusing the same code I wrote for ECE 411
 #define LED_H
 #include "common.h"
 
-
 class led
 {
-  public:
-    led(Adafruit_NeoPixel *leds, int number_leds);
-    int set(int led, byte r, byte g, byte b);
-    int set(byte r, byte g, byte b);
-    int set(long hex_color);
-    int set(int led,long hex_color);
-    int off(int led);
-    int off();
+public:
+  led(Adafruit_NeoPixel *leds, int number_leds);
 
-  private:
-    int m_numLed;
-    Adafruit_NeoPixel * m_leds;
+  int set(long hex_color);
+  int set(int led, long hex_color);
+  int set(byte r, byte g, byte b);
+  int set(int led, byte r, byte g, byte b);
+  int off(int led);
+  int off();
+
+private:
+  int m_numLed;
+  Adafruit_NeoPixel *m_leds;
 };
 
 #endif
