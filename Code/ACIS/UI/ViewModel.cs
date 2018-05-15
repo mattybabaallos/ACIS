@@ -477,6 +477,7 @@ namespace UI
 
         private void Stop()
         {
+            _isScanable = true;
             m_scan_cancel.Cancel();
             if (m_scan_cancel.IsCancellationRequested)
                 ErrorMessages.Add("canceling");
@@ -655,8 +656,8 @@ namespace UI
         public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
         public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
 
-        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
+        public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
+        public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
 
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
