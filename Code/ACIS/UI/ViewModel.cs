@@ -166,7 +166,7 @@ namespace UI
                  * 
                 */
 
-
+                ErrorMessages.Add(Common.ErrorCodeToString(errorCode));
             }
 
             //This is a respond to command sent from the main application
@@ -321,11 +321,11 @@ namespace UI
         {
 
             //Step the X axis cameras back start of tray 
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperBackward, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperBackward, (byte)x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperBackward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperBackward, x);
 
             //Move Y axis to next step
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperBackward, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperBackward, y);
         }
 
         private void ScanRow(int xPosition)
@@ -351,9 +351,9 @@ namespace UI
             HomeAll();
 
             //Move the X axis cameras to the begging of the tray
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, (byte)x);
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, (byte)y);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
 
         }
 

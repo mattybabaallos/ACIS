@@ -8,7 +8,7 @@ namespace Data
 {
     public class Constants
     {
-        public const int NUMBER_OF_MOTORS = 5;
+        public const int NUMBER_OF_MOTORS = 3;
         public const int BUFFER_SIZE = 6;
         public const int BAUD_RATE = 9600;
 
