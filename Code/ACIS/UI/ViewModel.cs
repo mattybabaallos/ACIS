@@ -15,6 +15,7 @@ using CV;
 using System.Xml;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Diagnostics;
 
 namespace UI
 {
@@ -40,10 +41,15 @@ namespace UI
         private float m_progress;
         private bool m_cpu_done;
 
+        private int m_distance_from_start_of_tray_to_middle_bar;
+        private int m_distance_from_home_to_tray;
+        private int m_distance_from_home_to_tray_middle_bar;
+        private int m_distance_from_middle_bar_to_end_tray;
+        private int m_distance_from_home_to_end_of_tray;
+        private int m_distance_from_home_to_tray_y;
+
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
-
-
 
         public ViewModel(Home home)
         {
@@ -61,10 +67,18 @@ namespace UI
             m_camera.Videocapture.ImageGrabbed += SaveImage;
             SaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
             m_imagePath = "";
+            cameraCapture = new CameraCapture();
 
+            #region Set settings from XML
             XmlDocument xmlDoc = new XmlDocument(); 
             xmlDoc.Load("Setting.xml");
             XmlNodeList savePathNode = xmlDoc.GetElementsByTagName("savePath");
+            XmlNodeList distance_from_start_of_tray_to_middle_bar_node = xmlDoc.GetElementsByTagName("distance_from_start_of_tray_to_middle_bar");
+            XmlNodeList distance_from_home_to_tray_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray");
+            XmlNodeList distance_from_home_to_tray_middle_bar_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray_middle_bar");
+            XmlNodeList distance_from_middle_bar_to_end_tray_node = xmlDoc.GetElementsByTagName("distance_from_middle_bar_to_end_tray");
+            XmlNodeList distance_from_home_to_end_of_tray_node = xmlDoc.GetElementsByTagName("distance_from_home_to_end_of_tray");
+            XmlNodeList distance_from_home_to_tray_y_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray_y");
 
             if (!String.IsNullOrEmpty(savePathNode[0].InnerText))
                 m_saveFolder = savePathNode[0].InnerText;
@@ -82,8 +96,37 @@ namespace UI
                 ErrorMessages.Add("Illegal save path");
             }
 
-            m_imagePath = "";
-            cameraCapture = new CameraCapture();
+            if (!String.IsNullOrEmpty(distance_from_start_of_tray_to_middle_bar_node[0].InnerText))
+                m_distance_from_start_of_tray_to_middle_bar = Convert.ToInt32(distance_from_start_of_tray_to_middle_bar_node[0].InnerText);
+            else
+                m_distance_from_start_of_tray_to_middle_bar = Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR;
+
+            if (!String.IsNullOrEmpty(distance_from_home_to_tray_node[0].InnerText))
+                m_distance_from_home_to_tray = Convert.ToInt32(distance_from_home_to_tray_node[0].InnerText);
+            else
+                m_distance_from_home_to_tray = Constants.DISTANCE_FROM_HOME_TO_TRAY;
+
+            if (!String.IsNullOrEmpty(distance_from_home_to_tray_middle_bar_node[0].InnerText))
+                m_distance_from_home_to_tray_middle_bar = Convert.ToInt32(distance_from_home_to_tray_middle_bar_node[0].InnerText);
+            else
+                m_distance_from_home_to_tray_middle_bar = Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR;
+
+            if (!String.IsNullOrEmpty(distance_from_middle_bar_to_end_tray_node[0].InnerText))
+                m_distance_from_middle_bar_to_end_tray = Convert.ToInt32(distance_from_middle_bar_to_end_tray_node[0].InnerText);
+            else
+                m_distance_from_middle_bar_to_end_tray = Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY;
+
+            if (!String.IsNullOrEmpty(distance_from_home_to_end_of_tray_node[0].InnerText))
+                m_distance_from_home_to_end_of_tray = Convert.ToInt32(distance_from_home_to_end_of_tray_node[0].InnerText);
+            else
+                m_distance_from_home_to_end_of_tray = Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY;
+
+            if (!String.IsNullOrEmpty(distance_from_home_to_tray_y_node[0].InnerText))
+                m_distance_from_home_to_tray_y = Convert.ToInt32(distance_from_home_to_tray_y_node[0].InnerText);
+            else
+                m_distance_from_home_to_tray_y = Constants.DISTANCE_FROM_HOME_TO_TRAY_Y;
+
+            #endregion
 
             m_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
@@ -91,7 +134,6 @@ namespace UI
             m_cpu_done = false;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
         }
-
 
         #region UiProprties 
         public string ImagePath
@@ -252,6 +294,72 @@ namespace UI
             set { }
         }
 
+        public int DistanceFromStartOfTrayToMiddleBar
+        {
+            get {return m_distance_from_start_of_tray_to_middle_bar;}
+            set
+            {
+                if (value > 0)
+                {
+                  m_distance_from_start_of_tray_to_middle_bar = value;
+                }
+            }
+        }
+        public int DistanceFromHomeToTray
+        {
+            get { return m_distance_from_home_to_tray; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_distance_from_home_to_tray = value;
+                }
+            }
+        }
+        public int DistanceFromHomeToTrayMiddleBar
+        {
+            get { return m_distance_from_home_to_tray_middle_bar; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_distance_from_home_to_tray_middle_bar = value;
+                }
+            }
+        }
+        public int DistanceFromMiddleBarToEndTray
+        {
+            get { return m_distance_from_middle_bar_to_end_tray; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_distance_from_middle_bar_to_end_tray = value;
+                }
+            }
+        }
+        public int DistanceFromHomeToEndOfTray
+        {
+            get { return m_distance_from_home_to_end_of_tray; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_distance_from_home_to_end_of_tray = value;
+                }
+            }
+        }
+        public int DistanceFromHomeToTrayY
+        {
+            get { return m_distance_from_home_to_tray_y; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_distance_from_home_to_tray_y = value;
+                }
+            }
+        }
         #endregion
 
         #region Privates
@@ -268,14 +376,14 @@ namespace UI
                 () =>
                 {
                     //Scan the first column
-                    MoveToStartOfColumn(Constants.DISTANCE_FROM_HOME_TO_TRAY, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
+                    MoveToStartOfColumn(DistanceFromHomeToTray, DistanceFromHomeToTrayY);
                     cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CpuScanned.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
-                            ScanRow(Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
-                            MoveStartOfRow(Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            ScanRow(DistanceFromHomeToTrayMiddleBar);
+                            MoveStartOfRow(DistanceFromStartOfTrayToMiddleBar, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -284,14 +392,14 @@ namespace UI
                     m_y_axis_dividers_count = 0;
 
                     //Scan the second column
-                    MoveToStartOfColumn(Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
+                    MoveToStartOfColumn(DistanceFromHomeToTrayMiddleBar, DistanceFromHomeToTrayY);
                     cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
-                            ScanRow(Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY);
-                            MoveStartOfRow(Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            ScanRow(DistanceFromHomeToEndOfTray);
+                            MoveStartOfRow(DistanceFromMiddleBarToEndTray, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -359,6 +467,7 @@ namespace UI
 
         private void Stop()
         {
+            _isScanable = true;
             m_scan_cancel.Cancel();
             if (m_scan_cancel.IsCancellationRequested)
                 ErrorMessages.Add("canceling");
@@ -526,8 +635,8 @@ namespace UI
         public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
         public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
 
-        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
+        public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
+        public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
 
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
@@ -535,8 +644,5 @@ namespace UI
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-
-
     }
 }
