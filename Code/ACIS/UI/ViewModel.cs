@@ -27,7 +27,7 @@ namespace UI
 
         /***********Added for camera************/
         private CameraControl m_camera;
-        private string m_saveFolder;
+        private string m_SavePath;
         private string m_imagePath;
         private CameraCapture cameraCapture;
 
@@ -41,18 +41,15 @@ namespace UI
         private float m_progress;
         private bool m_cpu_done;
 
-        private int m_distance_from_start_of_tray_to_middle_bar;
-        private int m_distance_from_home_to_tray;
-        private int m_distance_from_home_to_tray_middle_bar;
-        private int m_distance_from_middle_bar_to_end_tray;
-        private int m_distance_from_home_to_end_of_tray;
-        private int m_distance_from_home_to_tray_y;
+
 
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
 
         public ViewModel(Home home)
         {
+            DevSettingsProp = new DeviceSettings();
+            UsrSettings = new UserSettings();
             m_home = home;
             m_waitHandle = new AutoResetEvent(false);
             m_scan_cancel = new CancellationTokenSource();
@@ -65,54 +62,22 @@ namespace UI
             /***********Added for camera************/
             m_camera = new CameraControl();
             m_camera.Videocapture.ImageGrabbed += SaveImage;
-            SaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
             m_imagePath = "";
             cameraCapture = new CameraCapture();
-
-            #region Set settings from XML
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load("Setting.xml");
-            XmlNodeList savePathNode = xmlDoc.GetElementsByTagName("savePath");
-            XmlNodeList distance_from_start_of_tray_to_middle_bar_node = xmlDoc.GetElementsByTagName("distance_from_start_of_tray_to_middle_bar");
-            XmlNodeList distance_from_home_to_tray_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray");
-            XmlNodeList distance_from_home_to_tray_middle_bar_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray_middle_bar");
-            XmlNodeList distance_from_middle_bar_to_end_tray_node = xmlDoc.GetElementsByTagName("distance_from_middle_bar_to_end_tray");
-            XmlNodeList distance_from_home_to_end_of_tray_node = xmlDoc.GetElementsByTagName("distance_from_home_to_end_of_tray");
-            XmlNodeList distance_from_home_to_tray_y_node = xmlDoc.GetElementsByTagName("distance_from_home_to_tray_y");
-
-            if (!String.IsNullOrEmpty(savePathNode[0].InnerText))
-                m_saveFolder = savePathNode[0].InnerText;
-            else
-                m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
-
-            //validate the savePath
-            try
-            {
-                if (!Directory.Exists(m_saveFolder))
-                    Directory.CreateDirectory(m_saveFolder);
-            }
-            catch
-            {
-                ErrorMessages.Add("Illegal save path");
-            }
-
-            m_distance_from_start_of_tray_to_middle_bar = !String.IsNullOrEmpty(distance_from_start_of_tray_to_middle_bar_node[0].InnerText) ? Convert.ToInt32(distance_from_start_of_tray_to_middle_bar_node[0].InnerText) : Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR;
-            m_distance_from_home_to_tray = !String.IsNullOrEmpty(distance_from_home_to_tray_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_node[0].InnerText) : Constants.DISTANCE_FROM_HOME_TO_TRAY;
-            m_distance_from_home_to_tray_middle_bar = !String.IsNullOrEmpty(distance_from_home_to_tray_middle_bar_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_middle_bar_node[0].InnerText) : m_distance_from_home_to_tray_middle_bar = Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR;
-            m_distance_from_middle_bar_to_end_tray = !String.IsNullOrEmpty(distance_from_middle_bar_to_end_tray_node[0].InnerText) ? Convert.ToInt32(distance_from_middle_bar_to_end_tray_node[0].InnerText) : m_distance_from_middle_bar_to_end_tray = Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY;
-            m_distance_from_middle_bar_to_end_tray = !String.IsNullOrEmpty(distance_from_home_to_end_of_tray_node[0].InnerText) ? m_distance_from_home_to_end_of_tray = Convert.ToInt32(distance_from_home_to_end_of_tray_node[0].InnerText) : m_distance_from_home_to_end_of_tray = Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY;
-            m_distance_from_home_to_tray_y = !String.IsNullOrEmpty(distance_from_home_to_tray_y_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_y_node[0].InnerText) : Constants.DISTANCE_FROM_HOME_TO_TRAY_Y;
-
-            #endregion
 
             m_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
             m_cpu_done = false;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
+
         }
 
         #region UiProprties 
+
+        public DeviceSettings DevSettingsProp { get; }
+        public UserSettings UsrSettings { get; }
+
         public string ImagePath
         {
             get { return m_imagePath; }
@@ -123,21 +88,6 @@ namespace UI
             }
         }
 
-        public string SaveFolder
-        {
-            get { return m_saveFolder; }
-            set
-            {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    m_saveFolder = value;
-                    if (!Directory.Exists(m_saveFolder))
-                        Directory.CreateDirectory(m_saveFolder);
-                    OnPropertyChanged(this, "SaveFolder");
-                }
-
-            }
-        }
 
         public int CpuScanned
         {
@@ -255,6 +205,7 @@ namespace UI
 
         }
 
+
         public int XTopPosition
         {
             get { return m_motors[(int)Devices.XAxisTopMotor].Position; }
@@ -271,76 +222,9 @@ namespace UI
             set { }
         }
 
-        public int DistanceFromStartOfTrayToMiddleBar
-        {
-            get { return m_distance_from_start_of_tray_to_middle_bar; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_start_of_tray_to_middle_bar = value;
-                }
-            }
-        }
-        public int DistanceFromHomeToTray
-        {
-            get { return m_distance_from_home_to_tray; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_home_to_tray = value;
-                }
-            }
-        }
-        public int DistanceFromHomeToTrayMiddleBar
-        {
-            get { return m_distance_from_home_to_tray_middle_bar; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_home_to_tray_middle_bar = value;
-                }
-            }
-        }
-        public int DistanceFromMiddleBarToEndTray
-        {
-            get { return m_distance_from_middle_bar_to_end_tray; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_middle_bar_to_end_tray = value;
-                }
-            }
-        }
-        public int DistanceFromHomeToEndOfTray
-        {
-            get { return m_distance_from_home_to_end_of_tray; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_home_to_end_of_tray = value;
-                }
-            }
-        }
-        public int DistanceFromHomeToTrayY
-        {
-            get { return m_distance_from_home_to_tray_y; }
-            set
-            {
-                if (value > 0)
-                {
-                    m_distance_from_home_to_tray_y = value;
-                }
-            }
-        }
         #endregion
 
         #region Privates
-
         private async void Scan()
         {
             try
@@ -353,14 +237,14 @@ namespace UI
                 () =>
                 {
                     //Scan the first column
-                    MoveToStartOfColumn(DistanceFromHomeToTray, DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CpuScanned.ToString());
+                    MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
+                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, CpuScanned.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
-                            ScanRow(DistanceFromHomeToTrayMiddleBar);
-                            MoveStartOfRow(DistanceFromStartOfTrayToMiddleBar, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            ScanRow(DevSettingsProp.DistanceFromHomeToTrayMiddleBar);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromStartOfTrayToMiddleBar, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -369,14 +253,14 @@ namespace UI
                     m_y_axis_dividers_count = 0;
 
                     //Scan the second column
-                    MoveToStartOfColumn(DistanceFromHomeToTrayMiddleBar, DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
+                    MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTrayMiddleBar, DevSettingsProp.DistanceFromHomeToTrayY);
+                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, DateTime.Now.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
-                            ScanRow(DistanceFromHomeToEndOfTray);
-                            MoveStartOfRow(DistanceFromMiddleBarToEndTray, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            ScanRow(DevSettingsProp.DistanceFromHomeToEndOfTray);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromMiddleBarToEndTray, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -396,7 +280,7 @@ namespace UI
 
         private void UpdateScanVariables()
         {
-            cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
+            cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, DateTime.Now.ToString());
             ++CpuScanned;
             m_cpu_done = false;
             Progress = ((float)CpuScanned / (float)Constants.CPU_TO_SCAN) * 100;
@@ -529,7 +413,7 @@ namespace UI
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            SaveFolder = dialog.SelectedPath;
+            UsrSettings.SavePath = dialog.SelectedPath;
         }
         private void CaptureCPU()
         {
@@ -541,7 +425,7 @@ namespace UI
             {
                 m_camera.Videocapture.Retrieve(m_camera.Frame);
                 m_camera.Videocapture.Stop();
-                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
+                string path = m_SavePath + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
                 m_camera.Frame.Save(path);
                 ImagePath = path;
             }
@@ -593,13 +477,15 @@ namespace UI
             }
         }
 
-        private void OnPropertyChanged(object sender, string propertyName)
+        protected void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)
             {
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -618,8 +504,11 @@ namespace UI
 
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
         public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => this.BrowseCPUFolder(path)); } }
+
+        public ICommand SaveSettingsCommand { get { return new Command(e => true, this.DevSettingsProp.Save); } }
+        public ICommand RestoreSettingsCommand { get { return new Command(e => true, this.DevSettingsProp.Reset); } }
+
         #endregion
 
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

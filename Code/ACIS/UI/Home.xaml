@@ -133,24 +133,53 @@
                         <ColumnDefinition Width="400"/>
                         <ColumnDefinition Width="133"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Content="Serial ports" Grid.ColumnSpan="2"></Label>
-                    <Label Grid.Row="0" Grid.Column="2">
+                    <Label Grid.Row="3" Content="Serial ports" Grid.ColumnSpan="2"></Label>
+                    <Label Grid.Row="3" Grid.Column="2">
                         <ComboBox x:Name="GradeListDropdown"
                             ItemsSource="{Binding Ports}"
                             SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
                             ToolTip="Serial port list"
                             Height="20" Width="180" />
                     </Label>
-                    <Label Grid.Row="1" Content="Save path " Grid.ColumnSpan="2"></Label>
-                    <Label Grid.Row="1" Grid.Column="2">
+                    <Label Grid.Row="2" Content="Save path " Grid.ColumnSpan="2"></Label>
+                    <Label Grid.Row="2" Grid.Column="2">
                         <TextBox x:Name="SaveFolder"
-                            Text="{Binding SaveFolder}"
+                            Text="{Binding  UsrSettings.SavePath}"
                             ToolTip="Save path"
                             Height="20" Width="380" />
                     </Label>
-                    <Button Grid.Row="1" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
+                    <Button Grid.Row="2" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
                     <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
                     <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
+                    <GroupBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Header="Setting Values" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="528">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from start of tray to middle bar" />
+                            <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromStartOfTrayToMiddleBar,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0" Height="24"/>
+                            <Label Grid.Row="1" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
+                            <Label Grid.Row="2" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray middle bar" />
+                            <TextBox Grid.Row="2" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToTrayMiddleBar,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
+                            <Label Grid.Row="3" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from middle bar to the end of tray" />
+                            <TextBox Grid.Row="3" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromMiddleBarToEndTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,9,198.2,0"/>
+                            <Label Grid.Row="4" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray y" />
+                            <TextBox Grid.Row="4" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToEndOfTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
+                            <Button  Grid.Row="5" Grid.Column="1" Content="Save" Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118"/>
+                            <Button  Grid.Row="6" Grid.Column="1" Content="Restore" Command="{Binding RestoreSettingsCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem Header="Manual control" >
@@ -171,31 +200,6 @@
                             <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118" />
                             <Button Content="Home Y" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118" />
                         </StackPanel>
-                    </GroupBox>
-                    <GroupBox Grid.Column="1" Header="Setting Values" HorizontalAlignment="Left" Height="207" Margin="10,10,0,0" VerticalAlignment="Top" Width="528">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from start of tray to middle bar" />
-                            <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="{Binding DistanceFromStartOfTrayToMiddleBar,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0" Height="24"/>
-                            <Label Grid.Row="1" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray" />
-                            <TextBox Grid.Row="1" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DistanceFromHomeToTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
-                            <Label Grid.Row="2" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray middle bar" />
-                            <TextBox Grid.Row="2" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DistanceFromHomeToTrayMiddleBar,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
-                            <Label Grid.Row="3" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from middle bar to the end of tray" />
-                            <TextBox Grid.Row="3" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DistanceFromMiddleBarToEndTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,9,198.2,0"/>
-                            <Label Grid.Row="4" Grid.Column="0" Height="Auto" Margin="0,10,0,0"  Content="Distance from home to tray y" />
-                            <TextBox Grid.Row="4" Grid.Column="1" Height="24" TextWrapping="Wrap" Text="{Binding DistanceFromHomeToEndOfTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Margin="10.4,10,198.2,0"/>
-                        </Grid>
                     </GroupBox>
 
                 </Grid>
