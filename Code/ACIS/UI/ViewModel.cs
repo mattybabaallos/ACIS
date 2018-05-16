@@ -70,7 +70,7 @@ namespace UI
             cameraCapture = new CameraCapture();
 
             #region Set settings from XML
-            XmlDocument xmlDoc = new XmlDocument(); 
+            XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load("Setting.xml");
             XmlNodeList savePathNode = xmlDoc.GetElementsByTagName("savePath");
             XmlNodeList distance_from_start_of_tray_to_middle_bar_node = xmlDoc.GetElementsByTagName("distance_from_start_of_tray_to_middle_bar");
@@ -91,40 +91,17 @@ namespace UI
                 if (!Directory.Exists(m_saveFolder))
                     Directory.CreateDirectory(m_saveFolder);
             }
-            catch 
+            catch
             {
                 ErrorMessages.Add("Illegal save path");
             }
 
-            if (!String.IsNullOrEmpty(distance_from_start_of_tray_to_middle_bar_node[0].InnerText))
-                m_distance_from_start_of_tray_to_middle_bar = Convert.ToInt32(distance_from_start_of_tray_to_middle_bar_node[0].InnerText);
-            else
-                m_distance_from_start_of_tray_to_middle_bar = Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR;
-
-            if (!String.IsNullOrEmpty(distance_from_home_to_tray_node[0].InnerText))
-                m_distance_from_home_to_tray = Convert.ToInt32(distance_from_home_to_tray_node[0].InnerText);
-            else
-                m_distance_from_home_to_tray = Constants.DISTANCE_FROM_HOME_TO_TRAY;
-
-            if (!String.IsNullOrEmpty(distance_from_home_to_tray_middle_bar_node[0].InnerText))
-                m_distance_from_home_to_tray_middle_bar = Convert.ToInt32(distance_from_home_to_tray_middle_bar_node[0].InnerText);
-            else
-                m_distance_from_home_to_tray_middle_bar = Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR;
-
-            if (!String.IsNullOrEmpty(distance_from_middle_bar_to_end_tray_node[0].InnerText))
-                m_distance_from_middle_bar_to_end_tray = Convert.ToInt32(distance_from_middle_bar_to_end_tray_node[0].InnerText);
-            else
-                m_distance_from_middle_bar_to_end_tray = Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY;
-
-            if (!String.IsNullOrEmpty(distance_from_home_to_end_of_tray_node[0].InnerText))
-                m_distance_from_home_to_end_of_tray = Convert.ToInt32(distance_from_home_to_end_of_tray_node[0].InnerText);
-            else
-                m_distance_from_home_to_end_of_tray = Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY;
-
-            if (!String.IsNullOrEmpty(distance_from_home_to_tray_y_node[0].InnerText))
-                m_distance_from_home_to_tray_y = Convert.ToInt32(distance_from_home_to_tray_y_node[0].InnerText);
-            else
-                m_distance_from_home_to_tray_y = Constants.DISTANCE_FROM_HOME_TO_TRAY_Y;
+            m_distance_from_start_of_tray_to_middle_bar = !String.IsNullOrEmpty(distance_from_start_of_tray_to_middle_bar_node[0].InnerText) ? Convert.ToInt32(distance_from_start_of_tray_to_middle_bar_node[0].InnerText) : Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR;
+            m_distance_from_home_to_tray = !String.IsNullOrEmpty(distance_from_home_to_tray_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_node[0].InnerText) : Constants.DISTANCE_FROM_HOME_TO_TRAY;
+            m_distance_from_home_to_tray_middle_bar = !String.IsNullOrEmpty(distance_from_home_to_tray_middle_bar_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_middle_bar_node[0].InnerText) : m_distance_from_home_to_tray_middle_bar = Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR;
+            m_distance_from_middle_bar_to_end_tray = !String.IsNullOrEmpty(distance_from_middle_bar_to_end_tray_node[0].InnerText) ? Convert.ToInt32(distance_from_middle_bar_to_end_tray_node[0].InnerText) : m_distance_from_middle_bar_to_end_tray = Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY;
+            m_distance_from_middle_bar_to_end_tray = !String.IsNullOrEmpty(distance_from_home_to_end_of_tray_node[0].InnerText) ? m_distance_from_home_to_end_of_tray = Convert.ToInt32(distance_from_home_to_end_of_tray_node[0].InnerText) : m_distance_from_home_to_end_of_tray = Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY;
+            m_distance_from_home_to_tray_y = !String.IsNullOrEmpty(distance_from_home_to_tray_y_node[0].InnerText) ? Convert.ToInt32(distance_from_home_to_tray_y_node[0].InnerText) : Constants.DISTANCE_FROM_HOME_TO_TRAY_Y;
 
             #endregion
 
@@ -296,12 +273,12 @@ namespace UI
 
         public int DistanceFromStartOfTrayToMiddleBar
         {
-            get {return m_distance_from_start_of_tray_to_middle_bar;}
+            get { return m_distance_from_start_of_tray_to_middle_bar; }
             set
             {
                 if (value > 0)
                 {
-                  m_distance_from_start_of_tray_to_middle_bar = value;
+                    m_distance_from_start_of_tray_to_middle_bar = value;
                 }
             }
         }
@@ -577,7 +554,7 @@ namespace UI
         private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int device = -1, status = -1, fucntion = -1, data = -1, errorCode = -1;
-            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data,ref errorCode);
+            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data, ref errorCode);
             Process(device, fucntion, status, data);
 
             //This will spin up a thread that will update the UI
