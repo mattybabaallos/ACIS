@@ -14,8 +14,8 @@ Matty Baba Allos matty@pdx.edu
 
 class acis
 {
-public:
-	acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, led *top_leds, led * bottom_leds);
+  public:
+	acis(Adafruit_MotorShield *shield_0, Adafruit_MotorShield *shield_1, led *top_leds, led *bottom_leds);
 	int init();
 	int move_forward(byte motor_id, long data);
 	int move_backward(byte motor_id, long data);
@@ -26,9 +26,9 @@ public:
 	int process(byte *buffer);
 	int send_back(byte *buffer, byte device, byte function, long data, byte error_code);
 
-private:
+  private:
 	int decode(byte *buffer, byte &device, byte &function, long &data);
-	led* select_led(byte led_id);
+	led *select_led(byte led_id);
 	Adafruit_MotorShield *m_shield_0;
 	Adafruit_MotorShield *m_shield_1;
 	motor motors[NUMBER_MOTORS];
