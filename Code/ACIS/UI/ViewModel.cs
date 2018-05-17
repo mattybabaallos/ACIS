@@ -238,13 +238,13 @@ namespace UI
                 {
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, CpuScanned.ToString());
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
                             ScanRow(DevSettingsProp.DistanceFromHomeToTrayMiddleBar);
-                            MoveStartOfRow(DevSettingsProp.DistanceFromStartOfTrayToMiddleBar, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromStartOfTrayToMiddleBar, DevSettingsProp.DistanceToMovePerImageY);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -254,13 +254,13 @@ namespace UI
 
                     //Scan the second column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTrayMiddleBar, DevSettingsProp.DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, DateTime.Now.ToString());
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
                     while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
                     {
                         do
                         {
                             ScanRow(DevSettingsProp.DistanceFromHomeToEndOfTray);
-                            MoveStartOfRow(DevSettingsProp.DistanceFromMiddleBarToEndTray, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromMiddleBarToEndTray, DevSettingsProp.DistanceToMovePerImageY);
 
                         } while (!m_cpu_done);
                         UpdateScanVariables();
@@ -280,7 +280,7 @@ namespace UI
 
         private void UpdateScanVariables()
         {
-            cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, UsrSettings.SavePath, DateTime.Now.ToString());
+            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
             ++CpuScanned;
             m_cpu_done = false;
             Progress = ((float)CpuScanned / (float)Constants.CPU_TO_SCAN) * 100;
@@ -309,8 +309,8 @@ namespace UI
                 **********/
 
                 //Step the X axis camera to the next position
-                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
             }
         }
 

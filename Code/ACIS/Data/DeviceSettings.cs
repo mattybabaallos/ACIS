@@ -108,6 +108,39 @@ namespace Data
             }
         }
 
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("10")]
+        public int DistanceToMovePerImageX
+        {
+            get
+            {
+                return ((int)(this["DistanceToMovePerImageX"]));
+            }
+            set
+            {
+                this["DistanceToMovePerImageX"] = value;
+                OnPropertyChanged(this, "DistanceToMovePerImageX");
+
+            }
+        }
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("10")]
+        public int DistanceToMovePerImageY
+        {
+            get
+            {
+                return ((int)(this["DistanceToMovePerImageY"]));
+            }
+            set
+            {
+                this["DistanceToMovePerImageY"] = value;
+                OnPropertyChanged(this, "DistanceToMovePerImageY");
+
+            }
+        }
+
         protected void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)
