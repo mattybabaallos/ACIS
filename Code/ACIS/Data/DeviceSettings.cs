@@ -141,6 +141,40 @@ namespace Data
             }
         }
 
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("#fffff")]
+        public string TopLightsColor
+        {
+            get
+            {
+                return ((string)(this["TopLightsColor"]));
+            }
+            set
+            {
+                this["TopLightsColor"] = value;
+                OnPropertyChanged(this, "TopLightsColor");
+
+            }
+        }
+
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("#fffff")]
+        public string BottomLightsColor
+        {
+            get
+            {
+                return ((string)(this["BottomLightsColor"]));
+            }
+            set
+            {
+                this["BottomLightsColor"] = value;
+                OnPropertyChanged(this, "BottomLightsColor");
+
+            }
+        }
+
         protected void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)

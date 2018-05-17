@@ -157,6 +157,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <GroupBox Header="Tray" Grid.Column="0" Grid.Row="0">
                                 <Grid>
@@ -206,7 +208,29 @@
                                     <TextBox Grid.Row="1" Grid.Column="1" Height="24"  Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceToMovePerImageY,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
                                 </Grid>
                             </GroupBox>
-                            <Grid Grid.Row="2" Margin="0,10,0,10">
+                            <GroupBox Grid.Column="0" Grid.Row="2"  Header="Lights">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" Margin="0,8,0,0"  Content="Top lights color (hex)" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Height="24"  Width="60" Text="{Binding DevSettingsProp.TopLightsColor,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+                                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Height="Auto" Margin="0,8,0,0"  Content="Bottom lights color (hex)" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Height="24"  Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.BottomLightsColor,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <Grid Grid.Row="4" Margin="0,10,0,10">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
