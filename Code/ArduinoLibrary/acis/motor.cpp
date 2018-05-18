@@ -11,7 +11,8 @@ motor::motor() : m_stop(true), m_current_position(0), m_max_distance(0), m_motor
 {
 }
 
-int motor::init_motor(Adafruit_StepperMotor *stepper, int max_distance)
+
+int motor::init_motor(Adafruit_StepperMotor *stepper, long max_distance)
 {
 	if (!stepper)
 	{

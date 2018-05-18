@@ -1,17 +1,20 @@
-﻿using Data;
+﻿using CV;
+using Data;
+using NLog;
+using NLog.Targets;
 using Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using CV;
+using System.Windows.Media.Imaging;
 
 namespace UI
 {
@@ -24,36 +27,26 @@ namespace UI
 
         /***********Added for camera************/
         private CameraControl m_camera;
-        private string m_saveFolder;
+        private string m_SavePath;
         private string m_imagePath;
         private CameraCapture cameraCapture;
-        /***************************************/
 
         private string m_selected_port = string.Empty;
-        private object _lock = new object();
+        private object m_lock = new object();
         private bool m_updateUI = false;
-        private event EventHandler ScrollView;
+        private bool _isScanable = true;
 
         private int m_cpu_scanned;
-        private int m_total_cpu_scanned;
         private int m_y_axis_dividers_count;
         private float m_progress;
+        private bool m_cpu_done;
+
+
 
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
 
-        public ICommand HomeAllCommand { get { return new Command(e => true, this.HomeAll); } }
-        public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
-        public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
-        public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
-        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
-
-        public ICommand StartScan { get { return new Command(e => true, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => true, this.Stop); } }
-        public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
-
-
-        //private List<string> m_error = new List<string>();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public ViewModel(Home home)
         {
@@ -70,43 +63,43 @@ namespace UI
             /***********Added for camera************/
             m_camera = new CameraControl();
             m_camera.Videocapture.ImageGrabbed += SaveImage;
-            m_saveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACIS");
-            if (!Directory.Exists(m_saveFolder))
-                Directory.CreateDirectory(m_saveFolder);
             m_imagePath = "";
-
-
             cameraCapture = new CameraCapture();
-            /***************************************/
+
             m_cpu_scanned = 0;
-            m_total_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
-            BindingOperations.EnableCollectionSynchronization(ErrorMessages, _lock); //This is needed to update the collection
+            m_cpu_done = false;
+            UpdateLoggerPath();
+            UsrSettings.PropertyChanged += UpdateLoggerPathEventHandler;
+            BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
 
-            //HomeAllButton = new HomeCommand(this);
-            //updatePorts();
         }
 
-        /***********Added for camera************/
-        private void CaptureCPU()
+        #region UiProprties 
+
+        public DeviceSettings DevSettingsProp { get; } = new DeviceSettings();
+        public UserSettings UsrSettings { get; } = new UserSettings();
+        public ArduinoSettings ArdSettings { get; } = new ArduinoSettings();
+
+        public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
+
+        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> InfoMessages { get; set; } = new ObservableCollection<string>();
+
+        public ObservableCollection<string> Ports
         {
-            m_camera.Capture();
-        }
-        private void SaveImage(object sender, EventArgs e)
-        {
-            try
+            get
             {
-                m_camera.Videocapture.Retrieve(m_camera.Frame);
-                m_camera.Videocapture.Stop();
-                string path = m_saveFolder + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
-                m_camera.Frame.Save(path);
-                ImagePath = path;
+                return m_arduinoControl.PortList;
             }
-            catch (Exception ex)
+            set
             {
-                Console.WriteLine(ex.Message);
+                m_arduinoControl.PortList = new ObservableCollection<string>(value);
+                OnPropertyChanged(this, "Ports");
+
             }
+
         }
 
         public string ImagePath
@@ -119,95 +112,13 @@ namespace UI
             }
         }
 
-        private void Browse()
-        {
-            var dialog = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-            SaveFolder = dialog.SelectedPath;
-        }
-
-
-        public string SaveFolder
-        {
-            get { return m_saveFolder; }
-            set
-            {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    m_saveFolder = value;
-                    if (!Directory.Exists(m_saveFolder))
-                        Directory.CreateDirectory(m_saveFolder);
-                    OnPropertyChanged(this, "SaveFolder");
-                }
-
-            }
-        }
-        /***************************************/
-        public int CPU_Scanned
+        public int CpuScanned
         {
             get { return m_cpu_scanned; }
             set
             {
                 m_cpu_scanned = value;
                 OnPropertyChanged(this, "CPU_Scanned");
-            }
-        }
-
-        private void HomeAll()
-        {
-            ErrorMessages.Add("Homing all");
-            //for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
-            //{
-            //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
-            //}
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
-            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
-
-        }
-
-        private void HomeXTop()
-        {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_TOP, ArduinoFunctions.HOME, 0);
-        }
-        private void HomeXBottom()
-        {
-            m_arduinoControl.SendCommand(Motors.X_AXIS_BOTTOM, ArduinoFunctions.HOME, 0);
-        }
-
-        public void HomeY()
-        {
-            m_arduinoControl.SendCommand(Motors.Y_AXIS, ArduinoFunctions.HOME, 0);
-        }
-
-        /// <summary>
-        /// This function always run on the background and only update the COM list if there is any changes
-        /// </summary>
-        private async void updatePorts()
-        {
-            ObservableCollection<string> CurrentPorts;
-            while (true)
-            {
-                await Task.Delay(2000);
-                await Task.Run(() =>
-                {
-                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
-
-                    //only update port list when it changes
-                    if (Ports.SequenceEqual(CurrentPorts) != true)
-                    {
-                        Ports = new ObservableCollection<string>(CurrentPorts);
-
-                        if (Ports.Count == 0)
-                            IsPortConnected = false;
-                        else
-                            IsPortConnected = true;
-                    }
-                    //++CPU_Scanned;
-                    //Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    //Console.WriteLine(CPU_Scanned);
-                    //Console.WriteLine(Progress);
-                });
             }
         }
 
@@ -234,130 +145,9 @@ namespace UI
             }
         }
 
-        public void Stop()
+        public void Process(int device, int function, int errorCode, int data)
         {
-            m_scan_cancel.Cancel();
-            if (m_scan_cancel.IsCancellationRequested)
-                ErrorMessages.Add("canceling");
-        }
-
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            int device = -1, status = -1, op = -1, distance = -1;
-            m_arduinoControl.ReciveCommand(ref device, ref op, ref status, ref distance);
-            Process(device, op, status, distance);
-
-            //This will spin up a thread that will update the UI
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                m_home.ScrollViewer.ScrollToBottom();
-            }));
-        }
-
-        private void CreateNewCancellationToken()
-        {
-            m_scan_cancel = new CancellationTokenSource();
-            m_arduinoControl.Cancellation = m_scan_cancel;
-        }
-
-        public async void Scan()
-        {
-            try
-            {
-                if (m_scan_cancel.IsCancellationRequested)
-                    CreateNewCancellationToken();
-
-                await Task.Run(
-                () =>
-                {
-                    //Home the motors.
-                    HomeAll();
-
-                    //Move the X axis cameras to the begging of the tray
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY);
-                    m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
-
-
-                    //cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, CPU_Scanned.ToString());
-                    cameraCapture.Init_camera(2, 2, SaveFolder, "c0");
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
-                    {
-                        do
-                        {
-                            while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR) //Scan for one row 
-                            {
-                                Thread.Sleep(300);
-                                cameraCapture.Take_picture();
-                                //ImagePath = cameraCapture.FileName;
-
-
-                                //Step the X axis camera to the next position
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-
-                            }
-
-                            //Step the X axis cameras back start of tray 
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FROM_START_OF_TRAY_TO_MIDDLE_BAR);
-
-                            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
-
-                        } while (!cpu_done);
-                        //cameraCapture.Init_camera(24/Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder,DateTime.Now.ToString());
-                        ++CPU_Scanned;
-                        cpu_done = false;
-                        Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    }
-
-                    HomeAll();
-                    m_y_axis_dividers_count = 0;
-
-
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
-                    m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_MIDDLE_BAR);
-                    m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_FROM_HOME_TO_TRAY_Y);
-                    cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
-                    {
-                        do
-                        {
-                            while (m_motors[(int)Motors.X_AXIS_TOP].Position < Constants.DISTANCE_FROM_HOME_TO_END_OF_TRAY) //Scan for one row 
-                            {
-                               // cameraCapture.Take_picture();
-                                ImagePath = cameraCapture.FileName;
-
-                                //Step the X axis camera to the next position
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                                m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_FORWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_X);
-                            }
-
-                            //Step the X axis cameras back start of tray 
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_TOP, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY);
-                            m_arduinoControl.SendCommandBlocking(Motors.X_AXIS_BOTTOM, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_FRPM_MIDDLE_BAR_TO_END_TRAY);
-
-                            m_arduinoControl.SendCommandBlocking(Motors.Y_AXIS, ArduinoFunctions.MOVE_BACKWARD, Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y);
-
-                        } while (!m_motors[(int)Motors.Y_AXIS].Stopped);
-                        //cameraCapture.Init_camera(24 / Constants.DISTANCE_TO_MOVE_PER_IMAGE_Y, Constants.CPU_WIDTH / Constants.DISTANCE_TO_MOVE_PER_IMAGE_X, SaveFolder, DateTime.Now.ToString());
-                        ++CPU_Scanned;
-                        Progress = ((float)CPU_Scanned / (float)Constants.CPU_TO_SCAN) * 100;
-                    }
-
-                });
-            }
-            catch
-            {
-                ErrorMessages.Add("Scan canceled");
-                return;
-            }
-
-        }
-
-        public void Process(int device, int op, int status, int distance)
-        {
-            if (status > 0)
+            if (errorCode > 0)
             {
                 /*Error happened
                  * maybe print the error to the GUI and retry the command again. 
@@ -366,103 +156,30 @@ namespace UI
                  * 
                 */
 
-
+                ErrorMessages.Add(Common.ErrorCodeToString(errorCode));
             }
 
             //This is a respond to command sent from the main application
-            if (op != (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
+            if (function != (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
             {
-                m_motors[device].Position = distance;
-                UpdateMotorsUiElements(device, distance);
+                m_motors[device].Position = data;
+                UpdateMotorsUiElements(device, data);
                 m_waitHandle.Set();
             }
 
-            else if (device == Constants.Y_AXIS_CPU && op == (int)ArduinoFunctions.STOP && status == (int)Errors.STOP_INTERRUPT )
+            else if (device == (int)Devices.YAxisCpuSwitch && function == (int)Functions.StopStepper && errorCode == (int)Errors.StopInterrupt)
             {
                 ++m_y_axis_dividers_count;
-                cpu_done = true;
+                m_cpu_done = true;
+
             }
 
-            else if (op == (int)ArduinoFunctions.STOP && device < Constants.NUMBER_OF_MOTORS)
+            else if (function == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
         }
 
-        private void UpdateMotorsUiElements(int device, int distance)
-        {
-            switch (device)
-            {
-                case (int)Motors.X_AXIS_TOP:
-                    OnPropertyChanged(this, "XTopPosition");
-                    ErrorMessages.Add("X TOP motor moved to location " + distance);
-                    break;
-                case (int)Motors.X_AXIS_BOTTOM:
-                    OnPropertyChanged(this, "XBottomPosition");
-                    ErrorMessages.Add("X Bottom motor moved to location " + distance);
-
-                    break;
-                case (int)Motors.Y_AXIS:
-                    OnPropertyChanged(this, "YPosition");
-                    ErrorMessages.Add("Y motor moved to location " + distance);
-
-                    break;
-                case (int)Motors.Z_AXIS_TOP:
-                    OnPropertyChanged(this, "ZTopPosition");
-                    ErrorMessages.Add("Z TOP motor moved to location " + distance);
-
-                    break;
-                case (int)Motors.Z_AXIS_BOTTOM:
-                    OnPropertyChanged(this, "ZBottomPosition");
-                    ErrorMessages.Add("Z Bottom motor moved to location " + distance);
-                    break;
-
-
-                default:
-                    break;
-            }
-        }
-
-        public ObservableCollection<string> Ports
-        {
-            get
-            {
-                return m_arduinoControl.PortList;
-            }
-            set
-            {
-                m_arduinoControl.PortList = new ObservableCollection<string>(value);
-                OnPropertyChanged(this, "Ports");
-
-            }
-
-        }
-        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
-        public int XTopPosition
-        {
-            get { return m_motors[(int)Motors.X_AXIS_TOP].Position; }
-            set { }
-        }
-        public int XBottomPosition
-        {
-            get { return m_motors[(int)Motors.X_AXIS_BOTTOM].Position; }
-            set { }
-        }
-        public int ZTopPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_TOP].Position; }
-            set { }
-        }
-        public int ZBottomPosition
-        {
-            get { return m_motors[(int)Motors.Z_AXIS_BOTTOM].Position; }
-            set { }
-        }
-        public int YPosition
-        {
-            get { return m_motors[(int)Motors.Y_AXIS].Position; }
-            set { }
-        }
         public string SelectedPort
         {
             get
@@ -472,7 +189,7 @@ namespace UI
                     if (Ports.Count > 0)
                     {
                         m_arduinoControl.Connect(Ports[0]);
-                        m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                        m_arduinoControl.SerialDataReceived += PortDataReceived;
                         m_selected_port = Ports[0];
                         return Ports[0];
                     }
@@ -486,31 +203,363 @@ namespace UI
                 //Set the new port
                 m_selected_port = value;
                 m_arduinoControl.Close();
-                m_arduinoControl.SerialDataReceived += Port_DataReceived;
+                m_arduinoControl.SerialDataReceived += PortDataReceived;
                 OnPropertyChanged(this, "SelectedPort");
 
             }
 
         }
 
-
-
-
-        //ICommands
-        public ICommand HomeAllButton { get; set; }
-
-
-
-        private void OnPropertyChanged(object sender, string propertyName)
+        public int XTopPosition
         {
-            if (this.PropertyChanged != null)
+            get { return m_motors[(int)Devices.XAxisTopMotor].Position; }
+            set { }
+        }
+        public int XBottomPosition
+        {
+            get { return m_motors[(int)Devices.XAxisBottomMotor].Position; }
+            set { }
+        }
+        public int YPosition
+        {
+            get { return m_motors[(int)Devices.YAxisMotor].Position; }
+            set { }
+        }
+
+        #endregion
+
+        #region Privates
+        private async void Scan()
+        {
+            try
+            {
+                _isScanable = false;
+
+
+                await Task.Run(
+                () =>
+                {
+                    //Scan the first column
+                    MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString());
+                    while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
+                    {
+                        do
+                        {
+                            ScanRow(DevSettingsProp.DistanceFromHomeToTrayMiddleBar);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromStartOfTrayToMiddleBar, DevSettingsProp.DistanceToMovePerImageY);
+
+                        } while (!m_cpu_done);
+                        UpdateScanVariables();
+                    }
+
+                    m_y_axis_dividers_count = 0;
+
+                    //Scan the second column
+                    MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTrayMiddleBar, DevSettingsProp.DistanceFromHomeToTrayY);
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+                    while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
+                    {
+                        do
+                        {
+                            ScanRow(DevSettingsProp.DistanceFromHomeToEndOfTray);
+                            MoveStartOfRow(DevSettingsProp.DistanceFromMiddleBarToEndTray, DevSettingsProp.DistanceToMovePerImageY);
+
+                        } while (!m_cpu_done);
+                        UpdateScanVariables();
+                    }
+
+                });
+
+                _isScanable = true;
+            }
+            catch
+            {
+                if (m_scan_cancel.IsCancellationRequested)
+                    CreateNewCancellationToken();
+                ErrorMessages.Add("Scan canceled");
+                return;
+            }
+
+        }
+
+        private void UpdateScanVariables()
+        {
+            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+            ++CpuScanned;
+            m_cpu_done = false;
+            Progress = ((float)CpuScanned / (float)DevSettingsProp.CpusToScan) * 100;
+        }
+
+        private void MoveStartOfRow(int x, int y)
+        {
+
+            //Step the X axis cameras back start of tray 
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperBackward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperBackward, x);
+
+            //Move Y axis to next step
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperBackward, y);
+        }
+
+        private void ScanRow(int xPosition)
+        {
+            while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
+            {
+              //  cameraCapture.Take_picture();
+                //ImagePath = cameraCapture.FileName;
+
+                /**TODO*** 
+                ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 
+                **********/
+
+                //Step the X axis camera to the next position
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+            }
+        }
+
+        private void MoveToStartOfColumn(int x, int y)
+        {
+            //Home the motors.
+            HomeAll();
+
+            //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
+
+        }
+
+        private void OpenTrayAxis()
+        {
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, 500);
+        }
+
+        private void Stop()
+        {
+            _isScanable = true;
+            m_scan_cancel.Cancel();
+            if (m_scan_cancel.IsCancellationRequested)
+                LogInfo("Canceling Scan");
+        }
+
+        private void HomeAll()
+        {
+            ErrorMessages.Add("Homing all");
+            //for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
+            //{
+            //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
+            //}
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.HomeStepper, 0);
+
+        }
+
+        private void ViewCPU(object path)
+        {
+            Window imgWindow = new Window();
+            imgWindow.Height = 300;
+            imgWindow.Width = 300;
+            imgWindow.Title = path.ToString();
+            BitmapImage btm = new BitmapImage(new Uri(path.ToString(), UriKind.Relative));
+            Image img = new Image();
+            img.Source = btm;
+            imgWindow.Content = img;
+            imgWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            imgWindow.Show();
+        }
+        private void BrowseCPUFolder(object path)
+        {
+            System.Windows.Forms.OpenFileDialog cpuDialog = new System.Windows.Forms.OpenFileDialog();
+            cpuDialog.Title = path.ToString();
+            cpuDialog.InitialDirectory = path.ToString();
+            cpuDialog.ShowDialog();
+        }
+
+
+        private void HomeXTop()
+        {
+            m_arduinoControl.SendCommand(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
+        }
+        private void HomeXBottom()
+        {
+            m_arduinoControl.SendCommand(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
+        }
+        private void HomeY()
+        {
+            m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
+        }
+
+        private void UpdateLoggerPath()
+        {
+            var logFileTaget = (FileTarget)LogManager.Configuration.AllTargets[0]; //Using index 0 because we only have one traget
+            if (logFileTaget == null)
+            {
+                LogError("Could not update log file path. See the old path");
+                return;
+            }
+            logFileTaget.FileName = UsrSettings.SavePath + "\\log.txt";
+            LogManager.ReconfigExistingLoggers();
+        }
+
+        private void UpdateLoggerPathEventHandler(object sender, PropertyChangedEventArgs e)
+        {
+            UpdateLoggerPath();
+        }
+
+        /// <summary>
+        /// This function always run on the background and only update the COM list if there is any changes
+        /// </summary>
+        private async void updatePorts()
+        {
+            ObservableCollection<string> CurrentPorts;
+            while (true)
+            {
+                await Task.Delay(2000);
+                await Task.Run(() =>
+                {
+                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
+
+                    //only update port list when it changes
+                    if (Ports.SequenceEqual(CurrentPorts) != true)
+                    {
+                        Ports = new ObservableCollection<string>(CurrentPorts);
+
+                        if (Ports.Count == 0)
+                            IsPortConnected = false;
+                        else
+                            IsPortConnected = true;
+                    }
+                });
+            }
+        }
+
+        private void Browse()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            UsrSettings.SavePath = dialog.SelectedPath;
+        }
+
+        private void CaptureCPU()
+        {
+            m_camera.Capture();
+        }
+        private void SaveImage(object sender, EventArgs e)
+        {
+            try
+            {
+                m_camera.Videocapture.Retrieve(m_camera.Frame);
+                m_camera.Videocapture.Stop();
+                string path = m_SavePath + "\\" + DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + ".jpg";
+                m_camera.Frame.Save(path);
+                ImagePath = path;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            int device = -1, status = -1, fucntion = -1, data = -1, errorCode = -1;
+            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data, ref errorCode);
+            Process(device, fucntion, status, data);
+        }
+
+        private void CreateNewCancellationToken()
+        {
+            m_scan_cancel = new CancellationTokenSource();
+            m_arduinoControl.Cancellation = m_scan_cancel;
+        }
+
+        private void UpdateMotorsUiElements(int device, int distance)
+        {
+            switch (device)
+            {
+                case (int)Devices.XAxisTopMotor:
+                    OnPropertyChanged(this, "XTopPosition");
+                    ErrorMessages.Add("X TOP motor moved to location " + distance);
+                    break;
+                case (int)Devices.XAxisBottomMotor:
+                    OnPropertyChanged(this, "XBottomPosition");
+                    ErrorMessages.Add("X Bottom motor moved to location " + distance);
+
+                    break;
+                case (int)Devices.YAxisMotor:
+                    OnPropertyChanged(this, "YPosition");
+                    ErrorMessages.Add("Y motor moved to location " + distance);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        private void LogInfo(string message)
+        {
+            InfoMessages.Add(message);
+            logger.Info(message);
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.InfoMessageScrollViewer.ScrollToBottom();
+            }));
+        }
+
+        private void LogError(string message)
+        {
+            ErrorMessages.Add(message);
+            logger.Error(message);
+            //This will spin up a thread that will update the UI
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.ErrorMessageScrollViewer.ScrollToBottom();
+            }));
+        }
+
+        protected void OnPropertyChanged(object sender, string propertyName)
+        {
+            if (PropertyChanged != null)
             {
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion
 
+        #region ICommands
+
+        //ICommands
+        public ICommand HomeAllCommand { get { return new Command(e => true, HomeAll); } }
+        public ICommand HomeXTopCommand { get { return new Command(e => true, HomeXTop); } }
+        public ICommand HomeXBottomCommand { get { return new Command(e => true, HomeXBottom); } }
+        public ICommand HomeYCommand { get { return new Command(e => true, HomeY); } }
+        public ICommand CaptureCommand { get { return new Command(e => true, CaptureCPU); } }
+
+        public ICommand StartScan { get { return new Command(e => _isScanable, Scan); } }
+        public ICommand StopScan { get { return new Command(e => !_isScanable, Stop); } }
+        public ICommand OpenTray { get { return new Command(e => true, OpenTrayAxis); } }
+        public ICommand BrowseCommand { get { return new Command(e => true, Browse); } }
+
+        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => ViewCPU(path)); } }
+        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => BrowseCPUFolder(path)); } }
+
+        public ICommand SaveDevSettingsCommand { get { return new Command(e => true, DevSettingsProp.Save); } }
+        public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, DevSettingsProp.Reset); } }
+
+        public ICommand SaveUserSettingsCommand { get { return new Command(e => true, UsrSettings.Save); } }
+        public ICommand RestorUserSettingsCommand { get { return new Command(e => true, UsrSettings.Reset); } }
+
+        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, ArdSettings.Save); } }
+        public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, ArdSettings.Reset); } }
+
+        #endregion
 
     }
 }

@@ -15,6 +15,7 @@ It will include all #includes and #defines
 #include <avr/interrupt.h>
 #include <Wire.h>
 #include "Adafruit_MotorShield.h"
+#include "Adafruit_NeoPixel.h"
 
 #define SHIELD_ZERO_ADDRESS 0x61
 #define SHIELD_ONE_ADDRESS 0x62
@@ -22,8 +23,6 @@ It will include all #includes and #defines
 
 #define X_AXIS_TOP_CHANNEL 1
 #define X_AXIS_BOTTOM_CHANNEL 2
-#define Z_AXIS_TOP_CHANNEL 1
-#define Z_AXIS_BOTTOM_CHANNEL 2
 #define Y_AXIS_CHANNEL 2
 
 #define MOTOR_STEPS 200
@@ -33,37 +32,42 @@ It will include all #includes and #defines
 #define X_BOTTOM_SWICH_PIN 3
 #define Y_SWICH_PIN 4
 #define Y_AXIS_CPU_SWITCH_PIN 5
-#define Z_TOP_SWICH_PIN 6
-#define Z_BOTTOM_SWICH_PIN 7
+
+#define LEDS_PIN 9
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 6
+#define NUMBER_LEDS 144
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
-#define MAX_Z_TOP_LENGTH 330
-#define MAX_Z_BOTTOM_LENGTH 330
-#define MAX_Y_LENGTH 330
+#define MAX_Y_LENGTH 315
 
 #define STEP_TO_DEGREE_CONST (0.11344640138 * 1.8)
 
-#define BYTES_TO_READ 2
-#define BUFFER_SIZE 3
+#define BUFFER_SIZE 6
 
-#define X_AXIS_TOP 0
-#define X_AXIS_BOTTOM 1
-#define Z_AXIS_TOP 2
-#define Z_AXIS_BOTTOM 3
-#define Y_AXIS 4
-#define Y_AXIS_CPU 5
+enum Devices
+{
+    X_AXIS_TOP_MOTOR,
+    X_AXIS_BOTTOM_MOTOR,
+    Y_AXIS_MOTOR,
+    TOP_LEDS,
+    BOTTOM_LEDS,
+    Y_AXIS_CPU_SWITCH,
+    DOOR_SWITCH,
+    BOTTOM_SWITCH,
+};
 
 enum functions
 {
-    HOME,
-    MOVE_FORWARD,
-    MOVE_BACKWARD,
-    STOP
+    HOME_STEPPER,
+    MOVE_STEPPER_FORWARD,
+    MOVE_STEPPER_BACKWARD,
+    STOP_STEPPER,
+    TURN_ON_UPDATE_LEDS,
+    TURN_OFF_LEDS
 };
 
 enum errors
