@@ -230,8 +230,7 @@ namespace UI
             try
             {
                 _isScanable = false;
-                if (m_scan_cancel.IsCancellationRequested)
-                    CreateNewCancellationToken();
+
 
                 await Task.Run(
                 () =>
@@ -272,6 +271,8 @@ namespace UI
             }
             catch
             {
+                if (m_scan_cancel.IsCancellationRequested)
+                    CreateNewCancellationToken();
                 ErrorMessages.Add("Scan canceled");
                 return;
             }
@@ -301,8 +302,8 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
-                cameraCapture.Take_picture();
-                ImagePath = cameraCapture.FileName;
+              //  cameraCapture.Take_picture();
+                //ImagePath = cameraCapture.FileName;
 
                 /**TODO*** 
                 ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 
@@ -314,6 +315,8 @@ namespace UI
             }
         }
 
+
+
         private void MoveToStartOfColumn(int x, int y)
         {
             //Home the motors.
@@ -324,6 +327,11 @@ namespace UI
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
 
+        }
+
+        private void OpenTrayAxis()
+        {
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, 500);
         }
 
         private void Stop()
@@ -500,6 +508,7 @@ namespace UI
 
         public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
         public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
+        public ICommand OpenTray { get { return new Command(e => true, this.OpenTrayAxis); } }
         public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
 
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }

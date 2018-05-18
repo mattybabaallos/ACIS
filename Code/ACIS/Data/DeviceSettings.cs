@@ -175,6 +175,41 @@ namespace Data
             }
         }
 
+        [UserScopedSetting()]
+        [DefaultSettingValue("3")]
+        public int YaxisCpuDividers
+        {
+            get
+            {
+                return ((int)(this["YaxisCpuDividers"]));
+            }
+            set
+            {
+                this["YaxisCpuDividers"] = value;
+                OnPropertyChanged(this, "YaxisCpuDividers");
+
+            }
+        }
+
+
+        [UserScopedSetting()]
+        [DefaultSettingValue("6")]
+        public int CpusToScan
+        {
+            get
+            {
+                return ((int)(this["CpusToScan"]));
+            }
+            set
+            {
+                this["CpusToScan"] = value;
+                OnPropertyChanged(this, "CpusToScan");
+
+            }
+        }
+
+
+
         protected void OnPropertyChanged(object sender, string propertyName)
         {
             if (this.PropertyChanged != null)

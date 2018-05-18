@@ -68,7 +68,7 @@ namespace Services
             command[2] = (byte)data;
             command[3] = (byte)(data >> 8);
             command[4] = (byte)(data >> 16);
-            command[6] = 0;
+            command[5] = 0;
             port.Write(command, 0, Constants.BUFFER_SIZE);
             return command;
         }
@@ -106,6 +106,7 @@ namespace Services
                 function = buffer[1];
                 data = 0;
                 data = ((data | buffer[4]) << 16) | ((data | buffer[3]) << 8) | (data | buffer[2]);
+                errorCode = buffer[5];
             }
         }
 

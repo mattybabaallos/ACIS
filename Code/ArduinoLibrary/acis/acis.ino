@@ -18,6 +18,9 @@ void setup()
   acis.init();
   enable_pin_change_interrupt();
   Serial.begin(9600);
+  acis.home(X_AXIS_TOP_MOTOR);
+  acis.home(X_AXIS_BOTTOM_MOTOR);
+  acis.home(Y_AXIS_MOTOR);
 }
 
 void loop()
