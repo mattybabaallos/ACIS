@@ -1,21 +1,20 @@
-﻿using Data;
+﻿using CV;
+using Data;
+using NLog;
+using NLog.Targets;
 using Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using CV;
-using System.Xml;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Diagnostics;
 
 namespace UI
 {
@@ -46,6 +45,8 @@ namespace UI
         private CancellationTokenSource m_scan_cancel;
         private AutoResetEvent m_waitHandle;
 
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public ViewModel(Home home)
         {
             m_home = home;
@@ -70,6 +71,8 @@ namespace UI
             m_y_axis_dividers_count = 0;
             m_progress = 0;
             m_cpu_done = false;
+            UpdateLoggerPath();
+            UsrSettings.PropertyChanged += UpdateLoggerPathEventHandler;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
 
         }
@@ -89,7 +92,6 @@ namespace UI
                 OnPropertyChanged(this, "ImagePath");
             }
         }
-
 
         public int CpuScanned
         {
@@ -176,6 +178,7 @@ namespace UI
 
         }
         public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> InfoMessages { get; set; } = new ObservableCollection<string>();
 
         public string SelectedPort
         {
@@ -206,7 +209,6 @@ namespace UI
             }
 
         }
-
 
         public int XTopPosition
         {
@@ -317,8 +319,6 @@ namespace UI
             }
         }
 
-
-
         private void MoveToStartOfColumn(int x, int y)
         {
             //Home the motors.
@@ -392,6 +392,18 @@ namespace UI
             m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
         }
 
+        private void UpdateLoggerPath()
+        {
+            var logFileTaget = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
+            logFileTaget.FileName = UsrSettings.SavePath + "log.txt";
+            LogManager.ReconfigExistingLoggers();
+        }
+
+        private void UpdateLoggerPathEventHandler(object sender, PropertyChangedEventArgs e)
+        {
+            UpdateLoggerPath();
+        }
+
         /// <summary>
         /// This function always run on the background and only update the COM list if there is any changes
         /// </summary>
@@ -425,6 +437,7 @@ namespace UI
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
             UsrSettings.SavePath = dialog.SelectedPath;
         }
+
         private void CaptureCPU()
         {
             m_camera.Capture();
@@ -485,6 +498,19 @@ namespace UI
                 default:
                     break;
             }
+        }
+
+
+        private void LogInfo(string message)
+        {
+            InfoMessages.Add(message);
+            logger.Info(message);
+        }
+
+        private void LogError(string message)
+        {
+            ErrorMessages.Add(message);
+            logger.Error(message);
         }
 
         protected void OnPropertyChanged(object sender, string propertyName)
