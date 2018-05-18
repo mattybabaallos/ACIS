@@ -23,6 +23,7 @@ namespace UI
         private Home m_home;
         private ArduinoControl m_arduinoControl;
         private Motor[] m_motors;
+        private bool cpu_done;
 
         /***********Added for camera************/
         private CameraControl m_camera;
@@ -51,6 +52,7 @@ namespace UI
         {
             m_home = home;
             m_waitHandle = new AutoResetEvent(false);
+            cpu_done = false;
             m_scan_cancel = new CancellationTokenSource();
             m_arduinoControl = new ArduinoControl(m_waitHandle, m_scan_cancel);
             m_motors = new Motor[Constants.NUMBER_OF_MOTORS];

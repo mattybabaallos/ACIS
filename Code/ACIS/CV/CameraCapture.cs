@@ -1,6 +1,9 @@
 ﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +33,29 @@ namespace CV
         /* Base name for the file: */
         private string file_name;
 
+        /* Mask out edges of picture and keep focused middle */
+        private Rectangle image_mask;
+
+        /* Image resolution: */
+        private Size img_res;      //resolution of cam
+
+        /* Constructor */
+        private VideoCapture capture = new VideoCapture();
+
         public string FileName => Image_prefix_filename();
+
+        /* Crops Image based on ROI. Returns cropped Image: */
+        static Mat Crop_image(Mat input, Rectangle crop_region)
+        {
+            Image<Bgr, Byte> buffer_im = input.ToImage<Bgr, Byte>();
+            Console.WriteLine(buffer_im.Size);
+            Console.WriteLine(input.Size);
+            buffer_im.ROI = crop_region;
+            Image<Bgr, Byte> cropped_im = buffer_im.Copy();
+            return cropped_im.Mat;
+        }
+
+        
 
         /* Camera Settings: */
         public void Init_camera(int R, int C, string save_path, string name)
@@ -42,6 +67,11 @@ namespace CV
             seg_R = R;
             img_save_path = save_path;
             file_name = name;
+            img_res = new Size(1920, 1080);
+            var image_mask = new Rectangle(img_res.Width / 16, img_res.Height / 16, Convert.ToInt32(Math.Round(0.95 * img_res.Width)), Convert.ToInt32(Math.Round(0.95 * img_res.Height)));
+
+            capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
         }
 
         /* Determin which Image number: */
@@ -66,20 +96,36 @@ namespace CV
         /* Take picture: */
         public int Take_picture()
         {
-            if ((seg_C * seg_R) <= Image_count)
-                return 1;                           //Error, asking for more photos than requrested at init.
+            try
+            {
 
-            var prefix = Image_prefix();
+                if ((seg_C * seg_R) <= Image_count)
+                    return 1;                           //Error, asking for more photos than requrested at init.
 
-            var image = new Mat();
-            var capture = new VideoCapture();
-            image = capture.QueryFrame();
+                var prefix = Image_prefix();
 
-            image.Save(img_save_path + prefix);
+                var image = new Mat();
+               // var capture = new VideoCapture();
 
-            Image_count++;
+                for (int i = 0; i < 5; ++i)
+                {
+                    capture.QueryFrame();
+                }
 
-            return 0;
+                image = capture.QueryFrame();
+               
+                image = Crop_image(image, image_mask);
+
+                image.Save(img_save_path + prefix);
+
+                //Image_count++;
+
+                return 0;
+            }
+            catch
+            {
+                return 1;
+            }
         }
     }
 }
