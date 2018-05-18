@@ -50,9 +50,6 @@ namespace UI
         public ViewModel(Home home)
         {
             m_home = home;
-            DevSettingsProp = new DeviceSettings();
-            UsrSettings = new UserSettings();
-            ArdSettings = new ArduinoSettings();
             m_waitHandle = new AutoResetEvent(false);
             m_scan_cancel = new CancellationTokenSource();
             m_arduinoControl = new ArduinoControl(m_waitHandle, m_scan_cancel);
@@ -79,9 +76,29 @@ namespace UI
 
         #region UiProprties 
 
-        public DeviceSettings DevSettingsProp { get; }
-        public UserSettings UsrSettings { get; }
-        public ArduinoSettings ArdSettings { get; }
+        public DeviceSettings DevSettingsProp { get; } = new DeviceSettings();
+        public UserSettings UsrSettings { get; } = new UserSettings();
+        public ArduinoSettings ArdSettings { get; } = new ArduinoSettings();
+
+        public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
+
+        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> InfoMessages { get; set; } = new ObservableCollection<string>();
+
+        public ObservableCollection<string> Ports
+        {
+            get
+            {
+                return m_arduinoControl.PortList;
+            }
+            set
+            {
+                m_arduinoControl.PortList = new ObservableCollection<string>(value);
+                OnPropertyChanged(this, "Ports");
+
+            }
+
+        }
 
         public string ImagePath
         {
@@ -102,8 +119,6 @@ namespace UI
                 OnPropertyChanged(this, "CPU_Scanned");
             }
         }
-
-        public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
 
         public bool IsPortConnected
         {
@@ -162,23 +177,6 @@ namespace UI
             else
                 ErrorMessages.Add("Couldn't decode message from scanner");
         }
-
-        public ObservableCollection<string> Ports
-        {
-            get
-            {
-                return m_arduinoControl.PortList;
-            }
-            set
-            {
-                m_arduinoControl.PortList = new ObservableCollection<string>(value);
-                OnPropertyChanged(this, "Ports");
-
-            }
-
-        }
-        public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
-        public ObservableCollection<string> InfoMessages { get; set; } = new ObservableCollection<string>();
 
         public string SelectedPort
         {
@@ -341,7 +339,7 @@ namespace UI
             _isScanable = true;
             m_scan_cancel.Cancel();
             if (m_scan_cancel.IsCancellationRequested)
-                ErrorMessages.Add("canceling");
+                LogInfo("Canceling Scan");
         }
 
         private void HomeAll()
@@ -394,8 +392,13 @@ namespace UI
 
         private void UpdateLoggerPath()
         {
-            var logFileTaget = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
-            logFileTaget.FileName = UsrSettings.SavePath + "log.txt";
+            var logFileTaget = (FileTarget)LogManager.Configuration.AllTargets[0]; //Using index 0 because we only have one traget
+            if (logFileTaget == null)
+            {
+                LogError("Could not update log file path. See the old path");
+                return;
+            }
+            logFileTaget.FileName = UsrSettings.SavePath + "\\log.txt";
             LogManager.ReconfigExistingLoggers();
         }
 
@@ -463,12 +466,6 @@ namespace UI
             int device = -1, status = -1, fucntion = -1, data = -1, errorCode = -1;
             m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data, ref errorCode);
             Process(device, fucntion, status, data);
-
-            //This will spin up a thread that will update the UI
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                m_home.ScrollViewer.ScrollToBottom();
-            }));
         }
 
         private void CreateNewCancellationToken()
@@ -505,12 +502,21 @@ namespace UI
         {
             InfoMessages.Add(message);
             logger.Info(message);
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.InfoMessageScrollViewer.ScrollToBottom();
+            }));
         }
 
         private void LogError(string message)
         {
             ErrorMessages.Add(message);
             logger.Error(message);
+            //This will spin up a thread that will update the UI
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.ErrorMessageScrollViewer.ScrollToBottom();
+            }));
         }
 
         protected void OnPropertyChanged(object sender, string propertyName)

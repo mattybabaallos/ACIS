@@ -60,8 +60,18 @@
                             <Button Content="Open Tray" Command="{Binding OpenTray}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="2" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
-                        <ScrollViewer   Name="ScrollViewer"
+                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Info"  Grid.ColumnSpan="1">
+                        <ScrollViewer   Name="InfoMessageScrollViewer"
+                                        VerticalAlignment="Top"
+                                        ScrollViewer.PanningMode="VerticalFirst"
+                                        VerticalScrollBarVisibility="Auto"  Grid.Column="1" Margin="3,0,-3,0">
+                            <ItemsControl   Name="InfoMessages" 
+                                            VerticalAlignment="Bottom"
+                                            ItemsSource="{Binding InfoMessages ,UpdateSourceTrigger=PropertyChanged}"/>
+                        </ScrollViewer>
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Grid.Row="1" Header="Errors"  Grid.ColumnSpan="1">
+                        <ScrollViewer   Name="ErrorMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
                                         VerticalScrollBarVisibility="Auto"  Grid.Column="1">
@@ -70,6 +80,7 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
+
                     <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
                                   Grid.ColumnSpan="1">
                         <StackPanel Orientation="Horizontal">
