@@ -302,3 +302,9 @@ Code/ArduinoLibrary/libraries/readme\.txt
 Code/ArduinoLibrary/output/
 
 *.dll
+
+Code/ACIS/UI/Emgu\.CV\.World\.xml
+
+Code/ACIS/UI/NLog\.xml
+
+Code/ACIS/UI/logs\.txt
