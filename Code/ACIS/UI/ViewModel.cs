@@ -48,9 +48,10 @@ namespace UI
 
         public ViewModel(Home home)
         {
+            m_home = home;
             DevSettingsProp = new DeviceSettings();
             UsrSettings = new UserSettings();
-            m_home = home;
+            ArdSettings = new ArduinoSettings();
             m_waitHandle = new AutoResetEvent(false);
             m_scan_cancel = new CancellationTokenSource();
             m_arduinoControl = new ArduinoControl(m_waitHandle, m_scan_cancel);
@@ -77,6 +78,7 @@ namespace UI
 
         public DeviceSettings DevSettingsProp { get; }
         public UserSettings UsrSettings { get; }
+        public ArduinoSettings ArdSettings { get; }
 
         public string ImagePath
         {
@@ -238,7 +240,7 @@ namespace UI
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
                     cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString());
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
+                    while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
                     {
                         do
                         {
@@ -254,7 +256,7 @@ namespace UI
                     //Scan the second column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTrayMiddleBar, DevSettingsProp.DistanceFromHomeToTrayY);
                     cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
-                    while (m_y_axis_dividers_count < Constants.Y_AXIS_DIVIDERS)
+                    while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
                     {
                         do
                         {
@@ -284,7 +286,7 @@ namespace UI
             cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
             ++CpuScanned;
             m_cpu_done = false;
-            Progress = ((float)CpuScanned / (float)Constants.CPU_TO_SCAN) * 100;
+            Progress = ((float)CpuScanned / (float)DevSettingsProp.CpusToScan) * 100;
         }
 
         private void MoveStartOfRow(int x, int y)
@@ -487,7 +489,7 @@ namespace UI
 
         protected void OnPropertyChanged(object sender, string propertyName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
@@ -500,22 +502,28 @@ namespace UI
         #region ICommands
 
         //ICommands
-        public ICommand HomeAllCommand { get { return new Command(e => true, this.HomeAll); } }
-        public ICommand HomeXTopCommand { get { return new Command(e => true, this.HomeXTop); } }
-        public ICommand HomeXBottomCommand { get { return new Command(e => true, this.HomeXBottom); } }
-        public ICommand HomeYCommand { get { return new Command(e => true, this.HomeY); } }
-        public ICommand CaptureCommand { get { return new Command(e => true, this.CaptureCPU); } }
+        public ICommand HomeAllCommand { get { return new Command(e => true, HomeAll); } }
+        public ICommand HomeXTopCommand { get { return new Command(e => true, HomeXTop); } }
+        public ICommand HomeXBottomCommand { get { return new Command(e => true, HomeXBottom); } }
+        public ICommand HomeYCommand { get { return new Command(e => true, HomeY); } }
+        public ICommand CaptureCommand { get { return new Command(e => true, CaptureCPU); } }
 
-        public ICommand StartScan { get { return new Command(e => _isScanable, this.Scan); } }
-        public ICommand StopScan { get { return new Command(e => !_isScanable, this.Stop); } }
-        public ICommand OpenTray { get { return new Command(e => true, this.OpenTrayAxis); } }
-        public ICommand BrowseCommand { get { return new Command(e => true, this.Browse); } }
+        public ICommand StartScan { get { return new Command(e => _isScanable, Scan); } }
+        public ICommand StopScan { get { return new Command(e => !_isScanable, Stop); } }
+        public ICommand OpenTray { get { return new Command(e => true, OpenTrayAxis); } }
+        public ICommand BrowseCommand { get { return new Command(e => true, Browse); } }
 
-        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => this.ViewCPU(path)); } }
-        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => this.BrowseCPUFolder(path)); } }
+        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => ViewCPU(path)); } }
+        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => BrowseCPUFolder(path)); } }
 
-        public ICommand SaveSettingsCommand { get { return new Command(e => true, this.DevSettingsProp.Save); } }
-        public ICommand RestoreSettingsCommand { get { return new Command(e => true, this.DevSettingsProp.Reset); } }
+        public ICommand SaveDevSettingsCommand { get { return new Command(e => true, DevSettingsProp.Save); } }
+        public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, DevSettingsProp.Reset); } }
+
+        public ICommand SaveUserSettingsCommand { get { return new Command(e => true, UsrSettings.Save); } }
+        public ICommand RestorUserSettingsCommand { get { return new Command(e => true, UsrSettings.Reset); } }
+
+        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, ArdSettings.Save); } }
+        public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, ArdSettings.Reset); } }
 
         #endregion
 

@@ -10,10 +10,12 @@ namespace Services
     {
         private SerialPort port;
         private AutoResetEvent m_autoEvent; //Thead synchrontion
+        private ArduinoSettings arduinoSettings;
         public ArduinoControl(AutoResetEvent autoEvent, CancellationTokenSource cancellation)
         {
             m_autoEvent = autoEvent;
             port = new SerialPort();
+            arduinoSettings = new ArduinoSettings();
             Cancellation = cancellation;
         }
 
@@ -21,7 +23,7 @@ namespace Services
 
         public void Connect()
         {
-            port = new SerialPort(PortList[0], Constants.BAUD_RATE);
+            port = new SerialPort(PortList[0], arduinoSettings.BaudRate);
             port.DtrEnable = true;
             port.ReceivedBytesThreshold = Constants.BUFFER_SIZE;
             port.Open();
@@ -32,7 +34,7 @@ namespace Services
 
         public void Connect(string portName)
         {
-            port = new SerialPort(portName, Constants.BAUD_RATE);
+            port = new SerialPort(portName, arduinoSettings.BaudRate);
             port.DtrEnable = true;
             port.ReceivedBytesThreshold = Constants.BUFFER_SIZE;
             port.Open();

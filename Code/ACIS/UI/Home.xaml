@@ -22,13 +22,13 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="81.986"/>
-                        <ColumnDefinition Width="218.014"/>
+                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="2">
+                    <GroupBox Grid.Column="0" Width="300" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
@@ -48,7 +48,7 @@
                         </Grid>
 
                     </GroupBox>
-                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2">
+                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -60,7 +60,7 @@
                             <Button Content="Open Tray" Command="{Binding OpenTray}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="2" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Errors"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="ScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -70,7 +70,7 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Header="Preview" Grid.Column="3" Grid.Row="0"
+                    <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
                                   Grid.ColumnSpan="1">
                         <StackPanel Orientation="Horizontal">
                             <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="25,25,25,0" VerticalAlignment="Top" Width="237"/>
@@ -86,12 +86,12 @@
                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Label Content="{Binding CpuScanned}"/>
                                 <Label Content="/"/>
-                                <Label Content="{x:Static cons:Constants.CPU_TO_SCAN}"/>
+                                <Label Content="{Binding DevSettingsProp.CpusToScan}"/>
                                 <Label Content="CPUs"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Scanned CPU" Grid.Column="4">
+                    <GroupBox Header="Scanned CPU" Grid.Column="3">
                         <ScrollViewer   Name="ScrollScannedCPUs"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -125,35 +125,12 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto" MinHeight="20"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6"/>
-                        <ColumnDefinition Width="94"/>
-                        <ColumnDefinition Width="400"/>
-                        <ColumnDefinition Width="133"/>
+                        <ColumnDefinition MinWidth="550" Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="3" Content="Serial ports" Grid.ColumnSpan="2"></Label>
-                    <Label Grid.Row="3" Grid.Column="2">
-                        <ComboBox x:Name="GradeListDropdown"
-                            ItemsSource="{Binding Ports}"
-                            SelectedValue ="{Binding SelectedPort, Mode=TwoWay}"
-                            ToolTip="Serial port list"
-                            Height="20" Width="180" />
-                    </Label>
-                    <Label Grid.Row="2" Content="Save path " Grid.ColumnSpan="2"></Label>
-                    <Label Grid.Row="2" Grid.Column="2">
-                        <TextBox x:Name="SaveFolder"
-                            Text="{Binding  UsrSettings.SavePath}"
-                            ToolTip="Save path"
-                            Height="20" Width="380" />
-                    </Label>
-                    <Button Grid.Row="2" Grid.Column="3" HorizontalAlignment="left" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
-                    <!--<Label Grid.Row="2" Grid.Column="1" Content="{Binding SaveFolder}"/>
-                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding ImagePath}"/>-->
-                    <GroupBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" Header="Device Settings" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="528">
+                    <GroupBox Grid.Column="0" Grid.Row="0" Header="Device Settings" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="528">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -250,6 +227,56 @@
                             </Grid>
                         </Grid>
                     </GroupBox>
+                    <Grid Width="600" Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="1" Width="400" Height="125" HorizontalAlignment="Left" VerticalAlignment="Top" Header="Device Connection">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" MinHeight="20"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Content="Serial ports" Grid.ColumnSpan="2"></Label>
+                                <ComboBox  Grid.Row="0" Grid.Column="2" x:Name="GradeListDropdown" HorizontalAlignment="Left" ItemsSource="{Binding Ports}" SelectedValue ="{Binding SelectedPort, Mode=TwoWay}" ToolTip="Serial port list" Height="20" Width="180" />
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" Margin="0,8,0,0"  Content="Baud Rate" />
+                                <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Height="24" Width="100" TextWrapping="Wrap" Text="{Binding ArdSettings.BaudRate,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                                <Button Grid.Row="2" Grid.Column="2" Content="Save" Command="{Binding SaveArduinoSettingsCommand}" HorizontalAlignment="Right"  VerticalAlignment="Center"  Width="70" Margin="0,0,50,0"/>
+                                <Button Grid.Row="2" Grid.Column="2" Content="Restore" Command="{Binding RestorArdinoSettingsCommand}" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="60" />
+
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Grid.Row="0" Height="100" VerticalAlignment="Center" Header="User Settings">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Content="Save path"></Label>
+                                <TextBox Grid.Row="0" HorizontalAlignment="Left" Grid.Column="1" Grid.ColumnSpan="2" x:Name="SaveFolder" 
+                            Text="{Binding  UsrSettings.SavePath}" ToolTip="Save path" Width="324" Margin="0,5,0,8" />
+                                <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
+                                <Button Grid.Row="1" Grid.Column="2" Content="Save" Command="{Binding SaveUserSettingsCommand}" HorizontalAlignment="Right"  VerticalAlignment="Center"  Width="70" Margin="0,0,40,1"/>
+                                <Button Grid.Row="1" Grid.Column="2" Content="Restore" Command="{Binding RestorUserSettingsCommand}" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="60" Margin="10,0,0,0"/>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+
+
+
                 </Grid>
             </TabItem>
             <TabItem Header="Manual control" >
