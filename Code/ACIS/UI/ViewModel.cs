@@ -306,8 +306,8 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
-              //  cameraCapture.Take_picture();
-                //ImagePath = cameraCapture.FileName;
+                cameraCapture.Take_picture();
+                ImagePath = cameraCapture.FileName;
 
                 /**TODO*** 
                 ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 
