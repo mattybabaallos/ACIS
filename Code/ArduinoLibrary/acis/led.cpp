@@ -11,6 +11,7 @@ NOTE: I am reusing the same code I wrote for ECE 411
 
 led::led(Adafruit_NeoPixel *leds, int number_leds) : m_leds(leds), m_numLed(number_leds)
 {
+    m_leds->begin();
 }
 
 int led::set(int led, byte r, byte g, byte b)

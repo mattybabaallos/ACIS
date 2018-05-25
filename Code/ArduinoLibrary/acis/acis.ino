@@ -4,14 +4,14 @@
 
 Adafruit_MotorShield shield_0(SHIELD_ZERO_ADDRESS);
 Adafruit_MotorShield shield_1(SHIELD_ONE_ADDRESS);
-Adafruit_NeoPixel top_pixels(NUMBER_LEDS, LEDS_PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel bottom_pixels(NUMBER_LEDS, LEDS_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel top_pixels(NUMBER_LEDS, TOP_LEDS_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel bottom_pixels(NUMBER_LEDS, BOTTOM_LEDS_PIN, NEO_GRB + NEO_KHZ800);
+
 led top_leds(&top_pixels, NUMBER_LEDS);
 led bottom_leds(&bottom_pixels, NUMBER_LEDS);
 acis acis(&shield_0, &shield_1, &top_leds, &bottom_leds);
 byte buffer[BUFFER_SIZE];
 limit_switch sw[NUMBER_SWITCHES];
-sev_seg disp(9);
 int i = 0;
 void setup()
 {
@@ -29,9 +29,7 @@ void loop()
   {
     // read the incoming byte:
     Serial.readBytes(buffer, BUFFER_SIZE);
-    disp.all_off();
     acis.process(buffer);
-    disp.all_off();
     Serial.write(buffer, BUFFER_SIZE);
   }
 }
@@ -60,7 +58,6 @@ ISR(PCINT2_vect)
     acis.stop(X_AXIS_TOP_MOTOR);
     acis.send_back(buffer, X_AXIS_TOP_MOTOR, STOP_STEPPER, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
-    disp.display(0);
   }
 
   if (sw[X_AXIS_BOTTOM_MOTOR].pressed(X_BOTTOM_SWICH_PIN))
@@ -69,7 +66,6 @@ ISR(PCINT2_vect)
     acis.stop(X_AXIS_BOTTOM_MOTOR);
     acis.send_back(buffer, X_AXIS_BOTTOM_MOTOR, STOP_STEPPER, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
-    disp.display(1);
   }
 
   if (sw[Y_AXIS_MOTOR].pressed(Y_SWICH_PIN))
@@ -78,8 +74,6 @@ ISR(PCINT2_vect)
     acis.stop(Y_AXIS_MOTOR);
     acis.send_back(buffer, Y_AXIS_MOTOR, STOP_STEPPER, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
-
-    disp.display(2);
   }
 
   if (sw[Y_AXIS_CPU_SWITCH].pressed(Y_AXIS_CPU_SWITCH_PIN, 150))

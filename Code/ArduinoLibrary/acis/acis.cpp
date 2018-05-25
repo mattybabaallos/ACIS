@@ -70,7 +70,7 @@ int acis::leds_on(byte led_id, long hex_color)
 
 int acis::leds_off(byte led_id)
 {
-	led *working_leds = select_led(led_id);
+	led *working_leds = m_top_leds;
 	if (!working_leds)
 		return INVALID_DEVICE;
 	working_leds->off();
@@ -111,7 +111,7 @@ int acis::process(byte *buffer)
 	else if (function == TURN_OFF_LEDS)
 		temp = leds_off(device);
 	else if (function == TURN_ON_UPDATE_LEDS)
-		temp = leds_on(device,data);
+		temp = leds_on(device, data);
 	else
 		temp = COULD_NOT_DECODE_BYTES;
 	if (temp < 0)

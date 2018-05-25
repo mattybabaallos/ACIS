@@ -33,12 +33,14 @@ It will include all #includes and #defines
 #define Y_SWICH_PIN 4
 #define Y_AXIS_CPU_SWITCH_PIN 5
 
-#define LEDS_PIN 9
+#define TOP_LEDS_PIN 8
+#define BOTTOM_LEDS_PIN 9
+
 
 #define NUMBER_MOTORS 5
 #define NUMBER_SHIELD 3
 #define NUMBER_SWITCHES 6
-#define NUMBER_LEDS 144
+#define NUMBER_LEDS 25
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
