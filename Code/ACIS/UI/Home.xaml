@@ -64,7 +64,8 @@
                         <ScrollViewer   Name="InfoMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
-                                        VerticalScrollBarVisibility="Auto"  Grid.Column="1" Margin="3,0,-3,0">
+                                        VerticalScrollBarVisibility="Auto"  
+                                        HorizontalScrollBarVisibility="Auto" Grid.Column="1" Margin="3,0,-3,0">
                             <ItemsControl   Name="InfoMessages" 
                                             VerticalAlignment="Bottom"
                                             ItemsSource="{Binding InfoMessages ,UpdateSourceTrigger=PropertyChanged}"/>
@@ -74,7 +75,8 @@
                         <ScrollViewer   Name="ErrorMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
-                                        VerticalScrollBarVisibility="Auto"  Grid.Column="1">
+                                        VerticalScrollBarVisibility="Auto"  
+                                        HorizontalScrollBarVisibility="Auto" Grid.Column="1">
                             <ItemsControl   Name="ErrorMessages" 
                                             VerticalAlignment="Bottom"
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
