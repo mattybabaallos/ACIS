@@ -35,9 +35,6 @@ namespace UI
 
             LogManager.Configuration = config;
             DataContext = new ViewModel(this);
-
-
-
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

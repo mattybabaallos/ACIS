@@ -31,6 +31,14 @@ namespace UI
         private string m_imagePath;
         private CameraCapture cameraCapture;
 
+        /**********Added for barcode*********/
+        private Barcode m_barcode;
+        private string m_decoded;
+
+        /*********Added for Stitching************/
+        private string m_StitchedPath;
+        private ImageStitching m_stitcher;
+
         private string m_selected_port = string.Empty;
         private object m_lock = new object();
         private bool m_updateUI = false;
@@ -71,7 +79,7 @@ namespace UI
             DevSettingsProp.SettingChanging += ValidateDevSettings;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
             BindingOperations.EnableCollectionSynchronization(InfoMessages, m_lock);
-            ScannedCPUCollection.Add(new ScannedCPUInfo("Thao", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets\\in.png", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets"));
+            //ScannedCPUCollection.Add(new ScannedCPUInfo("Thao", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets\\in.png", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets"));
         }
 
         #region UiProprties 
@@ -201,9 +209,7 @@ namespace UI
                 m_arduinoControl.Close();
                 m_arduinoControl.SerialDataReceived += PortDataReceived;
                 OnPropertyChanged(this, "SelectedPort");
-
             }
-
         }
 
         public int XTopPosition
@@ -230,7 +236,6 @@ namespace UI
             try
             {
                 _isScanable = false;
-
                 await Task.Run(
                 () =>
                 {
@@ -283,6 +288,21 @@ namespace UI
         private void UpdateScanVariables()
         {
             cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+            var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
+            var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
+            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode("Stitched_img_path"));
+
+            //Create a folder for CPU: XML file + stitched image
+            String cpu_folder_name = "ACIS" + "_" + m_decoded + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");
+            String cpu_folder_path = Path.Combine(UsrSettings.SavePath, cpu_folder_name);
+            String cpu_image_path = Path.Combine(cpu_folder_path, cpu_folder_name + ".jpg");
+            Directory.CreateDirectory(cpu_folder_path);
+            CreateXMLFile(cpu_folder_path, m_decoded);
+            temp_stitched.Save(cpu_image_path);
+
+            //Add to UI list
+            ScannedCPUCollection.Add(new ScannedCPUInfo(m_decoded, cpu_image_path, cpu_folder_name)); 
+  
             ++CpuScanned;
             m_cpu_done = false;
             Progress = ((float)CpuScanned / (float)DevSettingsProp.CpusToScan) * 100;
@@ -304,11 +324,7 @@ namespace UI
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
                 cameraCapture.Take_picture();
-                ImagePath = cameraCapture.FileName;
-
-                /**TODO*** 
-                ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 
-                **********/
+                ImagePath = cameraCapture.FileName;          
 
                 //Step the X axis camera to the next position
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
@@ -377,11 +393,11 @@ namespace UI
             cpuDialog.InitialDirectory = path.ToString();
             cpuDialog.ShowDialog();
 
-            if (cpuDialog.FileName.EndsWith(".jpg") | cpuDialog.FileName.EndsWith(".png"))
+            if (cpuDialog.FileName.EndsWith(".jpg") | cpuDialog.FileName.EndsWith(".png")) //open image
             {
                 ViewCPU(cpuDialog.FileName);
             }
-            else
+            else //open XML file
             {
                 StreamReader sr = new StreamReader(cpuDialog.FileName);
                 MessageBox.Show(sr.ReadToEnd(), cpuDialog.FileName);
@@ -440,29 +456,28 @@ namespace UI
             /// <summary>
             /// This function always run on the background and only update the COM list if there is any changes
             /// </summary>
-            private async void updatePorts()
-        {
-            ObservableCollection<string> CurrentPorts;
-            while (true)
-            {
-                await Task.Delay(2000);
-                await Task.Run(() =>
+            private async void updatePorts() {
+                ObservableCollection<string> CurrentPorts;
+                while (true)
                 {
-                    CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
-
-                    //only update port list when it changes
-                    if (Ports.SequenceEqual(CurrentPorts) != true)
+                    await Task.Delay(2000);
+                    await Task.Run(() =>
                     {
-                        Ports = new ObservableCollection<string>(CurrentPorts);
+                        CurrentPorts = new ObservableCollection<string>(SerialPort.GetPortNames());
 
-                        if (Ports.Count == 0)
-                            IsPortConnected = false;
-                        else
-                            IsPortConnected = true;
-                    }
-                });
+                        //only update port list when it changes
+                        if (Ports.SequenceEqual(CurrentPorts) != true)
+                        {
+                            Ports = new ObservableCollection<string>(CurrentPorts);
+
+                            if (Ports.Count == 0)
+                                IsPortConnected = false;
+                            else
+                                IsPortConnected = true;
+                        }
+                    });
+                }
             }
-        }
 
         private void Browse()
         {
@@ -526,7 +541,6 @@ namespace UI
             }
         }
 
-
         private void LogInfo(string message)
         {
             InfoMessages.Add(message);
@@ -561,7 +575,6 @@ namespace UI
         #endregion
 
         #region ICommands
-
         //ICommands
         public ICommand HomeAllCommand { get { return new Command(e => true, HomeAll); } }
         public ICommand HomeXTopCommand { get { return new Command(e => true, HomeXTop); } }
@@ -584,6 +597,5 @@ namespace UI
         public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, delegate{ArdSettings.Reset(); LogInfo("Reset Arduino settings"); }); } }
 
         #endregion
-
     }
 }

@@ -82,12 +82,12 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-
+                    <GroupBox Header="Progress View" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="1">
+                        <Image x:Name="progressImage" Source="{Binding ProgressPath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="27,63,0,0" VerticalAlignment="Top" Width="237"/>
+                    </GroupBox>
                     <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
                                   Grid.ColumnSpan="1">
-                        <StackPanel Orientation="Horizontal">
-                            <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="25,25,25,0" VerticalAlignment="Top" Width="237"/>
-                        </StackPanel>
+                        <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="234" Margin="25,57,25,0" VerticalAlignment="Top" Width="237"/>
                     </GroupBox>
                     <GroupBox Header="Progress" Height="80" Grid.Column="3" VerticalAlignment="Top" Grid.Row="1">
                         <Grid >

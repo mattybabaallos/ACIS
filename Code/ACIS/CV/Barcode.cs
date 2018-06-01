@@ -9,7 +9,7 @@ using System.Drawing;
 namespace CV
 {
     /* All functions relating to Finding and Decoding 2D matrix barcodes: */
-    class Barcode
+    public class Barcode
     {
         /* Used to calculate lineraly spaced steps: */
         static double Linspace_step(double x1, double x2, int num)
