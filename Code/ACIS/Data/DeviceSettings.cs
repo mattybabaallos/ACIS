@@ -93,7 +93,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("140")]
+        [DefaultSettingValue("60")]
         public int DistanceFromHomeToTrayY
         {
             get

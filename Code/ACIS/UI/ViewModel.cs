@@ -241,7 +241,7 @@ namespace UI
                 {
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString());
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, "c0"); //UsrSettings.SavePath
                     while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
                     {
                         do
@@ -306,8 +306,8 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
-              //  cameraCapture.Take_picture();
-                //ImagePath = cameraCapture.FileName;
+                cameraCapture.Take_picture();
+                ImagePath = cameraCapture.FileName;
 
                 /**TODO*** 
                 ScannedCPUCollection.Add(new ScannedCPUInfo(***CPU barcode here***, ***CPU Image Path here***, ***CPU Folder here***)); 

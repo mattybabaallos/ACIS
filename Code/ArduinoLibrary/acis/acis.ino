@@ -21,6 +21,8 @@ void setup()
   acis.home(X_AXIS_TOP_MOTOR);
   acis.home(X_AXIS_BOTTOM_MOTOR);
   acis.home(Y_AXIS_MOTOR);
+  bottom_leds.set(0xffffff);
+  top_leds.set(0xffffff);
 }
 
 void loop()

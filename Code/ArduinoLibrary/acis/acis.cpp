@@ -20,6 +20,7 @@ int acis::init()
 	motors[X_AXIS_BOTTOM_MOTOR].init_motor(m_shield_0->getStepper(MOTOR_STEPS, X_AXIS_BOTTOM_CHANNEL), MAX_X_BOTTOM_LENGTH);
 	motors[Y_AXIS_MOTOR].init_motor(m_shield_1->getStepper(MOTOR_STEPS, Y_AXIS_CHANNEL), MAX_Y_LENGTH);
 
+
 	m_shield_0->begin();
 	m_shield_1->begin();
 	return 0;

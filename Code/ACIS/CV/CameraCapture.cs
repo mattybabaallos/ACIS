@@ -40,7 +40,7 @@ namespace CV
         private Size img_res;      //resolution of cam
 
         /* Constructor */
-        private VideoCapture capture = new VideoCapture();
+        private VideoCapture capture = new VideoCapture(1);
 
         public string FileName => Image_prefix_filename();
 
@@ -99,7 +99,7 @@ namespace CV
             try
             {
 
-                if ((seg_C * seg_R) <= Image_count)
+                if ((seg_C * seg_R) < Image_count)
                     return 1;                           //Error, asking for more photos than requrested at init.
 
                 var prefix = Image_prefix();
