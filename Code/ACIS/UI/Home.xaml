@@ -82,8 +82,8 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Header="Progress View" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="1">
-                        <Image x:Name="progressImage" Source="{Binding ProgressPath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="27,63,0,0" VerticalAlignment="Top" Width="237"/>
+                    <GroupBox Header="Inside View" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="1">
+                        <Image x:Name="insideImage" Source="{Binding insideImgPath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="27,63,0,0" VerticalAlignment="Top" Width="237"/>
                     </GroupBox>
                     <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
                                   Grid.ColumnSpan="1">
@@ -295,23 +295,62 @@
             <TabItem Header="Manual control" >
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition Height="Auto" MinHeight="20"/>
+                        <RowDefinition Height="200"/>
+                        <RowDefinition Height="200"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" Header="Home Commands" HorizontalAlignment="Left" Height="207" Margin="19,10,0,0" VerticalAlignment="Top" Width="151">
-                        <StackPanel Orientation="Vertical" Margin="0,13,-0.4,-13">
-                            <Button Content="Home All" Command="{Binding HomeAllCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118"/>
-                            <Button Content="Home X top" Command="{Binding HomeXTopCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118"/>
-                            <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118" />
-                            <Button Content="Home Y" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top" Width="118" />
+                    <GroupBox Grid.Row="0" Grid.Column="0" Header="Home Commands" Margin="10,10,0,0">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Margin" Value="10,10,10,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <Button Content="Home All" Command="{Binding HomeAllCommand}" Margin="10,30,10,0" />
+                            <Button Content="Home X top" Command="{Binding HomeXTopCommand}"/>
+                            <Button Content="Home X bottom" Command="{Binding HomeXBottomCommand}"/>
+                            <Button Content="Home Y" Command="{Binding HomeYCommand}"/>
                         </StackPanel>
                     </GroupBox>
 
+                    <GroupBox Grid.Row="0" Grid.Column="1" Header="Send Command" HorizontalAlignment="Left" Margin="20,10,0,0" >
+                        <StackPanel Orientation="Vertical">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Motors" Margin="0,10,0,0"/>
+                                <Label  Grid.Row="0" Grid.Column="1" Margin="0,5,10,0">
+                                    <ComboBox HorizontalAlignment="Left" Width="200"
+                                              ItemsSource="{Binding MotorList}"
+                                              SelectedValue ="{Binding SelectedMotor}"
+                                              ToolTip="Motor list"/>
+                                </Label>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Centimeters" Margin="0,10,0,0"/>
+                                <Label  Grid.Row="1" Grid.Column="1" Margin="0,5,0,0">
+                                    <TextBox Text="{Binding Distance}" Width="200" Height="20" HorizontalAlignment="Left"/>
+                                </Label>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Functions" Margin="0,10,0,0"/>
+                                <Label Grid.Row="2" Grid.Column="1" Margin="0,5,10,0">
+                                    <ComboBox Width="200" 
+                                          HorizontalAlignment="Left"
+                                          ItemsSource="{Binding FunctionList}"
+                                          SelectedValue ="{Binding SelectedFunction}"
+                                          ToolTip="Direction list"/>
+                                </Label>
+                            </Grid>
+                            <Button Content="SEND" Command="{Binding SendCommand}" Width="100" Height="30" Margin="0,20,0,0"/>
+                        </StackPanel>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>

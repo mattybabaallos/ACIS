@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace UI
 {
@@ -83,6 +84,16 @@ namespace UI
         }
 
         #region UiProprties 
+        public List<Motors> MotorList{
+            get { return Enum.GetValues(typeof(Motors)).Cast<Motors>().ToList(); }
+        }
+        public List<Functions> FunctionList
+        {
+            get { return Enum.GetValues(typeof(Functions)).Cast<Functions>().ToList(); }
+        }
+        public Motors SelectedMotor { get; set;}
+        public Functions SelectedFunction { get; set; }
+        public float Distance { get; set; }
 
         public DeviceSettings DevSettingsProp { get; } = new DeviceSettings();
         public UserSettings UsrSettings { get; } = new UserSettings();
@@ -301,7 +312,7 @@ namespace UI
             temp_stitched.Save(cpu_image_path);
 
             //Add to UI list
-            ScannedCPUCollection.Add(new ScannedCPUInfo(m_decoded, cpu_image_path, cpu_folder_name)); 
+            ScannedCPUCollection.Add(new ScannedCPUInfo(m_decoded, cpu_image_path, cpu_folder_path)); 
   
             ++CpuScanned;
             m_cpu_done = false;
@@ -486,7 +497,10 @@ namespace UI
             UsrSettings.SavePath = dialog.SelectedPath;
             LogInfo("Set save path to " + UsrSettings.SavePath);
         }
-
+        private void Send()
+        {
+            m_arduinoControl.SendCommand((byte)SelectedMotor, (byte)SelectedFunction, (byte)Distance);
+        }
         private void SaveDeviceSettings()
         {
             DevSettingsProp.Save();
@@ -580,22 +594,19 @@ namespace UI
         public ICommand HomeXTopCommand { get { return new Command(e => true, HomeXTop); } }
         public ICommand HomeXBottomCommand { get { return new Command(e => true, HomeXBottom); } }
         public ICommand HomeYCommand { get { return new Command(e => true, HomeY); } }
-
         public ICommand StartScan { get { return new Command(e => _isScanable, Scan); } }
         public ICommand StopScan { get { return new Command(e => !_isScanable, Stop); } }
         public ICommand OpenTray { get { return new Command(e => true, OpenTrayAxis); } }
         public ICommand BrowseCommand { get { return new Command(e => true, Browse); } }
-
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => ViewCPU(path)); } }
         public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => BrowseCPUFolder(path)); } }
-
         public ICommand SaveDevSettingsCommand { get { return new Command(e => true, SaveDeviceSettings); } }
         public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, delegate{DevSettingsProp.Reset(); LogInfo("Save user settings"); }); } }
         public ICommand SaveUserSettingsCommand { get { return new Command(e => true, delegate{UsrSettings.Save(); LogInfo("Save user settings"); }); } }
         public ICommand RestorUserSettingsCommand { get { return new Command(e => true, delegate{UsrSettings.Reset(); LogInfo("Reset user settings"); }); } }
         public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, delegate{ArdSettings.Save(); LogInfo("Save Arduino settings"); }); } }
         public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, delegate{ArdSettings.Reset(); LogInfo("Reset Arduino settings"); }); } }
-
+        public ICommand SendCommand { get { return new Command(e => true, Send); } }
         #endregion
     }
 }
