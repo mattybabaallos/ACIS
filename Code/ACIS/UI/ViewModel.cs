@@ -31,6 +31,15 @@ namespace UI
         private string m_imagePath;
         private CameraCapture cameraCapture;
 
+
+        /**********Added for barcode*********/
+        private Barcode m_barcode;
+        private string m_decoded;
+
+        /*********Added for Stitching************/
+        private string m_StitchedPath;
+        private ImageStitching m_stitcher;
+
         private string m_selected_port = string.Empty;
         private object m_lock = new object();
         private bool m_updateUI = false;
@@ -65,8 +74,13 @@ namespace UI
             m_camera.Videocapture.ImageGrabbed += SaveImage;
             m_imagePath = "";
             cameraCapture = new CameraCapture();
+            /**********Added for barcode*********/
+            m_barcode = new Barcode();
+            /*********Added for ImageStitching*********/
+            m_stitcher = new ImageStitching();
 
-            m_cpu_scanned = 0;
+
+        m_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
             m_cpu_done = false;
@@ -241,7 +255,7 @@ namespace UI
                 {
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString());
+                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, "c" + CpuScanned.ToString()); //UsrSettings.SavePath
                     while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
                     {
                         do
@@ -285,7 +299,16 @@ namespace UI
 
         private void UpdateScanVariables()
         {
-            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, "c" + CpuScanned.ToString());
+
+            var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
+            var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
+            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode("Stitched_img_path"));
+            
+            /* Save stitched Image */
+
+
+
             ++CpuScanned;
             m_cpu_done = false;
             Progress = ((float)CpuScanned / (float)DevSettingsProp.CpusToScan) * 100;

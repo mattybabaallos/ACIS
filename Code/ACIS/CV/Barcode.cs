@@ -9,7 +9,7 @@ using System.Drawing;
 namespace CV
 {
     /* All functions relating to Finding and Decoding 2D matrix barcodes: */
-    class Barcode
+    public class Barcode
     {
         /* Used to calculate lineraly spaced steps: */
         static double Linspace_step(double x1, double x2, int num)
@@ -111,18 +111,18 @@ namespace CV
 
             barcode = Find_barcode(img_path);
             var barcode_string = Barcode_decoder(barcode);
-            Console.WriteLine("Decoded Barcode is:" + barcode_string);
+            //Console.WriteLine("Decoded Barcode is:" + barcode_string);
 
 
             /* View Barcode Image: */
-            CvInvoke.NamedWindow("Barcode", NamedWindowType.Normal);
-            CvInvoke.Imshow("Barcode", barcode); /*
-            CvInvoke.NamedWindow("Given img", NamedWindowType.Normal);
-            CvInvoke.Imshow("Given img", img); */
-            CvInvoke.WaitKey();
-            CvInvoke.DestroyAllWindows();
+            //CvInvoke.NamedWindow("Barcode", NamedWindowType.Normal);
+            //CvInvoke.Imshow("Barcode", barcode); /*
+            //CvInvoke.NamedWindow("Given img", NamedWindowType.Normal);
+            //CvInvoke.Imshow("Given img", img); */
+            //CvInvoke.WaitKey();
+            //CvInvoke.DestroyAllWindows();
 
-            barcode.Save("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode_test.jpg");
+           // barcode.Save("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode_test.jpg");
 
             /* For debugging purposes: */
             Console.WriteLine("Press enter to close...");
