@@ -75,14 +75,14 @@ namespace Services
             return command;
         }
 
-        public byte[] SendCommand(Devices motor, Functions function, int data)
+        public byte[] SendCommand(Devices device, Functions function, int data)
         {
-            return SendCommand((byte)motor, (byte)function, data);
+            return SendCommand((byte)device, (byte)function, data);
         }
 
-        public byte[] SendCommandBlocking(Devices motor, Functions function, int data)
+        public byte[] SendCommandBlocking(Devices device, Functions function, int data)
         {
-            var val = SendCommand((byte)motor, (byte)function, data);
+            var val = SendCommand((byte)device, (byte)function, data);
             m_autoEvent.WaitOne();
             Cancellation.Token.ThrowIfCancellationRequested();
             return val;
