@@ -22,13 +22,14 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition Width="73"/>
+                        <ColumnDefinition Width="227"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                         <ColumnDefinition MinWidth="300" Width="300"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" Width="300" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200">
+                    <GroupBox Grid.Column="0" Width="300" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="2">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
@@ -48,7 +49,7 @@
                         </Grid>
 
                     </GroupBox>
-                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0">
+                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -60,7 +61,7 @@
                             <Button Content="Open Tray" Command="{Binding OpenTray}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="2" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Info"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Info"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="InfoMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -71,7 +72,7 @@
                                             ItemsSource="{Binding InfoMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="1" Header="Errors"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="2" Grid.Row="1" Header="Errors"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="ErrorMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -81,13 +82,6 @@
                                             VerticalAlignment="Bottom"
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
-                    </GroupBox>
-                    <GroupBox Header="Inside View" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="1">
-                        <Image x:Name="insideImage" Source="{Binding insideImgPath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="226" Margin="27,63,0,0" VerticalAlignment="Top" Width="237"/>
-                    </GroupBox>
-                    <GroupBox Header="Preview" Grid.Column="2" Grid.Row="0"
-                                  Grid.ColumnSpan="1">
-                        <Image x:Name="previewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="234" Margin="25,57,25,0" VerticalAlignment="Top" Width="237"/>
                     </GroupBox>
                     <GroupBox Header="Progress" Height="80" Grid.Column="3" VerticalAlignment="Top" Grid.Row="1">
                         <Grid >
@@ -130,6 +124,27 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </ScrollViewer>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Cameras">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Top Camera Preview" Grid.Column="0" Grid.Row="0">
+                        <Image x:Name="toppreviewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+                    </GroupBox>
+                    <GroupBox Header="Bottom Camera Preview" Grid.Column="0" Grid.Row="1">
+                        <Image x:Name="bottompreviewImage" Source="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="234"  VerticalAlignment="Top" />
+                    </GroupBox>
+                    <GroupBox Header="Inside View" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                        <Image x:Name="insideImage" Source="{Binding insideImgPath, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top" />
                     </GroupBox>
                 </Grid>
             </TabItem>

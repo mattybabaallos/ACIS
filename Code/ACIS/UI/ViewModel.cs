@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -188,6 +189,17 @@ namespace UI
 
             else if (function == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
+
+            else if(function == (int)Functions.TurnOnUpdateLeds)
+            {
+                if (device == (int)Devices.TopLeds)
+                    LogInfo("Top leds are updated");
+                else if (device == (int)Devices.BottomLeds)
+                    LogInfo("Top bottom are updated");
+                else
+                    LogError("Something wrong with leds");
+            }
+
             else
                 LogError("Couldn't decode message from scanner");
         }
@@ -371,13 +383,9 @@ namespace UI
         private void HomeAll()
         {
             LogInfo("Homing all");
-            //for (int i = 0; i < Constants.NUMBER_OF_MOTORS; ++i)
-            //{
-            //    m_arduinoControl.SendCommandBlocking((byte)i, (byte)ArduinoFunctions.HOME, 0);
-            //}
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
-            m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommand(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommand(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
+            m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
 
         }
 
@@ -455,13 +463,18 @@ namespace UI
 
         private void ValidateDevSettings(object sender, SettingChangingEventArgs e)
         {
-            if ((int)e.NewValue < 0)
-            {
-                e.Cancel = true;
-                MessageBox.Show("Negative Settings!");
-                LogError("Negative settings");
-            }
 
+
+            if (e.NewValue.GetType() == typeof(int))
+            {
+                if ((int)e.NewValue < 0)
+                {
+                    e.Cancel = true;
+                    MessageBox.Show("Negative Settings!");
+                    LogError("Negative settings");
+                    return;
+                }
+            }
         }
         /// <summary>
         /// This function always run on the background and only update the COM list if there is any changes
@@ -503,21 +516,34 @@ namespace UI
         }
         private void SaveDeviceSettings()
         {
+            int topLedColor = 0;
+            int bottomLedColor = 0;
+            try
+            {
+                topLedColor = Int32.Parse(DevSettingsProp.TopLightsColor.Replace(@"#", ""), NumberStyles.HexNumber);
+                bottomLedColor = Int32.Parse(DevSettingsProp.BottomLightsColor.Replace(@"#", ""), NumberStyles.HexNumber);
+                if (topLedColor > 0xffffff || bottomLedColor > 0xffffff)
+                    throw new Exception("Invalid device setting");
+            }
+            catch
+            {
+
+                LogError("Invalid device settings");
+                MessageBox.Show("Invalid device Settings!");
+                DevSettingsProp.Reload();
+                return;
+            }
+
             DevSettingsProp.Save();
             LogInfo("Saving device settings");
-            int topLedColor = Int32.Parse(DevSettingsProp.TopLightsColor.Replace(@"#", ""), System.Globalization.NumberStyles.HexNumber);
-            int bottomLedColor = Int32.Parse(DevSettingsProp.BottomLightsColor.Replace(@"#", ""), System.Globalization.NumberStyles.HexNumber);
-            LogInfo("Turn on top LEDs with value " + DevSettingsProp.TopLightsColor);
-            LogInfo("Turn on bottom LEDs with value " + DevSettingsProp.BottomLightsColor);
-
-            SendLEDCommand();
+            SendLEDCommand(topLedColor, bottomLedColor);
         }
 
-        private void SendLEDCommand()
+        private void SendLEDCommand(int topColor, int bottomColor)
         {
             /***TO_DOUBLE_CHECK***/
-            //m_arduinoControl.SendCommandBlocking(Devices.TopLeds, Functions.TurnOnUpdateLeds, topLedColor);
-            //m_arduinoControl.SendCommandBlocking(Devices.BottomLeds, Functions.TurnOnUpdateLeds, bottomLedColor);
+            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, topColor);
+            m_arduinoControl.SendCommand(Devices.BottomLeds, Functions.TurnOnUpdateLeds, bottomColor);
         }
         private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -601,11 +627,11 @@ namespace UI
         public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => ViewCPU(path)); } }
         public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => BrowseCPUFolder(path)); } }
         public ICommand SaveDevSettingsCommand { get { return new Command(e => true, SaveDeviceSettings); } }
-        public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, delegate { DevSettingsProp.Reset(); LogInfo("Save user settings"); }); } }
-        public ICommand SaveUserSettingsCommand { get { return new Command(e => true, delegate { UsrSettings.Save(); LogInfo("Save user settings"); }); } }
-        public ICommand RestorUserSettingsCommand { get { return new Command(e => true, delegate { UsrSettings.Reset(); LogInfo("Reset user settings"); }); } }
-        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, delegate { ArdSettings.Save(); LogInfo("Save Arduino settings"); }); } }
-        public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, delegate { ArdSettings.Reset(); LogInfo("Reset Arduino settings"); }); } }
+        public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, () => { DevSettingsProp.Reset(); SaveDeviceSettings(); LogInfo("Save user settings"); }); } }
+        public ICommand SaveUserSettingsCommand { get { return new Command(e => true, () => { UsrSettings.Save(); LogInfo("Save user settings"); }); } }
+        public ICommand RestorUserSettingsCommand { get { return new Command(e => true, () => { UsrSettings.Reset(); LogInfo("Reset user settings"); }); } }
+        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Save();  MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate","IMPORTANT"); LogInfo("Save Arduino settings"); }); } }
+        public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Reset(); MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate", "IMPORTANT"); LogInfo("Reset Arduino settings"); }); } }
         public ICommand SendCommand { get { return new Command(e => true, Send); } }
         #endregion
     }
