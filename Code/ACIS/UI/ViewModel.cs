@@ -28,7 +28,6 @@ namespace UI
         private ArduinoControl m_arduinoControl;
         private Motor[] m_motors;
         private bool cpu_done;
-        private string m_imagePath;
         private CameraCapture cameraCapture;
 
         /**********Added for barcode*********/
@@ -67,7 +66,6 @@ namespace UI
                 m_motors[i] = new Motor();
             }
 
-            m_imagePath = "";
             cameraCapture = new CameraCapture();
             /**********Added for barcode*********/
             m_barcode = new Barcode();
@@ -122,15 +120,9 @@ namespace UI
             }
         }
 
-        public string ImagePath
-        {
-            get { return m_imagePath; }
-            set
-            {
-                m_imagePath = value;
-                OnPropertyChanged(this, "ImagePath");
-            }
-        }
+        public string ImagePath { get; set; }
+
+        public int MyProperty { get; set; }
 
         public int CpuScanned
         {
@@ -339,8 +331,9 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
+                ImagePath = cameraCapture.Filepath;
                 cameraCapture.Take_picture();
-                ImagePath = cameraCapture.FileName;
+                OnPropertyChanged(this, "ImagePath");
 
                 //Step the X axis camera to the next position
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);

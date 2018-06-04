@@ -43,6 +43,7 @@ namespace CV
         private VideoCapture capture = new VideoCapture(1);
 
         public string FileName => Image_prefix_filename();
+        public string Filepath => img_save_path + Image_prefix_filename();
 
         /* Crops Image based on ROI. Returns cropped Image: */
         static Mat Crop_image(Mat input, Rectangle crop_region)
@@ -89,7 +90,7 @@ namespace CV
 
         private string Image_prefix_filename()
         {
-            var prefix = "/" + file_name + Image_number_R + Image_number_C + ".jpg";
+            var prefix = @"\" + file_name + Image_number_R + Image_number_C + ".jpg";
             return prefix;
         }
 
