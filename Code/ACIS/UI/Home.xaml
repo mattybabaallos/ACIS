@@ -24,10 +24,10 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="73"/>
                         <ColumnDefinition Width="227"/>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
+                        <ColumnDefinition MinWidth="300" Width="400"/>
                     </Grid.ColumnDefinitions>
                     <GroupBox Grid.Column="0" Width="300" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="2">
                         <Grid>
