@@ -160,7 +160,7 @@ namespace UI
 
         public void Process(int device, int function, int errorCode, int data)
         {
-            if (errorCode > 0)
+            if (errorCode < 0 && errorCode != (int)Errors.StopInterrupt)
             {
                 /*Error happened
                  * maybe print the error to the GUI and retry the command again. 
@@ -547,9 +547,9 @@ namespace UI
         }
         private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            int device = -1, status = -1, fucntion = -1, data = -1, errorCode = -1;
-            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref status, ref data, ref errorCode);
-            Process(device, fucntion, status, data);
+            int device = -1, fucntion = -1, data = -1, errorCode = -1;
+            m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref data, ref errorCode);
+            Process(device, fucntion, errorCode, data);
         }
 
         private void CreateNewCancellationToken()

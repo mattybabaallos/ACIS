@@ -98,7 +98,7 @@ namespace Services
         }
 
 
-        public void ReciveCommand(ref int device, ref int function ,ref int status, ref int data, ref int errorCode)
+        public void ReciveCommand(ref int device, ref int function , ref int data, ref int errorCode)
         {
             if (port.BytesToRead >= Constants.BUFFER_SIZE)
             {
@@ -108,7 +108,7 @@ namespace Services
                 function = buffer[1];
                 data = 0;
                 data = ((data | buffer[4]) << 16) | ((data | buffer[3]) << 8) | (data | buffer[2]);
-                errorCode = buffer[5];
+                errorCode = (sbyte)buffer[5];
             }
         }
 

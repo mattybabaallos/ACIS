@@ -142,6 +142,6 @@ int acis::send_back(byte *buffer, byte device, byte function, long data, byte er
 	buffer[2] = data;
 	buffer[3] = (data >> 8);
 	buffer[4] = ((data >> 8) >> 8);
-	buffer[6] = error_code;
+	buffer[5] = error_code;
 	return SUCCESS;
 }

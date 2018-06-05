@@ -69,10 +69,10 @@ namespace CV
                     }
                 }
             }
-            CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
-            CvInvoke.Imshow("stitched", imageResult);
-            CvInvoke.WaitKey();
-            CvInvoke.DestroyAllWindows();
+//            CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
+//            CvInvoke.Imshow("stitched", imageResult);
+//            CvInvoke.WaitKey();
+//            CvInvoke.DestroyAllWindows();
 
             /* ******************************************************* */
             /* Second Image: */
@@ -152,10 +152,10 @@ namespace CV
                     }
                 }
             }
-            CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
-            CvInvoke.Imshow("stitched", imageResult);
-            CvInvoke.WaitKey();
-            CvInvoke.DestroyAllWindows();
+            //CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
+            //CvInvoke.Imshow("stitched", imageResult);
+            //CvInvoke.WaitKey();
+            //CvInvoke.DestroyAllWindows();
 
             /* ******************************************************* */
             /* Second Image: */
@@ -191,10 +191,10 @@ namespace CV
             CvInvoke.Imshow("img1", img1);
             CvInvoke.NamedWindow("img2", NamedWindowType.Normal);
             CvInvoke.Imshow("img2", img2);*/
-            CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
-            CvInvoke.Imshow("stitched", imageResult);
-            CvInvoke.WaitKey();
-            CvInvoke.DestroyAllWindows();
+            //CvInvoke.NamedWindow("stitched", NamedWindowType.Normal);
+            //CvInvoke.Imshow("stitched", imageResult);
+            //CvInvoke.WaitKey();
+            //CvInvoke.DestroyAllWindows();
 
 
 
@@ -369,12 +369,12 @@ namespace CV
                     CvInvoke.MatchTemplate(img1_temp, img2_temp, result, TemplateMatchingType.CcoeffNormed);
                     CvInvoke.MinMaxLoc(result, ref min_val, ref max_val, ref min_loc, ref max_loc);
                     Mat imageResult = new Mat();
-                    CvInvoke.NamedWindow("img1", NamedWindowType.Normal);
-                    CvInvoke.Imshow("img1", img1_temp);
-                    CvInvoke.NamedWindow("img2", NamedWindowType.Normal);
-                    CvInvoke.Imshow("img2", img2_temp);
-                    CvInvoke.WaitKey();
-                    CvInvoke.DestroyAllWindows();
+                    //CvInvoke.NamedWindow("img1", NamedWindowType.Normal);
+                    //CvInvoke.Imshow("img1", img1_temp);
+                    //CvInvoke.NamedWindow("img2", NamedWindowType.Normal);
+                    //CvInvoke.Imshow("img2", img2_temp);
+                    //CvInvoke.WaitKey();
+                    //CvInvoke.DestroyAllWindows();
                     imageResult = Stitch_image_w(images[seg_C * k + y], images[seg_C * k + (y + 1)], max_loc, good_overlap);
                     done = imageResult.Clone();
 
@@ -394,10 +394,10 @@ namespace CV
                 if (current < final[i].Size.Width)
                     current = final[i].Size.Width;
 
-                CvInvoke.NamedWindow("Image_final", NamedWindowType.Normal);
-                CvInvoke.Imshow("Image_final", final[i]);
-                CvInvoke.WaitKey();
-                CvInvoke.DestroyAllWindows();
+                //CvInvoke.NamedWindow("Image_final", NamedWindowType.Normal);
+                //CvInvoke.Imshow("Image_final", final[i]);
+                //CvInvoke.WaitKey();
+                //CvInvoke.DestroyAllWindows();
 
             }
 
@@ -480,12 +480,12 @@ namespace CV
                 CvInvoke.MatchTemplate(img1_temp, img2_temp, result, TemplateMatchingType.CcoeffNormed);
                 CvInvoke.MinMaxLoc(result, ref min_val, ref max_val, ref min_loc, ref max_loc);
                 Mat imageResult = new Mat();
-                CvInvoke.NamedWindow("img1", NamedWindowType.Normal);
-                CvInvoke.Imshow("img1", img1_temp);
-                CvInvoke.NamedWindow("img2", NamedWindowType.Normal);
-                CvInvoke.Imshow("img2", img2_temp);
-                CvInvoke.WaitKey();
-                CvInvoke.DestroyAllWindows();
+                //CvInvoke.NamedWindow("img1", NamedWindowType.Normal);
+                //CvInvoke.Imshow("img1", img1_temp);
+                //CvInvoke.NamedWindow("img2", NamedWindowType.Normal);
+                //CvInvoke.Imshow("img2", img2_temp);
+                //CvInvoke.WaitKey();
+                //CvInvoke.DestroyAllWindows();
                 imageResult = Stitch_image_h(img1, img2, max_loc, good_overlap);
                 finished = imageResult.Clone();
 
