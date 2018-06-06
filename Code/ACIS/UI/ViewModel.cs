@@ -53,6 +53,7 @@ namespace UI
         private AutoResetEvent m_waitHandle;
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private bool m_collabrated;
 
         public ViewModel(Home home)
         {
@@ -72,7 +73,7 @@ namespace UI
             /*********Added for ImageStitching*********/
             m_stitcher = new ImageStitching();
 
-
+            m_collabrated = false;
             m_cpu_scanned = 0;
             m_y_axis_dividers_count = 0;
             m_progress = 0;
@@ -82,6 +83,7 @@ namespace UI
             DevSettingsProp.SettingChanging += ValidateDevSettings;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
             BindingOperations.EnableCollectionSynchronization(InfoMessages, m_lock);
+            
         }
 
         #region UiProprties 
@@ -240,6 +242,7 @@ namespace UI
                 () =>
                 {
                     LogInfo("Start Scanning");
+                    CallabrateCameras();
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
                     cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, "c" + CpuScanned.ToString()); //UsrSettings.SavePath
@@ -340,12 +343,24 @@ namespace UI
 
             //Move the X axis cameras to the begging of the tray
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
-            cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
-            cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
             m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, x);
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
 
 
+        }
+
+        private void CallabrateCameras()
+        {
+            if (m_collabrated)
+                return;
+            //Home the motors.
+            HomeAll();
+
+            //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceFromHomeToTrayY);
+            cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
+            cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
+            m_collabrated = true;
         }
         private void OpenTrayAxis()
         {
