@@ -321,8 +321,11 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
+
+                cameraCapture.Take_picture(0);                           // cam_num:  0-Top, 1-Bottom 
                 ImagePath = cameraCapture.Filepath;
-                cameraCapture.Take_picture();
+                cameraCapture.Take_picture(1);
+                ImagePath = cameraCapture.Filepath;
                 OnPropertyChanged(this, "ImagePath");
 
                 //Step the X axis camera to the next position
@@ -336,9 +339,12 @@ namespace UI
             HomeAll();
 
             //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
+            cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
+            cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
             m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, x);
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
+
 
         }
         private void OpenTrayAxis()
