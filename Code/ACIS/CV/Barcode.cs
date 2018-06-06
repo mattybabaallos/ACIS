@@ -39,9 +39,9 @@ namespace CV
 
         /* Finds barcode in a given Image:
          * Returns Mat containing barcode only. */
-        public Mat Find_barcode(string img_path)
+        public Mat Find_barcode(Mat img)
         {
-            var img = CvInvoke.Imread(img_path, ImreadModes.Color);
+            //var img = CvInvoke.Imread(img_path, ImreadModes.Color);
             /*  Load in templates: */
             List<Mat> template = new List<Mat>();
             template.Add(CvInvoke.Imread("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode1.jpg", ImreadModes.Color));
@@ -109,7 +109,7 @@ namespace CV
             var barcode = new Mat();
 
 
-            barcode = Find_barcode(img_path);
+            barcode = Find_barcode(img);
             var barcode_string = Barcode_decoder(barcode);
             //Console.WriteLine("Decoded Barcode is:" + barcode_string);
 

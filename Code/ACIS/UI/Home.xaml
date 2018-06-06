@@ -350,7 +350,7 @@
                                               SelectedValue ="{Binding SelectedMotor}"
                                               ToolTip="Motor list"/>
                                 </Label>
-                                <Label Grid.Row="1" Grid.Column="0" Content="Centimeters" Margin="0,10,0,0"/>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Milimeters" Margin="0,10,0,0"/>
                                 <Label  Grid.Row="1" Grid.Column="1" Margin="0,5,0,0">
                                     <TextBox Text="{Binding Distance}" Width="200" Height="20" HorizontalAlignment="Left"/>
                                 </Label>
