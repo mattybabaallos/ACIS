@@ -325,9 +325,9 @@ namespace UI
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
 
-                cameraCapture.Take_picture(0);                           // cam_num:  0-Top, 1-Bottom 
+                cameraCapture.Take_picture_test(0);                           // cam_num:  0-Top, 1-Bottom 
                 ImagePath = cameraCapture.Filepath;
-                cameraCapture.Take_picture(1);
+                cameraCapture.Take_picture_test(1);
                 ImagePath = cameraCapture.Filepath;
                 OnPropertyChanged(this, "ImagePath");
 
@@ -358,8 +358,8 @@ namespace UI
 
             //Move the X axis cameras to the begging of the tray
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceFromHomeToTrayY);
-            cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
-            cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
+           // cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
+           // cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
             m_collabrated = true;
         }
         private void OpenTrayAxis()

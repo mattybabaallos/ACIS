@@ -21,6 +21,8 @@ namespace Dev
             var cam1T = new Thread(() => {
                 var frame1 = new Mat();
                 var cam1 = new VideoCapture(0);
+                cam1.SetCaptureProperty(CapProp.FrameWidth, 320);
+                cam1.SetCaptureProperty(CapProp.FrameHeight, 240);
                 cam1.Start();
                 while (true)
                 {
@@ -34,6 +36,8 @@ namespace Dev
             var cam2T = new Thread(() => {
                 var frame1 = new Mat();
                 var cam1 = new VideoCapture(1);
+                cam1.SetCaptureProperty(CapProp.FrameWidth, 320);
+                cam1.SetCaptureProperty(CapProp.FrameHeight, 240);
                 cam1.Start();
                 while (true)
                 {
@@ -47,6 +51,8 @@ namespace Dev
             var cam3T = new Thread(() => {
                 var frame1 = new Mat();
                 var cam1 = new VideoCapture(2);
+                cam1.SetCaptureProperty(CapProp.FrameWidth, 320);
+                cam1.SetCaptureProperty(CapProp.FrameHeight, 240);
                 cam1.Start();
                 while (true)
                 {
@@ -56,13 +62,25 @@ namespace Dev
                 }
             });
 
+            var cam4T = new Thread(() => {
+                var frame1 = new Mat();
+                var cam1 = new VideoCapture(3);
+                cam1.SetCaptureProperty(CapProp.FrameWidth, 320);
+                cam1.SetCaptureProperty(CapProp.FrameHeight, 240);
+                cam1.Start();
+                while (true)
+                {
+                    cam1.Read(frame1);
+                    CvInvoke.Imshow("Cam4", frame1);
+                    CvInvoke.WaitKey(1);
+                }
+            });
+
             cam1T.Start();
-            Thread.Sleep(2000);
-     //       cam1T.Abort();
             cam2T.Start();
-            Thread.Sleep(2000);
-       //     cam2T.Abort();
             cam3T.Start();
+           // cam4T.Start();
+
 
         }
     }

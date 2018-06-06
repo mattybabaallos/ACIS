@@ -50,10 +50,10 @@ namespace CV
         private Size img_res;      //resolution of cam
 
         /* Constructor Top */
-        private VideoCapture Top_capture;
+       // private VideoCapture Top_capture;
 
         /* Constructor Top */
-        private VideoCapture Bottom_capture;
+       // private VideoCapture Bottom_capture;
 
 
 
@@ -89,9 +89,9 @@ namespace CV
                     var image = new Mat();
                     for (int k = 0; k < 4; ++k)
                     {
-                        temp_capture.QueryFrame();
+                        image = temp_capture.QueryFrame();
                     }
-                    image = temp_capture.QueryFrame();
+                   
 
                     temp_capture.Dispose();
 
@@ -187,8 +187,8 @@ namespace CV
         /* Camera Settings: */
         public void Init_camera(int R, int C, string save_path, string name)
         {
-            Top_capture = new VideoCapture(Top_index);
-            Bottom_capture = new VideoCapture(Bottom_index);
+          //  Top_capture = new VideoCapture(Top_index);
+          //  Bottom_capture = new VideoCapture(Bottom_index);
 
 
             Image_count = 0;
@@ -201,10 +201,10 @@ namespace CV
             img_res = new Size(1920, 1080);
             var image_mask = new Rectangle(img_res.Width / 16, img_res.Height / 16, Convert.ToInt32(Math.Round(0.95 * img_res.Width)), Convert.ToInt32(Math.Round(0.95 * img_res.Height)));
 
-            Top_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
-            Top_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
-            Bottom_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
-            Bottom_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+           // Top_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+           // Top_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+           // Bottom_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+           // Bottom_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
         }
 
         /* Determin which Image number: */
@@ -268,21 +268,21 @@ namespace CV
                 {
                     if (cam_num == 0)
                     {
-                        image = Top_capture.QueryFrame();
+                       // image = Top_capture.QueryFrame();
                     }
                     if (cam_num == 1)
                     {
-                        image = Bottom_capture.QueryFrame();
+                       // image = Bottom_capture.QueryFrame();
                     }
                 }
 
                 if (cam_num == 0)
                 {
-                    image = Top_capture.QueryFrame();
+                  //  image = Top_capture.QueryFrame();
                 }
                 if (cam_num == 1)
                 {
-                    image = Bottom_capture.QueryFrame();
+                 //   image = Bottom_capture.QueryFrame();
                     //Image_count++;
                 }
 
@@ -305,47 +305,42 @@ namespace CV
         public int Take_picture_test(int cam_num)
         {
             /* cam_num:  0-Top, 1-Bottom */
+            Console.WriteLine(Bottom_index);
+            Console.WriteLine(Top_index);
+            var frame1 = new Mat();
             Cam_Num = cam_num;
             try
             {
-                Console.WriteLine(Bottom_index);
-                Console.WriteLine(Top_index);
-
-                if ((seg_C * seg_R) < Image_count)
-                    return 1;                           //Error, asking for more photos than requrested at init.
-
-                var prefix = Image_prefix(cam_num);
-
-                var image = new Mat();
-                if (cam_num == 1)
-                {
-                    var capture = new VideoCapture(Bottom_index);
-                }
                 if (cam_num == 0)
                 {
-                    var capture = new VideoCapture(Bottom_index);
+                    var cam = new VideoCapture(1);      //top_index
+                    cam.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                    cam.SetCaptureProperty(CapProp.FrameHeight, 1080);
+                    for(int i= 0; i<5; i++)
+                    {
+                        frame1 = cam.QueryFrame();
+                    }
+                    var prefix = Image_prefix(cam_num);
+                    var image = Crop_image(frame1, image_mask);
+                    cam.Dispose();
+                    image.Save(img_save_path + prefix);
                 }
 
-                for (int i = 0; i < 5; ++i)
-                {
-                   
-                  //   image = capture.QueryFrame();
-                   
-                }
-
-                if (cam_num == 0)
-                {
-                    image = Top_capture.QueryFrame();
-                }
                 if (cam_num == 1)
                 {
-                    image = Bottom_capture.QueryFrame();
-                    //Image_count++;
+                    var cam = new VideoCapture(2);      //bottom index
+                    cam.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                    cam.SetCaptureProperty(CapProp.FrameHeight, 1080);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        frame1 = cam.QueryFrame();
+                    }
+                    var prefix = Image_prefix(cam_num);
+                    var image = Crop_image(frame1, image_mask);
+                    cam.Dispose();
+                    image.Save(img_save_path + prefix);
                 }
-
-                image = Crop_image(image, image_mask);
-
-                image.Save(img_save_path + prefix);
+            
 
 
 
