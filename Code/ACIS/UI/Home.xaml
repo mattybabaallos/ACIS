@@ -306,9 +306,6 @@
                             </Grid>
                         </GroupBox>
                     </Grid>
-
-
-
                 </Grid>
             </TabItem>
             <TabItem Header="Manual control" >
@@ -376,7 +373,12 @@
         <DockPanel Grid.Row="1">
             <Label Content="Serial port: "/>
             <Label Content="{Binding Path=SelectedPort}"/>
-
+            <Label Content="               X Motor: "/>
+            <Label Content="{Binding Path=XTopPosition}"/>
+            <Label Content="               X top: "/>
+            <Label Content="{Binding Path=XBottomPosition}"/>
+            <Label Content="               X Motor: "/>
+            <Label Content="{Binding Path=YPosition}"/>
         </DockPanel>
     </Grid>
 </UserControl>

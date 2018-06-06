@@ -344,7 +344,7 @@ namespace UI
         private void OpenTrayAxis()
         {
             LogInfo("Open tray axis");
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, 500);
+            m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.MoveStepperForward, 500);
         }
         private void Stop()
         {
@@ -480,7 +480,7 @@ namespace UI
         }
         private void Send()
         {
-            m_arduinoControl.SendCommand((byte)SelectedMotor, (byte)SelectedFunction, (byte)Distance);
+            m_arduinoControl.SendCommand((byte)SelectedMotor, (byte)SelectedFunction, (int)Distance);
         }
         private void SaveDeviceSettings()
         {
