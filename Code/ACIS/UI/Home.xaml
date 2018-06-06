@@ -22,12 +22,13 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="300" Width="300"/>
+                        <ColumnDefinition Width="112.5"/>
+                        <ColumnDefinition Width="187.5"/>
                         <ColumnDefinition MinWidth="300" Width="400"/>
                         <ColumnDefinition MinWidth="300" Width="400"/>
                         <ColumnDefinition MinWidth="300" Width="400"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Grid.Column="0" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" >
+                    <GroupBox Grid.Column="0" Width="300" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="0" Header="Motors Position" Height="200" Grid.ColumnSpan="2" >
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="50"/>
@@ -47,7 +48,7 @@
                         </Grid>
 
                     </GroupBox>
-                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0" >
+                    <GroupBox Header="Control" VerticalAlignment="Top" Height="80" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2" >
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -63,7 +64,7 @@
                             <Button Content="Close Tray" Command="{Binding HomeYCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="116" Grid.Row="1" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="0" Header="Info"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="2" Grid.Row="0" Header="Info"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="InfoMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -74,7 +75,7 @@
                                             ItemsSource="{Binding InfoMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Grid.Column="1" Grid.Row="1" Header="Errors"  Grid.ColumnSpan="1">
+                    <GroupBox Grid.Column="2" Grid.Row="1" Header="Errors"  Grid.ColumnSpan="1">
                         <ScrollViewer   Name="ErrorMessageScrollViewer"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -85,7 +86,7 @@
                                             ItemsSource="{Binding ErrorMessages ,UpdateSourceTrigger=PropertyChanged}"/>
                         </ScrollViewer>
                     </GroupBox>
-                    <GroupBox Header="Progress" Height="80" Grid.Column="2" VerticalAlignment="Top" Grid.Row="1">
+                    <GroupBox Header="Progress" Height="80" Grid.Column="3" VerticalAlignment="Top" Grid.Row="1">
                         <Grid >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -100,7 +101,7 @@
                             </StackPanel>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Scanned CPU" Grid.Column="2">
+                    <GroupBox Header="Scanned CPU" Grid.Column="3">
                         <ScrollViewer   Name="ScrollScannedCPUs"
                                         VerticalAlignment="Top"
                                         ScrollViewer.PanningMode="VerticalFirst"
@@ -301,6 +302,7 @@
                                 <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Content="Browse" Width="63"  Command="{Binding BrowseCommand}" Margin="0,5,0,10"/>
                                 <Button Grid.Row="1" Grid.Column="2" Content="Save" Command="{Binding SaveUserSettingsCommand}" HorizontalAlignment="Right"  VerticalAlignment="Center"  Width="70" Margin="0,0,40,1"/>
                                 <Button Grid.Row="1" Grid.Column="2" Content="Restore" Command="{Binding RestorUserSettingsCommand}" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="60" Margin="10,0,0,0"/>
+                                <Button Grid.Row="1" Grid.Column="1" Content="Open Folder" Command="{Binding OpenSaveFolder}" HorizontalAlignment="Left"  VerticalAlignment="Center" Width="80" Margin="116,2,0,0"/>
                             </Grid>
                         </GroupBox>
                     </Grid>
@@ -352,7 +354,7 @@
                                               SelectedValue ="{Binding SelectedMotor}"
                                               ToolTip="Motor list"/>
                                 </Label>
-                                <Label Grid.Row="1" Grid.Column="0" Content="Milimeters" Margin="0,10,0,0"/>
+                                <Label Grid.Row="1" Grid.Column="0" Content="Centimeters" Margin="0,10,0,0"/>
                                 <Label  Grid.Row="1" Grid.Column="1" Margin="0,5,0,0">
                                     <TextBox Text="{Binding Distance}" Width="200" Height="20" HorizontalAlignment="Left"/>
                                 </Label>

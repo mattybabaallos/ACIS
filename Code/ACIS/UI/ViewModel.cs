@@ -563,6 +563,7 @@ namespace UI
             {
                 m_home.ErrorMessageScrollViewer.ScrollToBottom();
             }));
+
         }
         protected void OnPropertyChanged(object sender, string propertyName)
         {
@@ -593,6 +594,9 @@ namespace UI
         public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Save();  MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate","IMPORTANT"); LogInfo("Save Arduino settings"); }); } }
         public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Reset(); MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate", "IMPORTANT"); LogInfo("Reset Arduino settings"); }); } }
         public ICommand SendCommand { get { return new Command(e => true, Send); } }
+        public ICommand OpenSaveFolder { get { return new Command(e => true, () => { System.Diagnostics.Process.Start(this.UsrSettings.SavePath); }); } }
+
+
         #endregion
     }
 }
