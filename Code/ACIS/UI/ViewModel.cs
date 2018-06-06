@@ -1,6 +1,5 @@
 ﻿using CV;
 using Data;
-using DirectShowLib;
 using NLog;
 using NLog.Targets;
 using Services;
