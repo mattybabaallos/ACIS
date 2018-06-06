@@ -44,8 +44,19 @@ namespace CV
             //var img = CvInvoke.Imread(img_path, ImreadModes.Color);
             /*  Load in templates: */
             List<Mat> template = new List<Mat>();
-            template.Add(CvInvoke.Imread("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode1.jpg", ImreadModes.Color));
-            template.Add(CvInvoke.Imread("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode2.jpg", ImreadModes.Color));
+            
+            Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(Properties.Resources.barcode2);
+            Mat imgMAT = imgCV.Mat;
+            template.Add(imgMAT);
+
+            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode3);
+            imgMAT = imgCV.Mat;
+            template.Add(imgMAT);
+
+            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode4);
+            imgMAT = imgCV.Mat;
+            template.Add(imgMAT);
+
             var resized = new Mat();
             var res = new Mat();
             /* Barcode location Information initilization: */
@@ -111,22 +122,6 @@ namespace CV
 
             barcode = Find_barcode(img);
             var barcode_string = Barcode_decoder(barcode);
-            //Console.WriteLine("Decoded Barcode is:" + barcode_string);
-
-
-            /* View Barcode Image: */
-            //CvInvoke.NamedWindow("Barcode", NamedWindowType.Normal);
-            //CvInvoke.Imshow("Barcode", barcode); /*
-            //CvInvoke.NamedWindow("Given img", NamedWindowType.Normal);
-            //CvInvoke.Imshow("Given img", img); */
-            //CvInvoke.WaitKey();
-            //CvInvoke.DestroyAllWindows();
-
-           // barcode.Save("C:/Users/Kestutis/Documents/PSU/Images/Intel/barcode_test.jpg");
-
-            /* For debugging purposes: */
-            Console.WriteLine("Press enter to close...");
-            Console.ReadLine();
         }
     }
 }

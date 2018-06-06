@@ -119,12 +119,6 @@ namespace CV
             var y_val = max_loc.Y - Convert.ToInt32(Math.Round(img1.Size.Height * (.10)));
             var x_val = max_loc.X - Convert.ToInt32(Math.Round(img1.Size.Width * (.10)));
 
-            Console.WriteLine("Stitching info:");
-            Console.WriteLine(y_val + "and" + x_val);
-            Console.WriteLine(new_hight + "and" + new_width);
-            Console.WriteLine(img1.Height + "and" + img1.Width);
-            Console.WriteLine(img2.Height + "and" + img2.Width);
-            Console.WriteLine(max_loc.X);
 
             /* ******************************************************* */
             /* First Image: */
