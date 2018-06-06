@@ -1,5 +1,6 @@
 ﻿using CV;
 using Data;
+using DirectShowLib;
 using NLog;
 using NLog.Targets;
 using Services;
@@ -66,7 +67,6 @@ namespace UI
             {
                 m_motors[i] = new Motor();
             }
-
             cameraCapture = new CameraCapture();
             /**********Added for barcode*********/
             m_barcode = new Barcode();
@@ -83,31 +83,20 @@ namespace UI
             DevSettingsProp.SettingChanging += ValidateDevSettings;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
             BindingOperations.EnableCollectionSynchronization(InfoMessages, m_lock);
-            //ScannedCPUCollection.Add(new ScannedCPUInfo("Thao", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets\\in.png", "C:\\Users\\thaotran\\Desktop\\xsc_v1.0.6\\assets"));
         }
 
         #region UiProprties 
-        public List<Motors> MotorList
-        {
-            get { return Enum.GetValues(typeof(Motors)).Cast<Motors>().ToList(); }
-        }
-        public List<Functions> FunctionList
-        {
-            get { return Enum.GetValues(typeof(Functions)).Cast<Functions>().ToList(); }
-        }
-        public Motors SelectedMotor { get; set; }
+        public List<Devices> MotorList { get; private set; } = new List<Devices> { Devices.XAxisTopMotor, Devices.XAxisBottomMotor, Devices.YAxisMotor};
+        public List<Functions> FunctionList { get; private set; } = new List<Functions> { Functions.HomeStepper, Functions.StopStepper, Functions.MoveStepperForward, Functions.MoveStepperBackward };
+        public Devices SelectedMotor { get; set; }
         public Functions SelectedFunction { get; set; }
         public float Distance { get; set; }
-
         public DeviceSettings DevSettingsProp { get; } = new DeviceSettings();
         public UserSettings UsrSettings { get; } = new UserSettings();
         public ArduinoSettings ArdSettings { get; } = new ArduinoSettings();
-
         public ObservableCollection<ScannedCPUInfo> ScannedCPUCollection { get; set; } = new ObservableCollection<ScannedCPUInfo>();
-
         public ObservableCollection<string> ErrorMessages { get; set; } = new ObservableCollection<string>();
         public ObservableCollection<string> InfoMessages { get; set; } = new ObservableCollection<string>();
-
         public ObservableCollection<string> Ports
         {
             get
@@ -120,11 +109,8 @@ namespace UI
                 OnPropertyChanged(this, "Ports");
             }
         }
-
         public string ImagePath { get; set; }
-
         public int MyProperty { get; set; }
-
         public int CpuScanned
         {
             get { return m_cpu_scanned; }
@@ -134,7 +120,6 @@ namespace UI
                 OnPropertyChanged(this, "CPU_Scanned");
             }
         }
-
         public bool IsPortConnected
         {
             get { return true; }
@@ -144,7 +129,6 @@ namespace UI
                 OnPropertyChanged(this, "IsPortConnected");
             }
         }
-
         public float Progress
         {
             get
@@ -157,7 +141,6 @@ namespace UI
                 OnPropertyChanged(this, "Progress");
             }
         }
-
         public void Process(int device, int function, int errorCode, int data)
         {
             if (errorCode < 0 && errorCode != (int)Errors.StopInterrupt)
@@ -203,7 +186,6 @@ namespace UI
             else
                 LogError("Couldn't decode message from scanner");
         }
-
         public string SelectedPort
         {
             get
@@ -231,7 +213,6 @@ namespace UI
                 OnPropertyChanged(this, "SelectedPort");
             }
         }
-
         public int XTopPosition
         {
             get { return m_motors[(int)Devices.XAxisTopMotor].Position; }
@@ -305,13 +286,12 @@ namespace UI
             }
 
         }
-
         private void UpdateScanVariables()
         {
             cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
             var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
             var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
-            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode("Stitched_img_path"));
+            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
 
             //Create a folder for CPU: XML file + stitched image
             String cpu_folder_name = "ACIS" + "_" + m_decoded + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");
@@ -328,7 +308,6 @@ namespace UI
             m_cpu_done = false;
             Progress = ((float)CpuScanned / (float)DevSettingsProp.CpusToScan) * 100;
         }
-
         private void MoveStartOfRow(int x, int y)
         {
 
@@ -339,7 +318,6 @@ namespace UI
             //Move Y axis to next step
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperBackward, y);
         }
-
         private void ScanRow(int xPosition)
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
@@ -353,7 +331,6 @@ namespace UI
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
             }
         }
-
         private void MoveToStartOfColumn(int x, int y)
         {
             //Home the motors.
@@ -365,13 +342,11 @@ namespace UI
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
 
         }
-
         private void OpenTrayAxis()
         {
             LogInfo("Open tray axis");
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, 500);
         }
-
         private void Stop()
         {
             LogInfo("Stop Scanning");
@@ -380,7 +355,6 @@ namespace UI
             if (m_scan_cancel.IsCancellationRequested)
                 LogInfo("Canceling Scan");
         }
-
         private void HomeAll()
         {
             LogInfo("Homing all");
@@ -389,7 +363,6 @@ namespace UI
             m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
 
         }
-
         private void ViewCPU(object path)
         {
             LogInfo("Open CPU image at " + path.ToString());
@@ -422,7 +395,6 @@ namespace UI
                 sr.Close();
             }
         }
-
         private void CreateXMLFile(String savePath, String CPUbarcode)
         {
             String fileName = "ACIS_" + CPUbarcode + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + ".xml";
@@ -443,7 +415,6 @@ namespace UI
             LogInfo("Home Y axis");
             m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
         }
-
         private void UpdateLoggerPath()
         {
             var logFileTaget = (FileTarget)LogManager.Configuration.AllTargets[0]; //Using index 0 because we only have one traget
@@ -456,12 +427,10 @@ namespace UI
             logFileTaget.FileName = UsrSettings.SavePath + "\\log.txt";
             LogManager.ReconfigExistingLoggers();
         }
-
         private void UpdateLoggerPathEventHandler(object sender, PropertyChangedEventArgs e)
         {
             UpdateLoggerPath();
         }
-
         private void ValidateDevSettings(object sender, SettingChangingEventArgs e)
         {
 
@@ -503,7 +472,6 @@ namespace UI
                 });
             }
         }
-
         private void Browse()
         {
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -539,7 +507,6 @@ namespace UI
             LogInfo("Saving device settings");
             SendLEDCommand(topLedColor, bottomLedColor);
         }
-
         private void SendLEDCommand(int topColor, int bottomColor)
         {
             /***TO_DOUBLE_CHECK***/
@@ -552,13 +519,11 @@ namespace UI
             m_arduinoControl.ReciveCommand(ref device, ref fucntion, ref data, ref errorCode);
             Process(device, fucntion, errorCode, data);
         }
-
         private void CreateNewCancellationToken()
         {
             m_scan_cancel = new CancellationTokenSource();
             m_arduinoControl.Cancellation = m_scan_cancel;
         }
-
         private void UpdateMotorsUiElements(int device, int distance)
         {
             switch (device)
@@ -581,7 +546,6 @@ namespace UI
                     break;
             }
         }
-
         private void LogInfo(string message)
         {
             InfoMessages.Add(message);
@@ -591,7 +555,6 @@ namespace UI
                 m_home.InfoMessageScrollViewer.ScrollToBottom();
             }));
         }
-
         private void LogError(string message)
         {
             ErrorMessages.Add(message);
@@ -602,7 +565,6 @@ namespace UI
                 m_home.ErrorMessageScrollViewer.ScrollToBottom();
             }));
         }
-
         protected void OnPropertyChanged(object sender, string propertyName)
         {
             if (PropertyChanged != null)
@@ -610,9 +572,7 @@ namespace UI
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
             }
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         #endregion
 
         #region ICommands
