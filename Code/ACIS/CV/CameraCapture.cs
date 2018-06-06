@@ -12,6 +12,15 @@ namespace CV
 {
     public class CameraCapture
     {
+        /* Cam index in use: */
+        private int Cam_Num;
+
+        /* Top camera index: */
+        private int Top_index;
+
+        /* Bottom camera index: */
+        private int Bottom_index;
+
         /* Number of Images taken: */
         private int Image_count;
 
@@ -39,8 +48,13 @@ namespace CV
         /* Image resolution: */
         private Size img_res;      //resolution of cam
 
-        /* Constructor */
-        private VideoCapture capture = new VideoCapture(1);
+        /* Constructor Top */
+        private VideoCapture Top_capture;
+
+        /* Constructor Top */
+        private VideoCapture Bottom_capture;
+
+
 
         public string FileName => Image_prefix_filename();
         public string Filepath => img_save_path + Image_prefix_filename();
@@ -56,11 +70,121 @@ namespace CV
             return cropped_im.Mat;
         }
 
-        
+        /* Determine top camera index: */
+        public int Find_cam_index_Top()
+        {
+            int camera_index = -1;
+            double match_rate = 0;
+            int img_count = 0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    VideoCapture temp_capture = new VideoCapture(i);
+                    temp_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                    temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+                    var image = new Mat();
+                    for (int k = 0; k < 5; ++k)
+                    {
+                        temp_capture.QueryFrame();
+                    }
+                    image = temp_capture.QueryFrame();
+                    temp_capture.Dispose();
+
+                    var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Top.jpg", ImreadModes.Color);
+
+                    double min_val = 0;
+                    double max_val = 0;
+                    Point min_loc = new Point();
+                    Point max_loc = new Point();
+                    Mat res = new Mat();
+
+                    /* 0-Top, 1-Bottom */
+
+                    CvInvoke.MatchTemplate(temp, image, res, TemplateMatchingType.CcoeffNormed);
+                    CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
+
+                    if (max_val > match_rate)
+                    {
+                        match_rate = max_val;
+                        camera_index = img_count;
+                    }
+                    img_count++;
+                }
+                catch
+                {
+                    Console.WriteLine("No cam at num: " + i);
+                }
+            }
+
+            Top_index = camera_index;
+            return camera_index;        //if negative there was an error;
+
+        }
+
+        /* Determine top camera index: */
+        public int Find_cam_index_Bottom()
+        {
+            int camera_index = -1;
+            double match_rate = 0;
+            int img_count = 0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    VideoCapture temp_capture = new VideoCapture(i);
+                    temp_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                    temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+                    var image = new Mat();
+                    for (int k = 0; k < 5; ++k)
+                    {
+                        temp_capture.QueryFrame();
+                    }
+                    image = temp_capture.QueryFrame();
+                    temp_capture.Dispose();
+
+                    var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Bottom.jpg", ImreadModes.Color);
+
+                    double min_val = 0;
+                    double max_val = 0;
+                    Point min_loc = new Point();
+                    Point max_loc = new Point();
+                    Mat res = new Mat();
+
+                    /* 0-Top, 1-Bottom */
+
+                    CvInvoke.MatchTemplate(temp, image, res, TemplateMatchingType.CcoeffNormed);
+                    CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
+
+                    if (max_val > match_rate)
+                    {
+                        match_rate = max_val;
+                        camera_index = img_count;
+                    }
+                    img_count++;
+                }
+                catch
+                {
+                    Console.WriteLine("No cam at num: " + i);
+                }
+            }
+
+            Bottom_index = camera_index;
+            return camera_index;        //if negative there was an error;
+
+        }
 
         /* Camera Settings: */
         public void Init_camera(int R, int C, string save_path, string name)
         {
+            Top_capture = new VideoCapture(Top_index);
+            Bottom_capture = new VideoCapture(Bottom_index);
+
+
             Image_count = 0;
             Image_number_R = 0;
             Image_number_C = 0;
@@ -71,55 +195,96 @@ namespace CV
             img_res = new Size(1920, 1080);
             var image_mask = new Rectangle(img_res.Width / 16, img_res.Height / 16, Convert.ToInt32(Math.Round(0.95 * img_res.Width)), Convert.ToInt32(Math.Round(0.95 * img_res.Height)));
 
-            capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
-            capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+            Top_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            Top_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+            Bottom_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            Bottom_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
         }
 
         /* Determin which Image number: */
-        private string Image_prefix()
+        private string Image_prefix(int cam_num)
         {
-            var prefix = "/" + file_name + Image_number_R + Image_number_C + ".jpg";
-            Image_number_C++;
-            if (Image_number_C >= seg_C)
+            /* cam_num:  0-Top, 1-Bottom */
+            var prefix = "";
+            if (cam_num == 0)
             {
-                Image_number_C = 0;
-                Image_number_R++;
+                prefix = "/" + "Top" + file_name + Image_number_R + Image_number_C + ".jpg";
             }
+            if (cam_num == 1)
+            {
+                prefix = "/" + "Bottom" + file_name + Image_number_R + Image_number_C + ".jpg";
+                Image_number_C++;
+                if (Image_number_C >= seg_C)
+                {
+                    Image_number_C = 0;
+                    Image_number_R++;
+                }
+            }
+
+
             return prefix;
         }
 
         private string Image_prefix_filename()
         {
-            var prefix = @"\" + file_name + Image_number_R + Image_number_C + ".jpg";
+            var prefix = "";
+
+            if (Cam_Num == 0)
+            {
+                prefix = @"\" + "Top" + file_name + Image_number_R + Image_number_C + ".jpg";
+            }
+            if (Cam_Num == 1)
+            {
+                prefix = @"\" + "Bottom" + file_name + Image_number_R + Image_number_C + ".jpg";
+            }
             return prefix;
         }
 
         /* Take picture: */
-        public int Take_picture()
+        public int Take_picture(int cam_num)
         {
+            /* cam_num:  0-Top, 1-Bottom */
+            Cam_Num = cam_num;
             try
             {
+                Console.WriteLine(Bottom_index);
+                Console.WriteLine(Top_index);
 
                 if ((seg_C * seg_R) < Image_count)
                     return 1;                           //Error, asking for more photos than requrested at init.
 
-                var prefix = Image_prefix();
+                var prefix = Image_prefix(cam_num);
 
                 var image = new Mat();
-               // var capture = new VideoCapture();
+                // var capture = new VideoCapture();
 
                 for (int i = 0; i < 5; ++i)
                 {
-                    capture.QueryFrame();
+                    if (cam_num == 0)
+                    {
+                        image = Top_capture.QueryFrame();
+                    }
+                    if (cam_num == 1)
+                    {
+                        image = Bottom_capture.QueryFrame();
+                    }
                 }
 
-                image = capture.QueryFrame();
-               
+                if (cam_num == 0)
+                {
+                    image = Top_capture.QueryFrame();
+                }
+                if (cam_num == 1)
+                {
+                    image = Bottom_capture.QueryFrame();
+                    //Image_count++;
+                }
+
                 image = Crop_image(image, image_mask);
 
                 image.Save(img_save_path + prefix);
 
-                //Image_count++;
+
 
                 return 0;
             }
@@ -128,5 +293,64 @@ namespace CV
                 return 1;
             }
         }
+
+
+        
+        public int Take_picture_test(int cam_num)
+        {
+            /* cam_num:  0-Top, 1-Bottom */
+            Cam_Num = cam_num;
+            try
+            {
+                Console.WriteLine(Bottom_index);
+                Console.WriteLine(Top_index);
+
+                if ((seg_C * seg_R) < Image_count)
+                    return 1;                           //Error, asking for more photos than requrested at init.
+
+                var prefix = Image_prefix(cam_num);
+
+                var image = new Mat();
+                if (cam_num == 1)
+                {
+                    var capture = new VideoCapture(Bottom_index);
+                }
+                if (cam_num == 0)
+                {
+                    var capture = new VideoCapture(Bottom_index);
+                }
+
+                for (int i = 0; i < 5; ++i)
+                {
+                   
+                  //   image = capture.QueryFrame();
+                   
+                }
+
+                if (cam_num == 0)
+                {
+                    image = Top_capture.QueryFrame();
+                }
+                if (cam_num == 1)
+                {
+                    image = Bottom_capture.QueryFrame();
+                    //Image_count++;
+                }
+
+                image = Crop_image(image, image_mask);
+
+                image.Save(img_save_path + prefix);
+
+
+
+                return 0;
+            }
+            catch
+            {
+                return 1;
+            }
+        }
+        
+
     }
 }

@@ -310,7 +310,7 @@ namespace UI
             cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
             var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
             var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
-            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode("Stitched_img_path"));
+            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
 
             //Create a folder for CPU: XML file + stitched image
             String cpu_folder_name = "ACIS" + "_" + m_decoded + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");
@@ -343,8 +343,11 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
+
+                cameraCapture.Take_picture(0);                           // cam_num:  0-Top, 1-Bottom 
                 ImagePath = cameraCapture.Filepath;
-                cameraCapture.Take_picture();
+                cameraCapture.Take_picture(1);
+                ImagePath = cameraCapture.Filepath;
                 OnPropertyChanged(this, "ImagePath");
 
                 //Step the X axis camera to the next position
@@ -359,9 +362,12 @@ namespace UI
             HomeAll();
 
             //Move the X axis cameras to the begging of the tray
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
+            cameraCapture.Find_cam_index_Top();             //Figure out the Top camera index
+            cameraCapture.Find_cam_index_Bottom();          //Figure out the Bottom camera index
             m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, x);
             m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, x);
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, y);
+
 
         }
 
