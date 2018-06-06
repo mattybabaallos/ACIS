@@ -95,7 +95,6 @@ namespace CV
 
                     temp_capture.Dispose();
 
-                    // var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Top.jpg", ImreadModes.Color);
                     var temp = Properties.Resources.Top;
                     Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(temp);
                     Mat imgMAT = imgCV.Mat;
