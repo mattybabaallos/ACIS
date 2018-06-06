@@ -193,8 +193,10 @@
                                     <TextBox Grid.Row="2" Grid.Column="1" Height="24" Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToTrayMiddleBar,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
                                     <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"  Height="Auto" Margin="0,8,0,0"  Content="Distance from middle bar to the end of tray (mm)" />
                                     <TextBox Grid.Row="3" Grid.Column="1" Height="24" Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromMiddleBarToEndTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
-                                    <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" Margin="0,8,0,0"  Content="Distance from home to tray y" />
-                                    <TextBox Grid.Row="4" Grid.Column="1" Height="24" Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToEndOfTray,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                                    <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" Margin="0,8,0,0"  Content="Distance from home to tray X" />
+                                    <TextBox Grid.Row="4" Grid.Column="1" Height="24" Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToEndOfTrayX,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                                    <Label Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Height="Auto" Margin="0,8,0,0"  Content="Distance from home to tray Y" />
+                                    <TextBox Grid.Row="5" Grid.Column="1" Height="24" Width="60" TextWrapping="Wrap" Text="{Binding DevSettingsProp.DistanceFromHomeToTrayY,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                                 </Grid>
                             </GroupBox>
                             <GroupBox Grid.Column="0" Grid.Row="1"  Header="Image taking">
