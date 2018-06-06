@@ -263,7 +263,7 @@ namespace UI
                     {
                         do
                         {
-                            ScanRow(DevSettingsProp.DistanceFromHomeToEndOfTray);
+                            ScanRow(DevSettingsProp.DistanceFromHomeToEndOfTrayX);
                             MoveStartOfRow(DevSettingsProp.DistanceFromMiddleBarToEndTray, DevSettingsProp.DistanceToMovePerImageY);
 
                         } while (!m_cpu_done);
