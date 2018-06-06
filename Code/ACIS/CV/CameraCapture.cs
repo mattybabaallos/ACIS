@@ -12,6 +12,7 @@ namespace CV
 {
     public class CameraCapture
     {
+        
         /* Cam index in use: */
         private int Cam_Num;
 
@@ -77,7 +78,7 @@ namespace CV
             double match_rate = 0;
             int img_count = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 try
                 {
@@ -86,14 +87,18 @@ namespace CV
                     temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
 
                     var image = new Mat();
-                    for (int k = 0; k < 5; ++k)
+                    for (int k = 0; k < 4; ++k)
                     {
                         temp_capture.QueryFrame();
                     }
                     image = temp_capture.QueryFrame();
+
                     temp_capture.Dispose();
 
-                    var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Top.jpg", ImreadModes.Color);
+                    // var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Top.jpg", ImreadModes.Color);
+                    var temp = Properties.Resources.Top;
+                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(temp);
+                    Mat imgMAT = imgCV.Mat;
 
                     double min_val = 0;
                     double max_val = 0;
@@ -103,7 +108,7 @@ namespace CV
 
                     /* 0-Top, 1-Bottom */
 
-                    CvInvoke.MatchTemplate(temp, image, res, TemplateMatchingType.CcoeffNormed);
+                    CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
                     CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
 
                     if (max_val > match_rate)
@@ -131,7 +136,7 @@ namespace CV
             double match_rate = 0;
             int img_count = 0;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 try
                 {
@@ -140,14 +145,16 @@ namespace CV
                     temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
 
                     var image = new Mat();
-                    for (int k = 0; k < 5; ++k)
+                    for (int k = 0; k < 4; ++k)
                     {
                         temp_capture.QueryFrame();
                     }
                     image = temp_capture.QueryFrame();
                     temp_capture.Dispose();
 
-                    var temp = CvInvoke.Imread("C:/Users/Kestutis/Documents/ACIS/Templates/Bottom.jpg", ImreadModes.Color);
+                    var temp = Properties.Resources.Bottom;
+                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(temp);
+                    Mat imgMAT = imgCV.Mat;
 
                     double min_val = 0;
                     double max_val = 0;
@@ -157,7 +164,7 @@ namespace CV
 
                     /* 0-Top, 1-Bottom */
 
-                    CvInvoke.MatchTemplate(temp, image, res, TemplateMatchingType.CcoeffNormed);
+                    CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
                     CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
 
                     if (max_val > match_rate)
