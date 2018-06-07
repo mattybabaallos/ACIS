@@ -1,12 +1,9 @@
-﻿using Emgu.CV;
+﻿using Data;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CV
 {
@@ -15,12 +12,6 @@ namespace CV
         
         /* Cam index in use: */
         private int Cam_Num;
-
-        /* Top camera index: */
-        private int Top_index;
-
-        /* Bottom camera index: */
-        private int Bottom_index;
 
         /* Number of Images taken: */
         private int Image_count;
@@ -50,14 +41,16 @@ namespace CV
         private Size img_res;      //resolution of cam
 
         /* Constructor Top */
-       // private VideoCapture Top_capture;
+        // private VideoCapture Top_capture;
 
         /* Constructor Top */
-       // private VideoCapture Bottom_capture;
+        // private VideoCapture Bottom_capture;
 
+        public VideoCapture Capture { get; set; }
 
+        public int TopIndex { get; private set; }
+        public int BottomIndex { get; private set; }
 
-        public string FileName => Image_prefix_filename();
         public string Filepath => img_save_path + Image_prefix_filename();
 
         /* Crops Image based on ROI. Returns cropped Image: */
@@ -71,9 +64,15 @@ namespace CV
             return cropped_im.Mat;
         }
 
-        /* Determine top camera index: */
-        public int Find_cam_index_Top()
+        public void CallobrateCameras()
         {
+            TopIndex = 0;//FindCameraIndex(Devices.XAxisTopMotor);
+            BottomIndex = 2;//FindCameraIndex(Devices.XAxisBottomMotor);
+        }
+
+        private int FindCameraIndex(Devices camera)
+        {
+
             int camera_index = -1;
             double match_rate = 0;
             int img_count = 0;
@@ -95,8 +94,7 @@ namespace CV
 
                     temp_capture.Dispose();
 
-                    var temp = Properties.Resources.Top;
-                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(temp);
+                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(GetTemplate(camera));
                     Mat imgMAT = imgCV.Mat;
 
                     double min_val = 0;
@@ -123,65 +121,17 @@ namespace CV
                 }
             }
 
-            Top_index = camera_index;
             return camera_index;        //if negative there was an error;
-
         }
 
-        /* Determine top camera index: */
-        public int Find_cam_index_Bottom()
+        private Bitmap GetTemplate(Devices camera)
         {
-            int camera_index = -1;
-            double match_rate = 0;
-            int img_count = 0;
-
-            for (int i = 0; i < 3; i++)
-            {
-                try
-                {
-                    VideoCapture temp_capture = new VideoCapture(i);
-                    temp_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
-                    temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
-
-                    var image = new Mat();
-                    for (int k = 0; k < 4; ++k)
-                    {
-                        temp_capture.QueryFrame();
-                    }
-                    image = temp_capture.QueryFrame();
-                    temp_capture.Dispose();
-
-                    var temp = Properties.Resources.Bottom;
-                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(temp);
-                    Mat imgMAT = imgCV.Mat;
-
-                    double min_val = 0;
-                    double max_val = 0;
-                    Point min_loc = new Point();
-                    Point max_loc = new Point();
-                    Mat res = new Mat();
-
-                    /* 0-Top, 1-Bottom */
-
-                    CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
-                    CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
-
-                    if (max_val > match_rate)
-                    {
-                        match_rate = max_val;
-                        camera_index = img_count;
-                    }
-                    img_count++;
-                }
-                catch
-                {
-                    Console.WriteLine("No cam at num: " + i);
-                }
-            }
-
-            Bottom_index = camera_index;
-            return camera_index;        //if negative there was an error;
-
+            if (camera == Devices.XAxisTopMotor)
+                return Properties.Resources.Top;
+            else if (camera == Devices.XAxisBottomMotor)
+                return Properties.Resources.Bottom;
+            else
+                return null;
         }
 
         /* Camera Settings: */
@@ -247,51 +197,26 @@ namespace CV
         }
 
         /* Take picture: */
-        public int Take_picture(int cam_num)
+        public int TakePicture(int cameraNumber)
         {
-            /* cam_num:  0-Top, 1-Bottom */
-            Cam_Num = cam_num;
             try
             {
-                Console.WriteLine(Bottom_index);
-                Console.WriteLine(Top_index);
-
                 if ((seg_C * seg_R) < Image_count)
                     return 1;                           //Error, asking for more photos than requrested at init.
 
-                var prefix = Image_prefix(cam_num);
+                var prefix = Image_prefix(cameraNumber);
 
                 var image = new Mat();
-                // var capture = new VideoCapture();
 
-                for (int i = 0; i < 5; ++i)
+                for (int i = 0; i < 6; ++i)
                 {
-                    if (cam_num == 0)
-                    {
-                       // image = Top_capture.QueryFrame();
-                    }
-                    if (cam_num == 1)
-                    {
-                       // image = Bottom_capture.QueryFrame();
-                    }
-                }
-
-                if (cam_num == 0)
-                {
-                  //  image = Top_capture.QueryFrame();
-                }
-                if (cam_num == 1)
-                {
-                 //   image = Bottom_capture.QueryFrame();
-                    //Image_count++;
+                    image = Capture.QueryFrame();
                 }
 
                 image = Crop_image(image, image_mask);
 
                 image.Save(img_save_path + prefix);
 
-
-
                 return 0;
             }
             catch
@@ -299,59 +224,5 @@ namespace CV
                 return 1;
             }
         }
-
-
-        
-        public int Take_picture_test(int cam_num)
-        {
-            /* cam_num:  0-Top, 1-Bottom */
-            Console.WriteLine(Bottom_index);
-            Console.WriteLine(Top_index);
-            var frame1 = new Mat();
-            Cam_Num = cam_num;
-            try
-            {
-                if (cam_num == 0)
-                {
-                    var cam = new VideoCapture(1);      //top_index
-                    cam.SetCaptureProperty(CapProp.FrameWidth, 1920);
-                    cam.SetCaptureProperty(CapProp.FrameHeight, 1080);
-                    for(int i= 0; i<5; i++)
-                    {
-                        frame1 = cam.QueryFrame();
-                    }
-                    var prefix = Image_prefix(cam_num);
-                    var image = Crop_image(frame1, image_mask);
-                    cam.Dispose();
-                    image.Save(img_save_path + prefix);
-                }
-
-                if (cam_num == 1)
-                {
-                    var cam = new VideoCapture(2);      //bottom index
-                    cam.SetCaptureProperty(CapProp.FrameWidth, 1920);
-                    cam.SetCaptureProperty(CapProp.FrameHeight, 1080);
-                    for (int i = 0; i < 5; i++)
-                    {
-                        frame1 = cam.QueryFrame();
-                    }
-                    var prefix = Image_prefix(cam_num);
-                    var image = Crop_image(frame1, image_mask);
-                    cam.Dispose();
-                    image.Save(img_save_path + prefix);
-                }
-            
-
-
-
-                return 0;
-            }
-            catch
-            {
-                return 1;
-            }
-        }
-        
-
     }
 }
