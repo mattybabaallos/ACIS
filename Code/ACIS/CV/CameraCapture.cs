@@ -66,8 +66,8 @@ namespace CV
 
         public void CallobrateCameras()
         {
-            TopIndex = 0;//FindCameraIndex(Devices.XAxisTopMotor);
-            BottomIndex = 2;//FindCameraIndex(Devices.XAxisBottomMotor);
+            TopIndex = FindCameraIndex(Devices.XAxisTopMotor);                   //1
+            BottomIndex = FindCameraIndex(Devices.XAxisBottomMotor);             //2
         }
 
         private int FindCameraIndex(Devices camera)
@@ -86,7 +86,7 @@ namespace CV
                     temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
 
                     var image = new Mat();
-                    for (int k = 0; k < 4; ++k)
+                    for (int k = 0; k < 2; ++k)
                     {
                         image = temp_capture.QueryFrame();
                     }
@@ -96,6 +96,12 @@ namespace CV
 
                     Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(GetTemplate(camera));
                     Mat imgMAT = imgCV.Mat;
+
+                    /*
+                    CvInvoke.Imshow("image:", image);
+                    CvInvoke.Imshow("Template:", imgMAT);
+                    CvInvoke.WaitKey();
+                    CvInvoke.DestroyAllWindows(); */
 
                     double min_val = 0;
                     double max_val = 0;
@@ -208,7 +214,7 @@ namespace CV
 
                 var image = new Mat();
 
-                for (int i = 0; i < 6; ++i)
+                for (int i = 0; i < 2; ++i)
                 {
                     image = Capture.QueryFrame();
                 }

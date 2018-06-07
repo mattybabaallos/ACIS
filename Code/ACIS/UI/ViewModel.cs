@@ -21,7 +21,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 using Emgu.CV;
-
+using Emgu.CV.CvEnum;
 
 namespace UI
 {
@@ -326,21 +326,27 @@ namespace UI
         {
             while (m_motors[(int)Devices.XAxisTopMotor].Position < xPosition) //Scan for one row 
             {
+                //Step the X axis camera to the next position
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+
 
                 cameraCapture.Capture = new VideoCapture(cameraCapture.TopIndex);
+                cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
                 cameraCapture.TakePicture((int)Devices.XAxisTopMotor);
                 ImagePath = cameraCapture.Filepath;
                 cameraCapture.Capture.Dispose();
 
                 cameraCapture.Capture = new VideoCapture(cameraCapture.BottomIndex);
+                cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+                cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
                 cameraCapture.TakePicture((int)Devices.XAxisBottomMotor);
                 ImagePath = cameraCapture.Filepath;
                 cameraCapture.Capture.Dispose();
                 OnPropertyChanged(this, "ImagePath");
 
-                //Step the X axis camera to the next position
-                m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
-                m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
+               
             }
         }
         private void MoveToStartOfColumn(int x, int y)
