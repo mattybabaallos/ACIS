@@ -11,6 +11,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Threading;
+using CV;
 
 namespace Dev
 {
@@ -18,6 +19,15 @@ namespace Dev
     {
         static void Main(string[] args)
         {
+           
+
+
+
+
+
+
+
+
            // var cam1T = new Thread(() => {
            //     var frame1 = new Mat();
            //     var cam1 = new VideoCapture(0);

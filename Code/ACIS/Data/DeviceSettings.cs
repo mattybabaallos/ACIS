@@ -93,7 +93,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("100")]
+        [DefaultSettingValue("80")]
         public int DistanceFromHomeToTrayY
         {
             get
@@ -143,7 +143,7 @@ namespace Data
 
 
         [UserScopedSetting()]
-        [DefaultSettingValue("#ffffff")]
+        [DefaultSettingValue("#040704")]
         public string TopLightsColor
         {
             get
@@ -160,7 +160,7 @@ namespace Data
 
 
         [UserScopedSetting()]
-        [DefaultSettingValue("#ffffff")]
+        [DefaultSettingValue("#070707")]
         public string BottomLightsColor
         {
             get

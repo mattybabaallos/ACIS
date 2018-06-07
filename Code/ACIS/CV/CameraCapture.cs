@@ -68,16 +68,20 @@ namespace CV
         {
             TopIndex = FindCameraIndex(Devices.XAxisTopMotor);                   //1
             BottomIndex = FindCameraIndex(Devices.XAxisBottomMotor);             //2
+            
+            if(TopIndex < 0|| BottomIndex < 0)
+            {
+                /* Camera Callobration Error */
+            }
         }
 
         private int FindCameraIndex(Devices camera)
         {
+            /* If looking for: Top-0. Bottom-1.  */
+            var cam_barcode = new Barcode();
+            string cam_decoded;
 
-            int camera_index = -1;
-            double match_rate = 0;
-            int img_count = 0;
-
-            for (int i = 0; i < 4; i++)
+            for (int i=0; i<4; i++)
             {
                 try
                 {
@@ -86,48 +90,50 @@ namespace CV
                     temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
 
                     var image = new Mat();
-                    for (int k = 0; k < 2; ++k)
+                    for (int k = 0; k < 1; ++k)
                     {
-                        image = temp_capture.QueryFrame();
+                        //image = temp_capture.QueryFrame();
+                        temp_capture.Read(image);
                     }
-                   
-
                     temp_capture.Dispose();
 
-                    Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(GetTemplate(camera));
-                    Mat imgMAT = imgCV.Mat;
-
-                    /*
-                    CvInvoke.Imshow("image:", image);
-                    CvInvoke.Imshow("Template:", imgMAT);
-                    CvInvoke.WaitKey();
-                    CvInvoke.DestroyAllWindows(); */
-
-                    double min_val = 0;
-                    double max_val = 0;
-                    Point min_loc = new Point();
-                    Point max_loc = new Point();
-                    Mat res = new Mat();
-
-                    /* 0-Top, 1-Bottom */
-
-                    CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
-                    CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
-
-                    if (max_val > match_rate)
+                    /* Try to decode original image before datamatrix location (saves time): */
+                    cam_decoded = cam_barcode.Barcode_decoder(image);
+                    if (cam_decoded == "Top" && camera == Devices.XAxisTopMotor)
                     {
-                        match_rate = max_val;
-                        camera_index = img_count;
+                        return i;
                     }
-                    img_count++;
+                    else if (cam_decoded == "Bottom" && camera == Devices.XAxisBottomMotor)
+                    {
+                        return i;
+                    }
+
+
+                    var imgMAT = cam_barcode.Find_TopBot_barcode(image);
+
+                    CvInvoke.Imshow("imgMAT", imgMAT);
+                    CvInvoke.Imshow("img", image);
+                    CvInvoke.WaitKey();
+                    CvInvoke.DestroyAllWindows();
+
+                    cam_decoded = cam_barcode.Barcode_decoder(imgMAT);
+
+                    if (cam_decoded == "Top" && camera == Devices.XAxisTopMotor)
+                    {
+                        return i;
+                    }
+                    else if (cam_decoded == "Bottom" && camera == Devices.XAxisBottomMotor)
+                    {
+                        return i;
+                    }
                 }
                 catch
                 {
-                    Console.WriteLine("No cam at num: " + i);
-                }
+                    //Console.WriteLine("No cam at num: " + i);
+                } 
             }
+            return -1;
 
-            return camera_index;        //if negative there was an error;
         }
 
         private Bitmap GetTemplate(Devices camera)
@@ -214,10 +220,11 @@ namespace CV
 
                 var image = new Mat();
 
-                for (int i = 0; i < 2; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
                     image = Capture.QueryFrame();
                 }
+                Capture.Read(image);
 
                 image = Crop_image(image, image_mask);
 
