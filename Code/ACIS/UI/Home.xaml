@@ -111,7 +111,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding CPUBarcode}" Width="120" Margin="0,0,15,5"/>
+                                            <Label Content="{Binding CPUBarcode}" Width="250" Margin="0,0,15,5"/>
                                             <Button Content="View Image" 
                                                     Command="{Binding ElementName=HomeControl, Path=DataContext.ViewCPUCommand}" 
                                                     CommandParameter="{Binding CPUImagePath}"

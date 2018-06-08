@@ -85,11 +85,11 @@ namespace UI
             DevSettingsProp.SettingChanging += ValidateDevSettings;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
             BindingOperations.EnableCollectionSynchronization(InfoMessages, m_lock);
-            
+
         }
 
         #region UiProprties 
-        public List<Devices> MotorList { get; private set; } = new List<Devices> { Devices.XAxisTopMotor, Devices.XAxisBottomMotor, Devices.YAxisMotor};
+        public List<Devices> MotorList { get; private set; } = new List<Devices> { Devices.XAxisTopMotor, Devices.XAxisBottomMotor, Devices.YAxisMotor };
         public List<Functions> FunctionList { get; private set; } = new List<Functions> { Functions.HomeStepper, Functions.StopStepper, Functions.MoveStepperForward, Functions.MoveStepperBackward };
         public Devices SelectedMotor { get; set; }
         public Functions SelectedFunction { get; set; }
@@ -176,7 +176,7 @@ namespace UI
             else if (function == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
                 m_motors[device].Stopped = true;
 
-            else if(function == (int)Functions.TurnOnUpdateLeds)
+            else if (function == (int)Functions.TurnOnUpdateLeds)
             {
                 if (device == (int)Devices.TopLeds)
                     LogInfo("Top leds are updated");
@@ -307,6 +307,10 @@ namespace UI
 
             //Add to UI list
             ScannedCPUCollection.Add(new ScannedCPUInfo(m_decoded, cpu_image_path, cpu_folder_path));
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                m_home.ScrollScannedCPUs.ScrollToBottom();
+            }));
 
             ++CpuScanned;
             m_cpu_done = false;
@@ -346,7 +350,7 @@ namespace UI
                 cameraCapture.Capture.Dispose();
                 OnPropertyChanged(this, "ImagePath");
 
-               
+
             }
         }
         private void MoveToStartOfColumn(int x, int y)
@@ -396,38 +400,7 @@ namespace UI
             m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
 
         }
-        private void ViewCPU(object path)
-        {
-            LogInfo("Open CPU image at " + path.ToString());
-            Window imgWindow = new Window();
-            imgWindow.Height = 300;
-            imgWindow.Width = 300;
-            imgWindow.Title = path.ToString();
-            BitmapImage btm = new BitmapImage(new Uri(path.ToString(), UriKind.Relative));
-            Image img = new Image();
-            img.Source = btm;
-            imgWindow.Content = img;
-            imgWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            imgWindow.Show();
-        }
-        private void BrowseCPUFolder(object path)
-        {
-            System.Windows.Forms.OpenFileDialog cpuDialog = new System.Windows.Forms.OpenFileDialog();
-            cpuDialog.Title = path.ToString();
-            cpuDialog.InitialDirectory = path.ToString();
-            cpuDialog.ShowDialog();
 
-            if (cpuDialog.FileName.EndsWith(".jpg") | cpuDialog.FileName.EndsWith(".png")) //open image
-            {
-                ViewCPU(cpuDialog.FileName);
-            }
-            else //open XML file
-            {
-                StreamReader sr = new StreamReader(cpuDialog.FileName);
-                MessageBox.Show(sr.ReadToEnd(), cpuDialog.FileName);
-                sr.Close();
-            }
-        }
         private void CreateXMLFile(String savePath, String CPUbarcode)
         {
             String fileName = "ACIS_" + CPUbarcode + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + ".xml";
@@ -619,13 +592,13 @@ namespace UI
         public ICommand StopScan { get { return new Command(e => !_isScanable, Stop); } }
         public ICommand OpenTray { get { return new Command(e => true, OpenTrayAxis); } }
         public ICommand BrowseCommand { get { return new Command(e => true, Browse); } }
-        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => ViewCPU(path)); } }
-        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => BrowseCPUFolder(path)); } }
+        public ICommand ViewCPUCommand { get { return new ParameterCommand(e => true, path => { System.Diagnostics.Process.Start((string)path); }); } }
+        public ICommand BrowseCPUFolderCommand { get { return new ParameterCommand(e => true, path => { System.Diagnostics.Process.Start((string)path); }); } }
         public ICommand SaveDevSettingsCommand { get { return new Command(e => true, SaveDeviceSettings); } }
         public ICommand RestorDeveSettingsCommand { get { return new Command(e => true, () => { DevSettingsProp.Reset(); SaveDeviceSettings(); LogInfo("Save user settings"); }); } }
         public ICommand SaveUserSettingsCommand { get { return new Command(e => true, () => { UsrSettings.Save(); LogInfo("Save user settings"); }); } }
         public ICommand RestorUserSettingsCommand { get { return new Command(e => true, () => { UsrSettings.Reset(); LogInfo("Reset user settings"); }); } }
-        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Save();  MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate","IMPORTANT"); LogInfo("Save Arduino settings"); }); } }
+        public ICommand SaveArduinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Save(); MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate", "IMPORTANT"); LogInfo("Save Arduino settings"); }); } }
         public ICommand RestorArdinoSettingsCommand { get { return new Command(e => true, () => { ArdSettings.Reset(); MessageBox.Show("Restart the app and update the Aruduino to match the set baud rate", "IMPORTANT"); LogInfo("Reset Arduino settings"); }); } }
         public ICommand SendCommand { get { return new Command(e => true, Send); } }
         public ICommand OpenSaveFolder { get { return new Command(e => true, () => { System.Diagnostics.Process.Start(this.UsrSettings.SavePath); }); } }
