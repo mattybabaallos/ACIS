@@ -68,7 +68,7 @@ namespace CV
             found.bottom_right = new Point(0, 0);
             found.top_left = new Point(0, 0);
             /* set up linspace loop for templates scaling: */
-            double start_val = .2;
+            double start_val = 1;
             double stop_val = 4;
             double step_val = Linspace_step(start_val, stop_val, 10);
             double min_val = 0; double max_val = 0; Point min_loc = new Point(); Point max_loc = new Point();

@@ -374,7 +374,9 @@ namespace UI
             HomeAll();
 
             //Move the X axis cameras to the begging of the tray
-            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceFromHomeToTrayY);
+            m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward,Constants.DISTANCE_TO_CALLAB_BARCODE);
+            Thread.Sleep(500);
+            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR);
             cameraCapture.CallobrateCameras();
 
             m_collabrated = true;

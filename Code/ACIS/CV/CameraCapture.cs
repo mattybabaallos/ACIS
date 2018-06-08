@@ -87,7 +87,7 @@ namespace CV
                 {
                     VideoCapture temp_capture = new VideoCapture(i);
                     temp_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
-                    temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+                    //temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
 
                     var image = new Mat();
                     for (int k = 0; k < 1; ++k)
