@@ -161,16 +161,16 @@ namespace UI
             //This is a respond to command sent from the main application
             if (function != (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)
             {
+                if (device == (int)Devices.YAxisMotor && data >= m_motors[(int)Devices.YAxisMotor].Position + DevSettingsProp.DistanceBetweenCPUs)
+                {
+                    
+                    ++m_y_axis_dividers_count;
+                    m_cpu_done = true;
+
+                }
                 m_motors[device].Position = data;
                 UpdateMotorsUiElements(device, data);
                 m_waitHandle.Set();
-            }
-
-            else if (device == (int)Devices.YAxisCpuSwitch && function == (int)Functions.StopStepper && errorCode == (int)Errors.StopInterrupt)
-            {
-                ++m_y_axis_dividers_count;
-                m_cpu_done = true;
-
             }
 
             else if (function == (int)Functions.StopStepper && device < Constants.NUMBER_OF_MOTORS)

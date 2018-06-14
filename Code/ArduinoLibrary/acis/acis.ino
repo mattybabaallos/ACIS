@@ -77,11 +77,4 @@ ISR(PCINT2_vect)
     acis.send_back(buffer, Y_AXIS_MOTOR, STOP_STEPPER, 0, STOP_INTERRUPT);
     Serial.write(buffer, BUFFER_SIZE);
   }
-
-  if (sw[Y_AXIS_CPU_SWITCH].pressed(Y_AXIS_CPU_SWITCH_PIN, 150))
-  {
-    interrupts();
-    acis.send_back(buffer, Y_AXIS_CPU_SWITCH, STOP_STEPPER, 0, STOP_INTERRUPT);
-    Serial.write(buffer, BUFFER_SIZE);
-  }
 }

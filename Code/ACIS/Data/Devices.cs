@@ -6,9 +6,6 @@
         XAxisBottomMotor,
         YAxisMotor,
         TopLeds,
-        BottomLeds,
-        YAxisCpuSwitch,
-        DoorSwitch,
-        BottomSwitch,
+        BottomLeds
     }
 }
