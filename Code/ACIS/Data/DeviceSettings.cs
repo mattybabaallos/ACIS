@@ -13,6 +13,22 @@ namespace Data
         }
 
         [UserScopedSetting()]
+        [DefaultSettingValue("5")]
+        public int DistanceBetweenCPUs
+        {
+            get
+            {
+                return ((int)(this["DistanceBetweenCPUs"]));
+            }
+            set
+            {
+                this["DistanceBetweenCPUs"] = value;
+                OnPropertyChanged(this, "DistanceBetweenCPUs");
+            }
+        }
+
+
+        [UserScopedSetting()]
         [DefaultSettingValue("45")]
         public int DistanceFromStartOfTrayToMiddleBar
         {

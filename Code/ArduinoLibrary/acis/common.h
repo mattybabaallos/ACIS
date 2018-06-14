@@ -56,10 +56,7 @@ enum Devices
     X_AXIS_BOTTOM_MOTOR,
     Y_AXIS_MOTOR,
     TOP_LEDS,
-    BOTTOM_LEDS,
-    Y_AXIS_CPU_SWITCH,
-    DOOR_SWITCH,
-    BOTTOM_SWITCH,
+    BOTTOM_LEDS
 };
 
 enum functions
