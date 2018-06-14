@@ -12,6 +12,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Threading;
 using CV;
+using Data;
 
 namespace Dev
 {
@@ -21,8 +22,53 @@ namespace Dev
         {
 
             CameraCapture cameraCapture = new CameraCapture();
-
             cameraCapture.CallobrateCameras();
+            // var save_path = "C:/Users/Kestutis/Documents/ACIS";     //path to images to stitch
+            var UserSettings = new UserSettings();
+            var save_path = UserSettings.SavePath;
+            var file_name = "c0";
+
+
+            cameraCapture.Init_camera(2, 2,save_path, file_name);
+
+
+            cameraCapture.Capture = new VideoCapture(2);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+            for (int i = 0; i < 4; i++)
+            {
+                cameraCapture.TakePicture(0);
+            }
+
+            cameraCapture.Capture.Dispose();
+            Thread.Sleep(2000);
+
+            cameraCapture.Capture = new VideoCapture(0);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+            for (int i = 0; i < 4; i++)
+            {
+                cameraCapture.TakePicture(0);
+            }
+
+            cameraCapture.Capture.Dispose();
+            Thread.Sleep(2000);
+
+            cameraCapture.Capture = new VideoCapture(1);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
+            cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+            for (int i = 0; i < 4; i++)
+            {
+                cameraCapture.TakePicture(0);
+            }
+
+            cameraCapture.Capture.Dispose();
+
+
+
 
 
 

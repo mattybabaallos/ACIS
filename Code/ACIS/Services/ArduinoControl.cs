@@ -85,6 +85,10 @@ namespace Services
             var val = SendCommand((byte)device, (byte)function, data);
             m_autoEvent.WaitOne();
             Cancellation.Token.ThrowIfCancellationRequested();
+
+            /* Camera Clean up if cancelation is thrown: */
+            
+            
             return val;
 
         }

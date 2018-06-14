@@ -77,9 +77,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Top.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Bottom.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +99,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Top_datamatrix.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Top.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Bot.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\EMGU.CV.3.4.1.2976\build\EMGU.CV.targets" Condition="Exists('..\packages\EMGU.CV.3.4.1.2976\build\EMGU.CV.targets')" />

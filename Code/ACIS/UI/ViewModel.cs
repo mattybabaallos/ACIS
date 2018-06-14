@@ -245,9 +245,14 @@ namespace UI
                 {
                     LogInfo("Start Scanning");
                     CallabrateCameras();
+                    var file_name = "c";
+                    cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
+                    
                     //Scan the first column
                     MoveToStartOfColumn(DevSettingsProp.DistanceFromHomeToTray, DevSettingsProp.DistanceFromHomeToTrayY);
-                    cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, "c" + CpuScanned.ToString()); //UsrSettings.SavePath
+
+
+                    //cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, CpuScanned.ToString()); //UsrSettings.SavePath
                     while (m_y_axis_dividers_count < DevSettingsProp.YaxisCpuDividers)
                     {
                         do
@@ -334,21 +339,30 @@ namespace UI
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
 
+                Thread.Sleep(500);
 
-                cameraCapture.Capture = new VideoCapture(cameraCapture.TopIndex);
+                cameraCapture.Capture = new VideoCapture(2);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
-                cameraCapture.TakePicture((int)Devices.XAxisTopMotor);
-                ImagePath = cameraCapture.Filepath;
+                cameraCapture.TakePicture(0);
+                Thread.Sleep(50);
                 cameraCapture.Capture.Dispose();
+                Thread.Sleep(50);
 
+
+
+
+
+                /*
                 cameraCapture.Capture = new VideoCapture(cameraCapture.BottomIndex);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
                 cameraCapture.TakePicture((int)Devices.XAxisBottomMotor);
                 ImagePath = cameraCapture.Filepath;
-                cameraCapture.Capture.Dispose();
-                OnPropertyChanged(this, "ImagePath");
+                cameraCapture.Capture.Dispose(); */
+
+                // ImagePath = cameraCapture.Filepath;
+                //  OnPropertyChanged(this, "ImagePath");
 
 
             }

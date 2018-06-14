@@ -44,7 +44,7 @@ It will include all #includes and #defines
 
 #define MAX_X_TOP_LENGTH 330
 #define MAX_X_BOTTOM_LENGTH 330
-#define MAX_Y_LENGTH 315
+#define MAX_Y_LENGTH 270
 
 #define STEP_TO_DEGREE_CONST (0.11344640138 * 1.8)
 

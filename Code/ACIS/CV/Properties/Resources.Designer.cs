@@ -93,9 +93,9 @@ namespace CV.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Bottom {
+        internal static System.Drawing.Bitmap Bot {
             get {
-                object obj = ResourceManager.GetObject("Bottom", resourceCulture);
+                object obj = ResourceManager.GetObject("Bot", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
