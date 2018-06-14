@@ -208,7 +208,7 @@ namespace CV
                 {
                     var filename = name + y + x + ".jpg";
                     //Console.WriteLine(filename);
-                    var img_to_add = CvInvoke.Imread(path + "/" + filename, ImreadModes.Color);
+                    var img_to_add = CvInvoke.Imread(path + "\\" + filename, ImreadModes.Color);
                     images.Add(img_to_add);
                     Image<Bgr, Byte> img_add = img_to_add.ToImage<Bgr, Byte>();
                     sourceImages.Add(img_add);
@@ -216,6 +216,31 @@ namespace CV
                 }
             }
             return images;
+        }
+
+        public VectorOfMat Load_images_vm(string path, int seg_R, int seg_C, string name)
+        {
+            var vm = new VectorOfMat();
+
+            for (int i = 0; i < seg_R; i++)
+            {
+                for (int ii = 0; ii < seg_C; ii++)
+                {
+                    var img_to_add = CvInvoke.Imread(path + "\\" + name + i + ii + ".jpg", ImreadModes.Color);
+                    vm.Push(img_to_add);
+                }
+            }
+            return vm;
+        }
+
+        private Stitcher stitcher = new Stitcher(false);
+
+        public Mat Stitch_vm(VectorOfMat vm)
+        {
+            Mat result = new Mat();
+            stitcher.Stitch(vm, result);
+
+            return result;
         }
 
 

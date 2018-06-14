@@ -56,6 +56,7 @@ namespace UI
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private bool m_collabrated;
+        private bool first_capture;
 
         public ViewModel(Home home)
         {
@@ -246,6 +247,7 @@ namespace UI
                     LogInfo("Start Scanning");
                     CallabrateCameras();
                     var file_name = "c";
+                    first_capture = true;
                     cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
                     
                     //Scan the first column
@@ -297,9 +299,12 @@ namespace UI
         }
         private void UpdateScanVariables()
         {
-            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
-            var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
-            var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
+           // cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+            var file_name = "c";
+            cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
+           
+            var temp_img_list = m_stitcher.Load_images_vm(UsrSettings.SavePath, 2, 2, "Topc" + CpuScanned.ToString());
+            var temp_stitched = m_stitcher.Stitch_vm(temp_img_list);
 
             // m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
             m_decoded = m_barcode.Barcode_finding_run(temp_stitched);
@@ -341,15 +346,25 @@ namespace UI
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
 
-                Thread.Sleep(750);
-
-                cameraCapture.Capture = new VideoCapture(2);
+                cameraCapture.Capture = new VideoCapture(cameraCapture.TopIndex);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+                //Give time for the first capture to auto focus:
+                if (first_capture == true)
+                {
+                    Thread.Sleep(5000);
+                }
+                else
+                {
+                   // Thread.Sleep(250);
+                }
+
                 cameraCapture.TakePicture(0);
                 Thread.Sleep(50);
                 cameraCapture.Capture.Dispose();
                 Thread.Sleep(50);
+                first_capture = false;
 
 
 

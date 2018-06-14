@@ -13,7 +13,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("5")]
+        [DefaultSettingValue("80")]
         public int DistanceBetweenCPUs
         {
             get

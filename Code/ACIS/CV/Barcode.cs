@@ -49,16 +49,8 @@ namespace CV
             /*  Load in templates: */
             List<Mat> template = new List<Mat>();
             
-            Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(Properties.Resources.barcode2);
+            Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(Properties.Resources.barcode4);
             Mat imgMAT = imgCV.Mat;
-            template.Add(imgMAT);
-
-            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode3);
-            imgMAT = imgCV.Mat;
-            template.Add(imgMAT);
-
-            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode4);
-            imgMAT = imgCV.Mat;
             template.Add(imgMAT);
 
             var resized = new Mat();
@@ -181,13 +173,18 @@ namespace CV
             string barcode_string = "";
             int offset = 0;
 
-            barcode = Find_barcode(img);
+            barcode_string = Barcode_decoder(img);
 
-            while (barcode_string == "" || offset > 50)
+            if(barcode_string == "")
+            {
+                barcode = Find_barcode(img);
+            }
+         
+            while (barcode_string == "" && offset < 50)
             {
                 barcode_string = Barcode_decoder(barcode);
                 Rectangle img_box = new Rectangle(barcode_info.top_left.X - offset, barcode_info.top_left.Y - offset, barcode_info.bottom_right.X - barcode_info.top_left.X + offset, barcode_info.bottom_right.Y - barcode_info.top_left.Y + offset);
-                CvInvoke.Rectangle(img, img_box, new MCvScalar(0, 0, 255), 2, LineType.EightConnected, 0);
+               // CvInvoke.Rectangle(img, img_box, new MCvScalar(0, 0, 255), 2, LineType.EightConnected, 0);        //Draws rectangle around barcode, good for debugging.
 
                 offset += 10;
             }
