@@ -114,13 +114,13 @@ namespace CV
                     Mat res = new Mat();
 
                     /* 0-Top, 1-Bottom */
+                    /*
                     CvInvoke.Imshow("imgMAT", imgMAT);
+                    CvInvoke.Imshow("img_capture", image);
                     CvInvoke.WaitKey();
-                    CvInvoke.DestroyAllWindows();
-                    var temp = image.Size.Width;
-                    temp = image.Size.Height;
-                    temp = imgMAT.Size.Width;
-                    temp = imgMAT.Size.Height;
+                    CvInvoke.DestroyAllWindows();  */
+
+                   
 
                     CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
                     CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);

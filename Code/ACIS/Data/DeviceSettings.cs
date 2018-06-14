@@ -28,7 +28,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("125")]
+        [DefaultSettingValue("110")]
         public int DistanceFromHomeToTray
         {
             get
@@ -44,7 +44,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("145")]
+        [DefaultSettingValue("125")]
         public int DistanceFromHomeToTrayMiddleBar
         {
             get
@@ -93,7 +93,7 @@ namespace Data
         }
 
         [UserScopedSetting()]
-        [DefaultSettingValue("80")]
+        [DefaultSettingValue("125")]
         public int DistanceFromHomeToTrayY
         {
             get
@@ -143,7 +143,7 @@ namespace Data
 
 
         [UserScopedSetting()]
-        [DefaultSettingValue("#040704")]
+        [DefaultSettingValue("#ff0000")]
         public string TopLightsColor
         {
             get
@@ -160,7 +160,7 @@ namespace Data
 
 
         [UserScopedSetting()]
-        [DefaultSettingValue("#070707")]
+        [DefaultSettingValue("#0000ff")]
         public string BottomLightsColor
         {
             get

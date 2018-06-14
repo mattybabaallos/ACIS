@@ -300,7 +300,9 @@ namespace UI
             cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
             var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
             var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
-            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
+
+            // m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
+            m_decoded = m_barcode.Barcode_finding_run(temp_stitched);
 
             //Create a folder for CPU: XML file + stitched image
             String cpu_folder_name = "ACIS" + "_" + m_decoded + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");
@@ -339,7 +341,7 @@ namespace UI
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
 
-                Thread.Sleep(500);
+                Thread.Sleep(750);
 
                 cameraCapture.Capture = new VideoCapture(2);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
@@ -390,7 +392,8 @@ namespace UI
             //Move the X axis cameras to the begging of the tray
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward,Constants.DISTANCE_TO_CALLAB_BARCODE);
             Thread.Sleep(500);
-            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR);
+            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR_TOP);
+            m_arduinoControl.SendCommand(Devices.BottomLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR_BOTTOM);
             cameraCapture.CallobrateCameras();
 
             m_collabrated = true;
