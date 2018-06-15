@@ -86,6 +86,7 @@ namespace CV
             int camera_index = -1;
             double match_rate = 0.5;
             int img_count = 0;
+            
 
             for (int i=0; i<4; i++)
             {
@@ -94,6 +95,8 @@ namespace CV
                     VideoCapture temp_capture = new VideoCapture(i);
                     temp_capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
                     temp_capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+                    Thread.Sleep(1000);     //one second for auto focus.
 
                     var image = new Mat();
                     for (int k = 0; k < 4; ++k)
@@ -114,13 +117,13 @@ namespace CV
                     Mat res = new Mat();
 
                     /* 0-Top, 1-Bottom */
+                    /*
                     CvInvoke.Imshow("imgMAT", imgMAT);
+                    CvInvoke.Imshow("img_capture", image);
                     CvInvoke.WaitKey();
-                    CvInvoke.DestroyAllWindows();
-                    var temp = image.Size.Width;
-                    temp = image.Size.Height;
-                    temp = imgMAT.Size.Width;
-                    temp = imgMAT.Size.Height;
+                    CvInvoke.DestroyAllWindows();  */
+
+                   
 
                     CvInvoke.MatchTemplate(imgMAT, image, res, TemplateMatchingType.CcoeffNormed);
                     CvInvoke.MinMaxLoc(res, ref min_val, ref max_val, ref min_loc, ref max_loc, null);
@@ -226,7 +229,7 @@ namespace CV
 
                 var image = new Mat();
 
-                for (int i = 0; i < 4; ++i)
+                for (int i = 0; i < 6; ++i)
                 {
                     image = Capture.QueryFrame();
                 }

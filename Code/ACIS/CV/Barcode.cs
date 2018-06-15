@@ -39,6 +39,8 @@ namespace CV
             public bool is_none;
         };
 
+        private MinMax_info barcode_info;
+
         /* Finds barcode in a given Image:
          * Returns Mat containing barcode only. */
         public Mat Find_barcode(Mat img)
@@ -47,16 +49,8 @@ namespace CV
             /*  Load in templates: */
             List<Mat> template = new List<Mat>();
             
-            Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(Properties.Resources.barcode2);
+            Image<Bgr, Byte> imgCV = new Image<Bgr, byte>(Properties.Resources.barcode4);
             Mat imgMAT = imgCV.Mat;
-            template.Add(imgMAT);
-
-            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode3);
-            imgMAT = imgCV.Mat;
-            template.Add(imgMAT);
-
-            imgCV = new Image<Bgr, byte>(Properties.Resources.barcode4);
-            imgMAT = imgCV.Mat;
             template.Add(imgMAT);
 
             var resized = new Mat();
@@ -93,8 +87,9 @@ namespace CV
                     }
                 }
             }
-            int offset = 10;
+            int offset = -10;
             Rectangle img_box = new Rectangle(found.top_left.X - offset, found.top_left.Y - offset, found.bottom_right.X - found.top_left.X + offset, found.bottom_right.Y - found.top_left.Y + offset);
+            barcode_info = found;
             return Crop_image(img, img_box);
         }
 
@@ -171,17 +166,29 @@ namespace CV
         }
 
         /* Used for debugging the Barcode class: */
-        private void Barcode_finding_run(string img_path)
+        public string Barcode_finding_run(Mat img)
         {
-            /* Loading in image: */
-            var img = new Mat();
-            img = CvInvoke.Imread(img_path, ImreadModes.Color);
             /* Image of barcode: */
             var barcode = new Mat();
+            string barcode_string = "";
+            int offset = 0;
 
+            barcode_string = Barcode_decoder(img);
 
-            barcode = Find_barcode(img);
-            var barcode_string = Barcode_decoder(barcode);
+            if(barcode_string == "")
+            {
+                barcode = Find_barcode(img);
+            }
+         
+            while (barcode_string == "" && offset < 50)
+            {
+                barcode_string = Barcode_decoder(barcode);
+                Rectangle img_box = new Rectangle(barcode_info.top_left.X - offset, barcode_info.top_left.Y - offset, barcode_info.bottom_right.X - barcode_info.top_left.X + offset, barcode_info.bottom_right.Y - barcode_info.top_left.Y + offset);
+               // CvInvoke.Rectangle(img, img_box, new MCvScalar(0, 0, 255), 2, LineType.EightConnected, 0);        //Draws rectangle around barcode, good for debugging.
+
+                offset += 10;
+            }
+            return barcode_string;
         }
     }
 }

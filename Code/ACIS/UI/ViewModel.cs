@@ -56,6 +56,7 @@ namespace UI
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private bool m_collabrated;
+        private bool first_capture;
 
         public ViewModel(Home home)
         {
@@ -246,6 +247,7 @@ namespace UI
                     LogInfo("Start Scanning");
                     CallabrateCameras();
                     var file_name = "c";
+                    first_capture = true;
                     cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
                     
                     //Scan the first column
@@ -297,10 +299,15 @@ namespace UI
         }
         private void UpdateScanVariables()
         {
-            cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
-            var temp_img_list = m_stitcher.Load_images(UsrSettings.SavePath, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, "c" + CpuScanned.ToString());
-            var temp_stitched = m_stitcher.Stitching_images(temp_img_list, 24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX);
-            m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
+           // cameraCapture.Init_camera(24 / DevSettingsProp.DistanceToMovePerImageY, Constants.CPU_WIDTH / DevSettingsProp.DistanceToMovePerImageX, UsrSettings.SavePath, DateTime.Now.ToString());
+            var file_name = "c";
+            cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
+           
+            var temp_img_list = m_stitcher.Load_images_vm(UsrSettings.SavePath, 2, 2, "Topc" + CpuScanned.ToString());
+            var temp_stitched = m_stitcher.Stitch_vm(temp_img_list);
+
+            // m_decoded = m_barcode.Barcode_decoder(m_barcode.Find_barcode(temp_stitched));
+            m_decoded = m_barcode.Barcode_finding_run(temp_stitched);
 
             //Create a folder for CPU: XML file + stitched image
             String cpu_folder_name = "ACIS" + "_" + m_decoded + "_" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss");
@@ -339,15 +346,25 @@ namespace UI
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisTopMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
                 m_arduinoControl.SendCommandBlocking(Devices.XAxisBottomMotor, Functions.MoveStepperForward, DevSettingsProp.DistanceToMovePerImageX);
 
-                Thread.Sleep(500);
-
-                cameraCapture.Capture = new VideoCapture(2);
+                cameraCapture.Capture = new VideoCapture(cameraCapture.TopIndex);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameWidth, 1920);
                 cameraCapture.Capture.SetCaptureProperty(CapProp.FrameHeight, 1080);
+
+                //Give time for the first capture to auto focus:
+                if (first_capture == true)
+                {
+                    Thread.Sleep(5000);
+                }
+                else
+                {
+                   // Thread.Sleep(250);
+                }
+
                 cameraCapture.TakePicture(0);
                 Thread.Sleep(50);
                 cameraCapture.Capture.Dispose();
                 Thread.Sleep(50);
+                first_capture = false;
 
 
 
@@ -390,7 +407,8 @@ namespace UI
             //Move the X axis cameras to the begging of the tray
             m_arduinoControl.SendCommandBlocking(Devices.YAxisMotor, Functions.MoveStepperForward,Constants.DISTANCE_TO_CALLAB_BARCODE);
             Thread.Sleep(500);
-            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR);
+            m_arduinoControl.SendCommand(Devices.TopLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR_TOP);
+            m_arduinoControl.SendCommand(Devices.BottomLeds, Functions.TurnOnUpdateLeds, Constants.BARCODE_READING_COLOR_BOTTOM);
             cameraCapture.CallobrateCameras();
 
             m_collabrated = true;

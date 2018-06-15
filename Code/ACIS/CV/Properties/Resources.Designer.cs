@@ -63,26 +63,6 @@ namespace CV.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap barcode2 {
-            get {
-                object obj = ResourceManager.GetObject("barcode2", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap barcode3 {
-            get {
-                object obj = ResourceManager.GetObject("barcode3", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap barcode4 {
             get {
                 object obj = ResourceManager.GetObject("barcode4", resourceCulture);
