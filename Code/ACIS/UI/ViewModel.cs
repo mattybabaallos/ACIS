@@ -401,8 +401,6 @@ namespace UI
         {
             if (m_collabrated)
                 return;
-            IsPortConnected = false;
-            OnPropertyChanged(this, "IsPortConnected");
             
             LogInfo("Calibrating Cameras");
             await Task.Run(() => MessageBox.Show("Calibrating Cameras. Please wait", "", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.None));
@@ -419,11 +417,11 @@ namespace UI
             cameraCapture.CallobrateCameras();
 
             m_collabrated = true;
-            IsPortConnected = true;
             LogInfo("Done calibrating Cameras");
 
 
         }
+
         private void OpenTrayAxis()
         {
             LogInfo("Open tray axis");

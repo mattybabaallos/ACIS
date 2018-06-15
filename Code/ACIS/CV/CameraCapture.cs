@@ -54,6 +54,10 @@ namespace CV
         public int TopIndex { get; private set; }
         //public int TopIndex;
         public int BottomIndex { get; private set; }
+        public int InsideViewIndex { get; private set; }
+
+
+
         //public int BottomIndex;
 
         public string Filepath => img_save_path + Image_prefix_filename();
