@@ -1,4 +1,5 @@
 ﻿using Data;
+using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
@@ -84,11 +85,20 @@ namespace Services
         {
             var val = SendCommand((byte)device, (byte)function, data);
             m_autoEvent.WaitOne();
-            Cancellation.Token.ThrowIfCancellationRequested();
+            try
+            {  
+                Cancellation.Token.ThrowIfCancellationRequested();
+            }
+
+            catch(OperationCanceledException e)
+            {
+               
+            }
+
 
             /* Camera Clean up if cancelation is thrown: */
-            
-            
+
+
             return val;
 
         }

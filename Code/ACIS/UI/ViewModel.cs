@@ -86,7 +86,7 @@ namespace UI
             DevSettingsProp.SettingChanging += ValidateDevSettings;
             BindingOperations.EnableCollectionSynchronization(ErrorMessages, m_lock); //This is needed to update the collection
             BindingOperations.EnableCollectionSynchronization(InfoMessages, m_lock);
-
+            SelectedPort.Count();
         }
 
         #region UiProprties 
@@ -245,7 +245,7 @@ namespace UI
                 () =>
                 {
                     LogInfo("Start Scanning");
-                    CallabrateCameras();
+                    CalibrateCameras();
                     var file_name = "c";
                     first_capture = true;
                     cameraCapture.Init_camera(2, 2, UsrSettings.SavePath, file_name + CpuScanned.ToString());
@@ -397,10 +397,17 @@ namespace UI
 
         }
 
-        private void CallabrateCameras()
+        public async void CalibrateCameras()
         {
             if (m_collabrated)
                 return;
+            IsPortConnected = false;
+            OnPropertyChanged(this, "IsPortConnected");
+            
+            LogInfo("Calibrating Cameras");
+            await Task.Run(() => MessageBox.Show("Calibrating Cameras. Please wait", "", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.None));
+
+
             //Home the motors.
             HomeAll();
 
@@ -412,6 +419,10 @@ namespace UI
             cameraCapture.CallobrateCameras();
 
             m_collabrated = true;
+            IsPortConnected = true;
+            LogInfo("Done calibrating Cameras");
+
+
         }
         private void OpenTrayAxis()
         {
@@ -429,6 +440,10 @@ namespace UI
         private void HomeAll()
         {
             LogInfo("Homing all");
+            m_arduinoControl.SendCommand(Devices.XAxisTopMotor, Functions.MoveStepperForward, 20);
+            m_arduinoControl.SendCommand(Devices.XAxisBottomMotor, Functions.MoveStepperForward, 20);
+            m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.MoveStepperForward, 20);
+
             m_arduinoControl.SendCommand(Devices.XAxisTopMotor, Functions.HomeStepper, 0);
             m_arduinoControl.SendCommand(Devices.XAxisBottomMotor, Functions.HomeStepper, 0);
             m_arduinoControl.SendCommand(Devices.YAxisMotor, Functions.HomeStepper, 0);
