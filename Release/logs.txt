@@ -1,0 +1,2 @@
+2018-06-16 14:41:30.7523|INFO|UI.ViewModel|Log files are saved to C:\Users\Matty\Documents\ACIS\log.txt
+2018-06-16 14:41:30.7523|INFO|UI.ViewModel|Log files are saved to C:\Users\Matty\Documents\ACIS\log.txt

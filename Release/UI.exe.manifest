@@ -49,7 +49,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4KbW+suDp6otJ3GK97M+43m/zvA33vWjOIUCv7pniHo=</dsig:DigestValue>
+        <dsig:DigestValue>H+xmIbqMOVdBnNdWS2cScTAxWIgTcVh2ru3Ec05R7YI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -61,7 +61,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>EMkhbiH2UHJJZmzGJoN+T2OSPlSX37CFlGft+6W/+Ak=</dsig:DigestValue>
+        <dsig:DigestValue>7EWmw/dJMV6u7jxbDj7rNgy4uI0Djckp08x0WT/8AiY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -78,18 +78,6 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Emgu.CV.World.dll" size="665088">
-      <assemblyIdentity name="Emgu.CV.World" version="3.4.1.2976" language="neutral" processorArchitecture="msil" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>dJZeBk6q9UZVAE/nZx70Vw6ip2EuStz1Y2U/AU16VC8=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NLog.dll" size="696320">
       <assemblyIdentity name="NLog" version="4.0.0.0" publicKeyToken="5120E14C03D0593C" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -102,26 +90,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Services.dll" size="8192">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Services.dll" size="7680">
       <assemblyIdentity name="Services" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>EhxHPMep7Xplx5cryjd5WPswN0Z9AruYjqFrkogOudQ=</dsig:DigestValue>
+        <dsig:DigestValue>NKy/ujU/AszantgWgG3y2Dk6zRtSJ3h9nckEXxfxi04=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UI.exe" size="45504">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UI.exe" size="44544">
       <assemblyIdentity name="UI" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AyeNPCkLpSstdI586W8r10KSYXuUEgdcgz9R26ml63I=</dsig:DigestValue>
+        <dsig:DigestValue>DdWC+etNDMIQvEvlnKMI8id/E3GoyODM0JgJihDTMJU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

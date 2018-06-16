@@ -90,7 +90,7 @@ namespace UI
 
         #region UiProprties 
         public List<Devices> MotorList { get; private set; } = new List<Devices> { Devices.XAxisTopMotor, Devices.XAxisBottomMotor, Devices.YAxisMotor };
-        public List<Functions> FunctionList { get; private set; } = new List<Functions> { Functions.HomeStepper, Functions.StopStepper, Functions.MoveStepperForward, Functions.MoveStepperBackward };
+        public List<Functions> FunctionList { get; private set; } = new List<Functions> {Functions.MoveStepperForward, Functions.MoveStepperBackward };
         public Devices SelectedMotor { get; set; }
         public Functions SelectedFunction { get; set; }
         public float Distance { get; set; }
@@ -582,16 +582,16 @@ namespace UI
             {
                 case (int)Devices.XAxisTopMotor:
                     OnPropertyChanged(this, "XTopPosition");
-                    LogError("X TOP motor moved to location " + distance);
+                    LogInfo("X TOP motor moved to location " + distance);
                     break;
                 case (int)Devices.XAxisBottomMotor:
                     OnPropertyChanged(this, "XBottomPosition");
-                    LogError("X Bottom motor moved to location " + distance);
+                    LogInfo("X Bottom motor moved to location " + distance);
 
                     break;
                 case (int)Devices.YAxisMotor:
                     OnPropertyChanged(this, "YPosition");
-                    LogError("Y motor moved to location " + distance);
+                    LogInfo("Y motor moved to location " + distance);
 
                     break;
                 default:
